@@ -30,6 +30,8 @@ for (var ctr in files) {
     }
 }
 
+series.buildSeries();
+
 console.log("Number of images read is " + series.images.length);
 console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
 console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits");
