@@ -16,14 +16,18 @@ See tests/driver.js to run this example:
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
 
+// iterator over files
 for (var ctr in files) {
     var name = './data/volume/' + files[ctr];
     var buf = fs.readFileSync(name);
+    
+    // read the DICOM file
     var image = daikon.Series.parseImage(new DataView(toArrayBuffer(buf)));
 
     if (image === null) {
         console.error(daikon.Series.parserError);
     } else if (image.hasPixelData()) {
+        // if its part of the same series, add it
         if ((series.images.length === 0) || 
                 (image.getSeriesId() === series.images[0].getSeriesId())) {
             series.addImage(image);
@@ -31,12 +35,15 @@ for (var ctr in files) {
     }
 }
 
+// order the image files, determines number of frames, etc.
 series.buildSeries();
 
+// output header info
 console.log("Number of images read is " + series.images.length);
 console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
 console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits");
 
+// concat the image data into a single ArrayBuffer
 series.concatenateImageData(null, function (imageData) {
     console.log("Total image data size is " + imageData.byteLength + " bytes");
 });
