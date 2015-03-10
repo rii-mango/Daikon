@@ -52,7 +52,7 @@ series.concatenateImageData(null, function (imageData) {
 ###Usage (browser)
 See tests/debug.html for an example.
 
-For a more advanced example, see [Papaya](https://github.com/rii-mango/Papaya).  [This class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) uses Daikon to add DICOM support to Papaya.
+For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.  Papaya uses Daikon to add DICOM support to Papaya.
 
 ###Building
 ```shell
