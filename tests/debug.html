@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<!-- Test: Typical fullscreen usage; autoload an image and overlay. -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <!-- JS debug start -->
+    <script type="text/javascript" src="../src/dictionary.js"></script>
+    <script type="text/javascript" src="../src/image.js"></script>
+    <script type="text/javascript" src="../src/iterator.js"></script>
+    <script type="text/javascript" src="../src/orderedmap.js"></script>
+    <script type="text/javascript" src="../src/parser.js"></script>
+    <script type="text/javascript" src="../src/series.js"></script>
+    <script type="text/javascript" src="../src/tag.js"></script>
+    <script type="text/javascript" src="../src/utilities.js"></script>
+
+    <title>Daikon Test</title>
+</head>
+
+<body>
+    <div id="daikon" style="font-family:sans-serif"></div>
+
+    <script type="text/javascript">
+        var old = console.log;
+        var logger = document.getElementById('daikon');
+
+        console.log = function (message) {
+            if (typeof message == 'object') {
+                logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+            } else {
+                logger.innerHTML += message + '<br />';
+            }
+        }
+
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', './data/explicit_little.dcm', true);
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    var buf = xhr.response;
+                    var data = new DataView(buf);
+                    daikon.Parser.verbose = true;
+                    daikon.Series.parseImage(data);
+                } else {
+                    console.error(xhr.status);
+                }
+            }
+        };
+
+        xhr.send(null);
+    </script>
+</body>
+
+</html>
