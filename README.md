@@ -41,7 +41,8 @@ series.buildSeries();
 // output header info
 console.log("Number of images read is " + series.images.length);
 console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
-console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits");
+console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits, " + 
+    (series.images[0].littleEndian ? "little" : "big") + " endian");
 
 // concat the image data into a single ArrayBuffer
 series.concatenateImageData(null, function (imageData) {
