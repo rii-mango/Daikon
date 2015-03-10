@@ -51,3 +51,9 @@ series.concatenateImageData(null, function (imageData) {
 ```
 ###Usage (browser)
 Daikon provides DICOM parsing support in [Papaya](https://github.com/rii-mango/Papaya).  See [here](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) for an example of how to use Daikon in browser code.
+
+###Building
+```shell
+./build.sh # normal build
+./build-min.sh # minimized build
+```
