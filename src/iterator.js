@@ -29,3 +29,11 @@ daikon.OrderedMapIterator.prototype.next = function() {
     this.index += 1;
     return item;
 };
+
+
+/*** Exports ***/
+
+var moduleType = typeof module;
+if ((moduleType !== 'undefined') && module.exports) {
+    module.exports = daikon.OrderedMapIterator;
+}

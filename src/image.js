@@ -7,6 +7,7 @@
 /*** Imports ***/
 var daikon = daikon || {};
 daikon.Tag = daikon.Tag || ((typeof require !== 'undefined') ? require('./tag.js') : null);
+daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
 
 /*** Constructor ***/

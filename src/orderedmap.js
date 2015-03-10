@@ -8,6 +8,7 @@
 
 /*** Imports ***/
 var daikon = daikon || {};
+daikon.OrderedMapIterator = daikon.OrderedMapIterator || ((typeof require !== 'undefined') ? require('./iterator.js') : null);
 
 
 /*** Constructor ***/

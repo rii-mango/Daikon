@@ -10,6 +10,7 @@ daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./
 daikon.Image = daikon.Image || ((typeof require !== 'undefined') ? require('./image.js') : null);
 daikon.OrderedMap = daikon.OrderedMap || ((typeof require !== 'undefined') ? require('./orderedmap.js') : null);
 daikon.OrderedMapIterator = daikon.OrderedMapIterator || ((typeof require !== 'undefined') ? require('./iterator.js') : null);
+daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 
 
 /*** Constructor ***/
