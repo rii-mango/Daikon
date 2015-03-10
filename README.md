@@ -21,7 +21,7 @@ for (var ctr in files) {
     var name = './data/volume/' + files[ctr];
     var buf = fs.readFileSync(name);
     
-    // read the DICOM file
+    // parse DICOM file
     var image = daikon.Series.parseImage(new DataView(toArrayBuffer(buf)));
 
     if (image === null) {
