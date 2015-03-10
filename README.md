@@ -28,7 +28,7 @@ for (var ctr in files) {
     }
 }
 
-series.concatenateImageData(null, function onFinishedReadImageData(imageData) {
+series.concatenateImageData(null, function (imageData) {
     console.log("Number of images read is " + series.images.length);
     console.log("Each slice is " + 
         series.images[0].getCols() + " x " + series.images[0].getRows());
