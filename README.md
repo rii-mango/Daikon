@@ -39,4 +39,4 @@ series.concatenateImageData(null, function (imageData) {
 });
 ```
 ###Usage (browser)
-
+See header.dicom.js in Papaya: https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js
