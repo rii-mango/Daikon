@@ -16,7 +16,7 @@ See tests/driver.js to run this example:
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
 
-// iterator over files
+// iterate over files
 for (var ctr in files) {
     var name = './data/volume/' + files[ctr];
     var buf = fs.readFileSync(name);
