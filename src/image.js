@@ -553,16 +553,6 @@ daikon.Image.prototype.isMosaic = function () {
 };
 
 
-/*
-if (isMosaic) {
-    dcm.setMosaicCols(tempDicom[chosenFileIndex].getCols() / matSize[1]);
-    dcm.setMosaicRows(tempDicom[chosenFileIndex].getRows() / matSize[0]);
-    dcm.setMosaicWidth(tempDicom[chosenFileIndex].getCols());
-    dcm.setMosaicHeight(tempDicom[chosenFileIndex].getRows());
-}
-*/
-
-
 
 daikon.Image.prototype.getMosaicCols = function() {
     return this.getCols() / this.getAcquisitionMatrix();
