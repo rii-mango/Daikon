@@ -9,6 +9,8 @@ Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
 - Supports Siemens "Mosaic" image data.
 - Robust enough to handle some kinds of missing data.
 
+###Usage
+
 ```javascript
 var series = new daikon.Series();
 var files = fs.readdirSync('/path/to/data/');
@@ -28,11 +30,11 @@ for (var ctr in files) {
     }
 }
 
+console.log("Number of images read is " + series.images.length);
+console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
+console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits");
+
 series.concatenateImageData(null, function (imageData) {
-    console.log("Number of images read is " + series.images.length);
-    console.log("Each slice is " + 
-        series.images[0].getCols() + " x " + series.images[0].getRows());
-    console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits");
     console.log("Total image data size is " + imageData.byteLength + " bytes");
 });
 ```
