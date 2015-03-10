@@ -10,13 +10,14 @@ Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
 - Robust enough to handle some kinds of missing data.
 
 ###Usage (Node.js)
+See tests/driver.js to run this example:
 
 ```javascript
 var series = new daikon.Series();
-var files = fs.readdirSync('/path/to/data/');
+var files = fs.readdirSync('./data/volume/');
 
 for (var ctr in files) {
-    var name = '/path/to/data/' + files[ctr];
+    var name = './data/volume/' + files[ctr];
     var buf = fs.readFileSync(name);
     var image = daikon.Series.parseImage(new DataView(toArrayBuffer(buf)));
 
