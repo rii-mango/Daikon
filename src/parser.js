@@ -139,10 +139,6 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     element = data.getUint16(offset, true);
     offset += 2;
 
-    if ((group === 0) && (element === 0)) {
-        console.log("here");
-    }
-
     if (this.explicit || !this.metaFinished) {
         vr = daikon.Utils.getStringAt(data, offset, 2);
 
