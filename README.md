@@ -9,7 +9,7 @@ Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
 - Supports Siemens "Mosaic" image data.
 - Robust enough to handle some kinds of missing data.
 
-Click [here](http://rii.uthscsa.edu/mango/daikon/index.html) to try Daikon now...
+[Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try Daikon now...
 
 ###Usage (Node.js)
 See tests/driver.js to run this example:
