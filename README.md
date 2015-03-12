@@ -15,7 +15,7 @@ Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
 
 ###Usage (Node.js)
 ####Single File
-See tests/driver-explicit-little.js:
+See tests/driver-explicit-little.js to run this example:
 ```javascript
 var buf = fs.readFileSync('./data/explicit_little.dcm');
 var data = new DataView(toArrayBuffer(buf));
