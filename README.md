@@ -20,7 +20,7 @@ See tests/driver-explicit-little.js to run this example:
 var buf = fs.readFileSync('./data/explicit_little.dcm');
 var data = new DataView(toArrayBuffer(buf));
 daikon.Parser.verbose = true;
-daikon.Series.parseImage(data);
+var image = daikon.Series.parseImage(data);
 ```
 
 ####Series
