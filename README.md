@@ -40,7 +40,7 @@ for (var ctr in files) {
     if (image === null) {
         console.error(daikon.Series.parserError);
     } else if (image.hasPixelData()) {
-        // if its part of the same series, add it
+        // if it's part of the same series, add it
         if ((series.images.length === 0) || 
                 (image.getSeriesId() === series.images[0].getSeriesId())) {
             series.addImage(image);
