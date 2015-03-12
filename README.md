@@ -14,8 +14,17 @@ Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
 [Click here](http://rii.uthscsa.edu/mango/papaya/index.html) to try Papaya, a DICOM viewer that uses Daikon...
 
 ###Usage (Node.js)
-See tests/driver.js to run this example:
+####Single File
+See tests/driver-explicit_little.js:
+```javascript
+var buf = fs.readFileSync('./data/explicit_little.dcm');
+var data = new DataView(toArrayBuffer(buf));
+daikon.Parser.verbose = true;
+daikon.Series.parseImage(data);
+```
 
+####Series
+See tests/driver.js to run this example:
 ```javascript
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
