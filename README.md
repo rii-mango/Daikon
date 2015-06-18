@@ -6,7 +6,7 @@ Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
 - Works in the browser and Node.js environments.
 - Parses header, orders and concatenates multi-file series image data.
 - Supports Siemens "Mosaic" image data.
-- Supports JPEG Losselss compressed data.
+- Supports JPEG Lossless compressed data.
 
 The following transfer syntaxes are supported:
 - 1.2.840.10008.1.2 (Implicit VR Endian)
