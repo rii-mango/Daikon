@@ -76,3 +76,6 @@ See tests/debug.html for an example.  For a more advanced example, see [this cla
 ./build.sh # normal build
 ./build-min.sh # minimized build
 ```
+
+###Acknowledgments
+Daikon makes use the [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support.
