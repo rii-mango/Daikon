@@ -17,6 +17,20 @@ daikon.Utils.dec2hex = function (i) {
 
 
 
+// http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+daikon.Utils.createArray = function (length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = daikon.Utils.createArray.apply(this, args);
+    }
+
+    return arr;
+};
+
+
 daikon.Utils.getStringAt = function (dataview, start, length) {
     var str = "", ctr, ch;
 
@@ -103,6 +117,27 @@ daikon.Utils.concatArrayBuffers = function (buffer1, buffer2) {
     tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
     return tmp.buffer;
 };
+
+
+
+daikon.Utils.concatArrayBuffers2 = function (buffers) {
+    var length = 0, offset = 0, ctr;
+
+    for (ctr = 0; ctr < buffers.length; ctr += 1) {
+        length += buffers[ctr].byteLength;
+    }
+
+    var tmp = new Uint8Array(length);
+
+    for (ctr = 0; ctr < buffers.length; ctr += 1) {
+        tmp.set(new Uint8Array(buffers[ctr]), offset);
+        offset += buffers[ctr].byteLength;
+
+    }
+
+    return tmp.buffer;
+};
+
 
 
 

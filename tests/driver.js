@@ -22,11 +22,11 @@ function toArrayBuffer(buffer) {
 }
 
 /*
-var buf = fs.readFileSync('./data/explicit_little.dcm');
-var data = new DataView(toArrayBuffer(buf));
-Parser.verbose = true;
-var image = Series.parseImage(data);
-*/
+ var buf = fs.readFileSync('./data/explicit_little.dcm');
+ var data = new DataView(toArrayBuffer(buf));
+ Parser.verbose = true;
+ var image = Series.parseImage(data);
+ */
 
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
@@ -50,7 +50,7 @@ series.buildSeries();
 console.log("Number of images read is " + series.images.length);
 console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
 console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits, " +
-    (series.images[0].littleEndian ? "little" : "big") + " endian");
+(series.images[0].littleEndian ? "little" : "big") + " endian");
 
 series.concatenateImageData(null, function (imageData) {
     console.log("Total image data size is " + imageData.byteLength + " bytes");

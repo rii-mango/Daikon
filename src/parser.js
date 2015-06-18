@@ -1,6 +1,6 @@
 
 /*jslint browser: true, node: true */
-/*global require */
+/*global require, module */
 
 "use strict";
 
@@ -93,6 +93,31 @@ daikon.Parser.prototype.parse = function (data) {
 
 
 
+daikon.Parser.prototype.parseEncapsulated = function (data) {
+    var offset = 0, tag, tags = [];
+
+    try {
+        tag = this.getNextTag(data, offset);
+
+        while (tag !== null) {
+            tags.push(tag);
+
+            if (daikon.Parser.verbose) {
+                console.log(tag.toString());
+            }
+
+            tag = this.getNextTag(data, tag.offsetEnd);
+        }
+    } catch (err) {
+        this.error = err;
+
+    }
+
+    return tags;
+};
+
+
+
 daikon.Parser.prototype.testForValidTag = function (data) {
     var offset, tag = null;
 
@@ -180,6 +205,12 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
             length = value[value.length - 1].offsetEnd - offset;
         }
     } else if ((length > 0) && !testForTag) {
+        if (length === daikon.Parser.UNDEFINED_LENGTH) {
+            if ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1])) {
+                length = (data.byteLength - offset);
+            }
+        }
+
         value = data.buffer.slice(offset, offset + length);
     }
 
@@ -190,12 +221,12 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
         if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
             this.explicit = false;
             this.littleEndian = true;
-        } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_LITTLE) {
-            this.explicit = true;
-            this.littleEndian = true;
         } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_BIG) {
             this.explicit = true;
             this.littleEndian = false;
+        } else {
+            this.explicit = true;
+            this.littleEndian = true;
         }
     } else if (tag.isMetaLength()) {
         this.metaFinishedOffset = tag.value[0] + offset;

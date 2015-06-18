@@ -7,7 +7,10 @@
 /*** Imports ***/
 var daikon = daikon || {};
 daikon.Tag = daikon.Tag || ((typeof require !== 'undefined') ? require('./tag.js') : null);
-daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+daikon.CompressionUtils = daikon.CompressionUtils || ((typeof require !== 'undefined') ? require('./compression-utils.js') : null);
+daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
+
+var jpeg = jpeg || ((typeof require !== 'undefined') ? require('../lib/lossless.js') : null);
 
 
 /*** Constructor ***/
@@ -15,6 +18,7 @@ daikon.Image = daikon.Image || function () {
     this.tags = {};
     this.littleEndian = false;
     this.index = -1;
+    this.decompressed = false;
 };
 
 
@@ -342,6 +346,30 @@ daikon.Image.prototype.getPixelData = function () {
 
 
 
+daikon.Image.prototype.getPixelDataBytes = function () {
+    if (this.isCompressed()) {
+        this.decompress();
+    }
+
+    return this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value.buffer;
+};
+
+
+
+daikon.Image.prototype.decompress = function () {
+    var jpegs, decoder, decompressed;
+
+    if (!this.decompressed) {
+        this.decompressed = true;
+        jpegs = this.getJpegs();
+        decoder = new jpeg.lossless.Decoder(jpegs[0], parseInt(this.getBitsAllocated() / 8));
+        decompressed = decoder.decode();
+        this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+    }
+};
+
+
+
 daikon.Image.prototype.hasPixelData = function () {
     return (this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])] !== undefined);
 };
@@ -574,6 +602,8 @@ daikon.Image.prototype.isElscint = function() {
 
 
 daikon.Image.prototype.isCompressed = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
     var transferSyntax = this.getTransferSyntax();
     if (transferSyntax) {
         if (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG) !== -1) {
@@ -602,6 +632,10 @@ daikon.Image.prototype.getNumberOfFrames = function () {
 
 daikon.Image.prototype.getNumberOfImplicitFrames = function () {
     var pixelData, length, size;
+
+    if (this.isCompressed()) {
+        return 1;
+    }
 
     pixelData = this.getPixelData();
     length = pixelData.offsetEnd - pixelData.offsetValue;
@@ -737,6 +771,56 @@ daikon.Image.prototype.getAcquiredSliceDirection = function () {
 
     return label;
 };
+
+
+
+// returns an array of tags
+daikon.Image.prototype.getEncapsulatedData = function () {
+    var buffer, parser;
+
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    buffer = this.getPixelData().value.buffer;
+    parser = new daikon.Parser();
+    return parser.parseEncapsulated(new DataView(buffer));
+};
+
+
+
+daikon.Image.prototype.getJpegs = function () {
+    var encapTags, numTags, ctr, currentJpeg, data = [], dataConcat = [];
+
+    encapTags = this.getEncapsulatedData();
+
+    // organize data as an array of an array of JPEG parts
+    if (encapTags) {
+        numTags = encapTags.length;
+
+        for (ctr = 0; ctr < numTags; ctr += 1) {
+            if (daikon.CompressionUtils.isHeaderJPEG(encapTags[ctr].value)) {
+                currentJpeg = [];
+                currentJpeg.push(encapTags[ctr].value.buffer);
+                data.push(currentJpeg);
+            } else if (currentJpeg && encapTags[ctr].value) {
+                currentJpeg.push(encapTags[ctr].value.buffer);
+            }
+        }
+    }
+
+    // concat into an array of full JPEGs
+    for (ctr = 0; ctr < data.length; ctr += 1) {
+        if (data[ctr].length > 1) {
+            dataConcat[ctr] = daikon.Utils.concatArrayBuffers2(data[ctr]);
+        } else {
+            dataConcat[ctr] = data[ctr][0];
+        }
+
+        data[ctr] = null;
+    }
+
+    return dataConcat;
+};
+
 
 
 /*** Exports ***/

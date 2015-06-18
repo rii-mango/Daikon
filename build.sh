@@ -7,6 +7,8 @@ mkdir build
 
 cat LICENSE > build/daikon.js
 
+cat lib/lossless.js >> build/daikon.js
+
 FILES=src/*.js
 for f in $FILES
 do

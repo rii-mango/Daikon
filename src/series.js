@@ -422,42 +422,49 @@ daikon.Series.prototype.buildSeries = function () {
 
 
 daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinishedImageRead) {
-    var buffer;
+    var buffer, data;
 
     if (this.isMosaic) {
-        buffer = this.getMosaicData(this.images[0], this.images[0].getPixelData().value.buffer);
-        this.images[0].clearPixelData();
+        data = this.getMosaicData(this.images[0], this.images[0].getPixelDataBytes());
     } else {
-        buffer = this.images[0].getPixelData().value.buffer;
-        this.images[0].clearPixelData();
+        data = this.images[0].getPixelDataBytes();
     }
 
-    setTimeout(this.concatenateNextImageData(buffer, progressMeter, 1, onFinishedImageRead), 0);
+    this.images[0].clearPixelData();
+    buffer = new Uint8Array(new ArrayBuffer(data.byteLength * this.images.length));
+    buffer.set(new Uint8Array(data), 0);
+
+    setTimeout(this.concatenateNextImageData(buffer, data.byteLength, progressMeter, 1, onFinishedImageRead), 0);
 };
 
 
 
-daikon.Series.prototype.concatenateNextImageData = function (buffer, progressMeter, index, onFinishedImageRead) {
+daikon.Series.prototype.concatenateNextImageData = function (buffer, frameSize, progressMeter, index,
+                                                             onFinishedImageRead) {
+    var data;
+
     if (index >= this.images.length) {
         if (progressMeter) {
             progressMeter.drawProgress(1, "Reading DICOM Images");
         }
 
-        onFinishedImageRead(buffer);
+        onFinishedImageRead(buffer.buffer);
     } else {
         if (progressMeter) {
             progressMeter.drawProgress(index / this.images.length, "Reading DICOM Images");
         }
 
         if (this.isMosaic) {
-            buffer = daikon.Utils.concatArrayBuffers(buffer, this.getMosaicData(this.images[index], this.images[index].getPixelData().value.buffer));
-            this.images[index].clearPixelData();
+            data = this.getMosaicData(this.images[index], this.images[index].getPixelDataBytes());
         } else {
-            buffer = daikon.Utils.concatArrayBuffers(buffer, this.images[index].getPixelData().value.buffer);
-            this.images[index].clearPixelData();
+            data = this.images[index].getPixelDataBytes();
         }
 
-        setTimeout(daikon.Utils.bind(this, function() {this.concatenateNextImageData(buffer, progressMeter, index + 1, onFinishedImageRead);}), 0);
+        this.images[index].clearPixelData();
+        buffer.set(new Uint8Array(data), (frameSize * index));
+
+        setTimeout(daikon.Utils.bind(this, function() {this.concatenateNextImageData(buffer, frameSize, progressMeter,
+            index + 1, onFinishedImageRead);}), 0);
     }
 };
 
