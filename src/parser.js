@@ -100,7 +100,9 @@ daikon.Parser.prototype.parseEncapsulated = function (data) {
         tag = this.getNextTag(data, offset);
 
         while (tag !== null) {
-            tags.push(tag);
+            if (tag.isSublistItem()) {
+                tags.push(tag);
+            }
 
             if (daikon.Parser.verbose) {
                 console.log(tag.toString());

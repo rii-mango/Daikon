@@ -9,6 +9,7 @@ var daikon = daikon || {};
 daikon.Tag = daikon.Tag || ((typeof require !== 'undefined') ? require('./tag.js') : null);
 daikon.CompressionUtils = daikon.CompressionUtils || ((typeof require !== 'undefined') ? require('./compression-utils.js') : null);
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
+daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js') : null);
 
 var jpeg = jpeg || ((typeof require !== 'undefined') ? require('../lib/lossless.js') : null);
 
@@ -357,14 +358,38 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 
 
 daikon.Image.prototype.decompress = function () {
-    var jpegs, decoder, decompressed;
+    var jpegs, rle, decoder, decompressed, size, frameSize, temp, ctr;
 
     if (!this.decompressed) {
         this.decompressed = true;
-        jpegs = this.getJpegs();
-        decoder = new jpeg.lossless.Decoder(jpegs[0], parseInt(this.getBitsAllocated() / 8));
-        decompressed = decoder.decode();
-        this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+
+        frameSize = this.getRows() * this.getCols() * parseInt(this.getBitsAllocated() / 8);
+        size = frameSize * this.getNumberOfFrames();
+        decompressed = new DataView(new ArrayBuffer(size));
+
+        if (this.isCompressedJPEG()) {
+            jpegs = this.getJpegs();
+
+            for (ctr = 0; ctr < jpegs.length; ctr+=1) {
+                decoder = new jpeg.lossless.Decoder(jpegs[ctr], parseInt(this.getBitsAllocated() / 8));
+                temp = decoder.decode();
+                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
+                temp = null;
+            }
+
+            this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+        } else if (this.isCompressedRLE()) {
+            rle = this.getRLE();
+
+            for (ctr = 0; ctr < rle.length; ctr+=1) {
+                decoder = new daikon.RLE();
+                temp = decoder.decode(rle[ctr], this.littleEndian, this.getRows() * this.getCols());
+                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
+                temp = null;
+            }
+
+            this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+        }
     }
 };
 
@@ -618,6 +643,34 @@ daikon.Image.prototype.isCompressed = function() {
 
 
 
+daikon.Image.prototype.isCompressedJPEG = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    var transferSyntax = this.getTransferSyntax();
+    if (transferSyntax) {
+        if (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG) !== -1) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
+daikon.Image.prototype.isCompressedRLE = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    var transferSyntax = this.getTransferSyntax();
+    if (transferSyntax) {
+        if (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_RLE) !== -1) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
 daikon.Image.prototype.getNumberOfFrames = function () {
     var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_NUMBER_OF_FRAMES[0], daikon.Tag.TAG_NUMBER_OF_FRAMES[1]), 0);
 
@@ -821,6 +874,27 @@ daikon.Image.prototype.getJpegs = function () {
     return dataConcat;
 };
 
+
+
+daikon.Image.prototype.getRLE = function () {
+    var encapTags, numTags, ctr, data = [];
+
+    encapTags = this.getEncapsulatedData();
+
+    // organize data as an array of an array of JPEG parts
+    if (encapTags) {
+        numTags = encapTags.length;
+
+        // the first sublist item contains offsets, need offsets?
+        for (ctr = 1; ctr < numTags; ctr += 1) {
+            if (encapTags[ctr].value) {
+                data.push(encapTags[ctr].value.buffer);
+            }
+        }
+    }
+
+    return data;
+};
 
 
 /*** Exports ***/
