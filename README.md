@@ -1,13 +1,19 @@
 Daikon 
 ======
 
-Daikon is a pure JavaScript DICOM parser.  Here are some of its keys features:
+Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
 
 - Works in the browser and Node.js environments.
-- Supports little/big and explicit/implicit transfer syntaxes.
 - Parses header, orders and concatenates multi-file series image data.
 - Supports Siemens "Mosaic" image data.
-- Robust enough to handle some kinds of missing data.
+- Supports JPEG Lossless compressed data.
+
+The following transfer syntaxes are supported:
+- 1.2.840.10008.1.2 (Implicit VR Endian)
+- 1.2.840.10008.1.2.1 (Explicit VR Little Endian)
+- 1.2.840.10008.1.2.2 (Explicit VR Big Endian)
+- 1.2.840.10008.1.2.4.57 (JPEG Lossless, Nonhierarchical (Processes 14))
+- 1.2.840.10008.1.2.4.70 (JPEG Lossless, Nonhierarchical (Processes 14 [Selection 1]))
 
 [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
 
@@ -70,3 +76,6 @@ See tests/debug.html for an example.  For a more advanced example, see [this cla
 ./build.sh # normal build
 ./build-min.sh # minimized build
 ```
+
+###Acknowledgments
+Daikon makes use the [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support.
