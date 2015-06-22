@@ -34,6 +34,23 @@ daikon.CompressionUtils.isHeaderJPEG = function (data) {
 };
 
 
+daikon.CompressionUtils.isHeaderJPEG2000 = function (data) {
+    var ctr;
+
+    if (data) {
+        for (ctr = 0; ctr < daikon.CompressionUtils.JPEG2000_MAGIC_NUMBER.length; ctr+=1) {
+            if (data.getUint8(ctr) !== daikon.CompressionUtils.JPEG2000_MAGIC_NUMBER[ctr]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+};
+
+
 /*** Exports ***/
 
 var moduleType = typeof module;

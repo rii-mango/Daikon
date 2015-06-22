@@ -13,6 +13,9 @@ daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js
 
 var jpeg = jpeg || ((typeof require !== 'undefined') ? require('../lib/lossless.js') : null);
 
+var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
+var JpxDecoder = JpxDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpxDecoder : null);
+
 
 /*** Constructor ***/
 daikon.Image = daikon.Image || function () {
@@ -358,7 +361,7 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 
 
 daikon.Image.prototype.decompress = function () {
-    var jpegs, rle, decoder, decompressed, size, frameSize, temp, ctr;
+    var jpegs, rle, decoder, decompressed, size, frameSize, temp, ctr, width, height, numComponents, decoded;
 
     if (!this.decompressed) {
         this.decompressed = true;
@@ -367,7 +370,7 @@ daikon.Image.prototype.decompress = function () {
         size = frameSize * this.getNumberOfFrames();
         decompressed = new DataView(new ArrayBuffer(size));
 
-        if (this.isCompressedJPEG()) {
+        if (this.isCompressedJPEGLossless()) {
             jpegs = this.getJpegs();
 
             for (ctr = 0; ctr < jpegs.length; ctr+=1) {
@@ -375,6 +378,38 @@ daikon.Image.prototype.decompress = function () {
                 temp = decoder.decode();
                 (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
                 temp = null;
+            }
+
+            this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+        } else if (this.isCompressedJPEGBaseline()) {
+            jpegs = this.getJpegs();
+
+            for (ctr = 0; ctr < jpegs.length; ctr+=1) {
+                decoder = new JpegDecoder();
+                temp = decoder.parse(new Uint8Array(jpegs[ctr]));
+
+                width = decoder.width;
+                height = decoder.height;
+                numComponents = decoder.numComponents;
+                decoded = decoder.getData(width, height);
+                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize));
+                decoded = null;
+            }
+
+            this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+        } else if (this.isCompressedJPEG2000()) {
+            jpegs = this.getJpegs();
+
+            for (ctr = 0; ctr < jpegs.length; ctr+=1) {
+                decoder = new JpxDecoder();
+                temp = decoder.parse(new Uint8Array(jpegs[ctr]));
+
+                width = decoder.width;
+                height = decoder.height;
+                numComponents = decoder.numComponents;
+                decoded = decoder.tiles[0].items;
+                daikon.Utils.fillBuffer2(decoded, decompressed, (ctr * frameSize));
+                decoded = null;
             }
 
             this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
@@ -657,6 +692,55 @@ daikon.Image.prototype.isCompressedJPEG = function() {
 };
 
 
+
+daikon.Image.prototype.isCompressedJPEGLossless = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    var transferSyntax = this.getTransferSyntax();
+    if (transferSyntax) {
+        if ((transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS) !== -1) ||
+            (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1) !== -1)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
+
+daikon.Image.prototype.isCompressedJPEGBaseline = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    var transferSyntax = this.getTransferSyntax();
+    if (transferSyntax) {
+        if ((transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT) !== -1) ||
+            (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT) !== -1)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
+
+daikon.Image.prototype.isCompressedJPEG2000 = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    var transferSyntax = this.getTransferSyntax();
+    if (transferSyntax) {
+        if ((transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000) !== -1) ||
+            (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS) !== -1)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
+
 daikon.Image.prototype.isCompressedRLE = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -669,6 +753,7 @@ daikon.Image.prototype.isCompressedRLE = function() {
 
     return false;
 };
+
 
 
 daikon.Image.prototype.getNumberOfFrames = function () {
@@ -850,7 +935,8 @@ daikon.Image.prototype.getJpegs = function () {
         numTags = encapTags.length;
 
         for (ctr = 0; ctr < numTags; ctr += 1) {
-            if (daikon.CompressionUtils.isHeaderJPEG(encapTags[ctr].value)) {
+            if (daikon.CompressionUtils.isHeaderJPEG(encapTags[ctr].value) ||
+                daikon.CompressionUtils.isHeaderJPEG2000(encapTags[ctr].value)) {
                 currentJpeg = [];
                 currentJpeg.push(encapTags[ctr].value.buffer);
                 data.push(currentJpeg);

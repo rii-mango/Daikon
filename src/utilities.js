@@ -140,6 +140,23 @@ daikon.Utils.concatArrayBuffers2 = function (buffers) {
 
 
 
+daikon.Utils.fillBuffer = function (array, buffer, offset) {
+    var ctr;
+
+    for (ctr = 0; ctr < array.length; ctr+=1) {
+        buffer.setUint8(offset + ctr, array[ctr]);
+    }
+};
+
+
+daikon.Utils.fillBuffer2 = function (array, buffer, offset) {
+    var ctr;
+
+    for (ctr = 0; ctr < array.length; ctr+=1) {
+        buffer.setUint16(offset + (ctr * 2), array[ctr], true);
+    }
+};
+
 
 daikon.Utils.bind = function (scope, fn, args, appendArgs) {
     if (arguments.length === 2) {

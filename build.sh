@@ -7,7 +7,13 @@ mkdir build
 
 cat LICENSE > build/daikon.js
 
-cat lib/lossless.js >> build/daikon.js
+
+FILES_LIB=lib/*.js
+for f in $FILES_LIB
+do
+  cat $f >> build/daikon.js
+done
+
 
 FILES=src/*.js
 for f in $FILES

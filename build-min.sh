@@ -7,9 +7,13 @@ mkdir build
 
 cat LICENSE > build/daikon-min.js
 
-java -jar lib/yuicompressor-2.4.7.jar lib/lossless.js -o build/file.js
-cat build/file.js >> build/daikon-min.js
-rm build/file.js
+FILES_LIB=lib/*.js
+for f in FILES_LIB
+do
+  java -jar lib/yuicompressor-2.4.7.jar $f -o build/file.js
+  cat build/file.js >> build/daikon-min.js
+  rm build/file.js
+done
 
 FILES=src/*.js
 for f in $FILES
