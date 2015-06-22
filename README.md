@@ -14,6 +14,7 @@ The following transfer syntaxes are supported:
 - 1.2.840.10008.1.2.2 (Explicit VR Big Endian)
 - 1.2.840.10008.1.2.4.57 (JPEG Lossless, Nonhierarchical (Processes 14))
 - 1.2.840.10008.1.2.4.70 (JPEG Lossless, Nonhierarchical (Processes 14 [Selection 1]))
+- 1.2.840.10008.1.2.5 (RLE Lossless)
 
 [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
 
