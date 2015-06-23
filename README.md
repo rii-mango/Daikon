@@ -1,7 +1,7 @@
 Daikon 
 ======
 
-Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
+Daikon is a pure JavaScript DICOM reader.  Here are some of its key features:
 
 - Works in the browser and Node.js environments.
 - Parses DICOM headers and reads image data.
