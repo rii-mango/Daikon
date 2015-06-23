@@ -4,9 +4,10 @@ Daikon
 Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
 
 - Works in the browser and Node.js environments.
-- Parses header, orders and concatenates multi-file series image data.
+- Parses DICOM headers and reads image data.
+- Supports most common DICOM compressed formats.
+- Orders and concatenates multi-file image data.
 - Supports Siemens "Mosaic" image data.
-- Supports JPEG Lossless compressed data.
 
 The following transfer syntaxes are supported:
 - 1.2.840.10008.1.2 (Implicit VR Endian)
@@ -15,6 +16,8 @@ The following transfer syntaxes are supported:
 - 1.2.840.10008.1.2.4.50 (JPEG Baseline (Process 1) Lossy JPEG 8-bit)
 - 1.2.840.10008.1.2.4.57 (JPEG Lossless, Nonhierarchical (Processes 14))
 - 1.2.840.10008.1.2.4.70 (JPEG Lossless, Nonhierarchical (Processes 14 [Selection 1]))
+- 1.2.840.10008.1.2.4.90 (JPEG 2000 Image Compression (Lossless Only))
+- 1.2.840.10008.1.2.4.91 (JPEG 2000 Image Compression)
 - 1.2.840.10008.1.2.5 (RLE Lossless)
 
 [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
