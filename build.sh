@@ -5,8 +5,7 @@ cd $DIR
 rm -rf build
 mkdir build
 
-cat LICENSE > build/daikon.js
-
+cat src/license.js > build/daikon.js
 
 FILES_LIB=lib/*.js
 for f in $FILES_LIB
@@ -18,7 +17,10 @@ done
 FILES=src/*.js
 for f in $FILES
 do
-  cat $f >> build/daikon.js
+  if [[ $f != *license* ]]
+  then
+    cat $f >> build/daikon.js
+  fi
 done
 
 echo "Done!"

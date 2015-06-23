@@ -5,10 +5,10 @@ cd $DIR
 rm -rf build
 mkdir build
 
-cat LICENSE > build/daikon-min.js
+cat src/license.js > build/daikon-min.js
 
 FILES_LIB=lib/*.js
-for f in FILES_LIB
+for f in $FILES_LIB
 do
   java -jar lib/yuicompressor-2.4.7.jar $f -o build/file.js
   cat build/file.js >> build/daikon-min.js
@@ -18,9 +18,12 @@ done
 FILES=src/*.js
 for f in $FILES
 do
-  java -jar lib/yuicompressor-2.4.7.jar $f -o build/file.js
-  cat build/file.js >> build/daikon-min.js
-  rm build/file.js
+  if [[ $f != *license* ]]
+  then
+    java -jar lib/yuicompressor-2.4.7.jar $f -o build/file.js
+    cat build/file.js >> build/daikon-min.js
+    rm build/file.js
+  fi
 done
 
 echo "Done!"
