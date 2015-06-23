@@ -12,7 +12,7 @@ Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
 ###Supported Transfer Syntax
 
 Uncompressed:
-- 1.2.840.10008.1.2 (Implicit VR Endian)
+- 1.2.840.10008.1.2 (Implicit Little VR Endian)
 - 1.2.840.10008.1.2.1 (Explicit VR Little Endian)
 - 1.2.840.10008.1.2.2 (Explicit VR Big Endian)
  
