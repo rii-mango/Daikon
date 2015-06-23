@@ -4,22 +4,29 @@ Daikon
 Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
 
 - Works in the browser and Node.js environments.
-- Parses header, orders and concatenates multi-file series image data.
+- Parses DICOM headers and reads image data.
+- Supports most common DICOM compressed formats.
+- Orders and concatenates multi-file image data.
 - Supports Siemens "Mosaic" image data.
-- Supports JPEG Lossless compressed data.
 
-The following transfer syntaxes are supported:
-- 1.2.840.10008.1.2 (Implicit VR Endian)
+###Supported Transfer Syntax
+
+Uncompressed:
+- 1.2.840.10008.1.2 (Implicit VR Little Endian)
 - 1.2.840.10008.1.2.1 (Explicit VR Little Endian)
 - 1.2.840.10008.1.2.2 (Explicit VR Big Endian)
+ 
+Compressed:
 - 1.2.840.10008.1.2.4.50 (JPEG Baseline (Process 1) Lossy JPEG 8-bit)
 - 1.2.840.10008.1.2.4.57 (JPEG Lossless, Nonhierarchical (Processes 14))
 - 1.2.840.10008.1.2.4.70 (JPEG Lossless, Nonhierarchical (Processes 14 [Selection 1]))
+- 1.2.840.10008.1.2.4.90 (JPEG 2000 Image Compression (Lossless Only))
+- 1.2.840.10008.1.2.4.91 (JPEG 2000 Image Compression)
 - 1.2.840.10008.1.2.5 (RLE Lossless)
 
 [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
 
-[Click here](http://rii.uthscsa.edu/mango/papaya/index.html) to try Papaya, a DICOM viewer that uses Daikon...
+[Click here](http://rii.uthscsa.edu/mango/papayabeta/) to try Papaya, a DICOM viewer that uses Daikon...
 
 ###Usage (Node.js)
 ####Single File
@@ -29,6 +36,18 @@ var buf = fs.readFileSync('./data/explicit_little.dcm');
 var data = new DataView(toArrayBuffer(buf));
 daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
+```
+
+####Compressed File
+See tests/driver-jpeg-2000.js to run this example:
+```javascript
+var buf = fs.readFileSync('./data/jpeg_2000.dcm');
+var data = new DataView(toArrayBuffer(buf));
+var image = daikon.Series.parseImage(data);
+console.log("size of image (bytes) = " + (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
+console.log("pixel bytes (compressed) = " + image.getPixelData().value.buffer.byteLength);
+image.decompress();
+console.log("pixel bytes (decompressed) = " + image.getPixelData().value.buffer.byteLength);
 ```
 
 ####Series
@@ -81,4 +100,5 @@ See tests/debug.html for an example.  For a more advanced example, see [this cla
 
 ###Acknowledgments
 Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support as well as the following third-party libraries:
-- [jpgjs](https://github.com/notmasteryet/jpgjs) for JPEG Baseline and JPEG 2000 support.
+- [jpgjs](https://github.com/notmasteryet/jpgjs) for JPEG Baseline support.
+- [image-JPEG2000](https://github.com/OHIF/image-JPEG2000) for JPEG 2000 support.
