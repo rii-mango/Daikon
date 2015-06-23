@@ -63,6 +63,12 @@
         }
     </script>
 
+    <style>
+        .private {
+            color: gray;
+        }
+    </style>
+
     <!-- JS debug start -->
     <script type="text/javascript" src="../src/dictionary.js"></script>
     <script type="text/javascript" src="../src/image.js"></script>
@@ -101,7 +107,11 @@
             str = str.replace(/^\s*/mg, function(x) { return new Array(++x.length).join('&nbsp;&nbsp;') });
             str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
 
-            logger.innerHTML += str;
+            if (str.indexOf("Private Data") != -1) {
+                logger.innerHTML += ("<span class='private'>" + str + "</span>");
+            } else {
+                logger.innerHTML += str;
+            }
         };
 
         document.getElementById('file').addEventListener('change', handleFileSelect, false);
