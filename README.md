@@ -38,6 +38,18 @@ daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
 ```
 
+####Compressed File
+See tests/driver-jpeg-2000.js to run this example:
+```javascript
+var buf = fs.readFileSync('./data/jpeg_2000.dcm');
+var data = new DataView(toArrayBuffer(buf));
+var image = daikon.Series.parseImage(data);
+console.log("size of image (bytes) = " + (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
+console.log("pixel bytes (compressed) = " + image.getPixelData().value.buffer.byteLength);
+image.decompress();
+console.log("pixel bytes (decompressed) = " + image.getPixelData().value.buffer.byteLength);
+```
+
 ####Series
 See tests/driver.js to run this example:
 ```javascript
