@@ -88,4 +88,5 @@ See tests/debug.html for an example.  For a more advanced example, see [this cla
 
 ###Acknowledgments
 Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support as well as the following third-party libraries:
-- [jpgjs](https://github.com/notmasteryet/jpgjs) for JPEG Baseline and JPEG 2000 support.
+- [jpgjs](https://github.com/notmasteryet/jpgjs) for JPEG Baseline support.
+- [image-JPEG2000](https://github.com/OHIF/image-JPEG2000) for JPEG 2000 support.
