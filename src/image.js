@@ -655,8 +655,8 @@ daikon.Image.prototype.getMosaicRows = function() {
 
 
 daikon.Image.prototype.isElscint = function() {
-    var dataScale = this.getDataScaleElscint();
-    return ((dataScale !== null) && (dataScale !== 0));
+    var tag = this.getTag(daikon.Tag.TAG_DATA_SCALE_ELSCINT[0], daikon.Tag.TAG_DATA_SCALE_ELSCINT[1]);
+    return (tag !== undefined);
 };
 
 
