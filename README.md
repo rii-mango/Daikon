@@ -9,10 +9,14 @@ Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
 - Orders and concatenates multi-file image data.
 - Supports Siemens "Mosaic" image data.
 
-The following transfer syntaxes are supported:
+###Supported Transfer Syntaxes
+
+Uncompressed:
 - 1.2.840.10008.1.2 (Implicit VR Endian)
 - 1.2.840.10008.1.2.1 (Explicit VR Little Endian)
 - 1.2.840.10008.1.2.2 (Explicit VR Big Endian)
+ 
+Compressed:
 - 1.2.840.10008.1.2.4.50 (JPEG Baseline (Process 1) Lossy JPEG 8-bit)
 - 1.2.840.10008.1.2.4.57 (JPEG Lossless, Nonhierarchical (Processes 14))
 - 1.2.840.10008.1.2.4.70 (JPEG Lossless, Nonhierarchical (Processes 14 [Selection 1]))
