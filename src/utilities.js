@@ -140,22 +140,34 @@ daikon.Utils.concatArrayBuffers2 = function (buffers) {
 
 
 
-daikon.Utils.fillBuffer = function (array, buffer, offset) {
+daikon.Utils.fillBuffer = function (array, buffer, offset, numBytes) {
     var ctr;
 
-    for (ctr = 0; ctr < array.length; ctr+=1) {
-        buffer.setUint8(offset + ctr, array[ctr]);
+    if (numBytes === 1) {
+        for (ctr = 0; ctr < array.length; ctr+=1) {
+            buffer.setUint8(offset + ctr, array[ctr]);
+        }
+    } else if (numBytes === 2) {
+        for (ctr = 0; ctr < array.length; ctr+=1) {
+            buffer.setUint16(offset + (ctr * 2), array[ctr], true);
+        }
     }
 };
 
 
-daikon.Utils.fillBuffer2 = function (array, buffer, offset) {
-    var ctr;
 
-    for (ctr = 0; ctr < array.length; ctr+=1) {
-        buffer.setUint16(offset + (ctr * 2), array[ctr], true);
+daikon.Utils.fillBufferRGB = function (array, buffer, offset) {
+    var r, g, b, ctr, numElements = (parseInt(array.length / 3));
+
+    for (ctr = 0; ctr < numElements; ctr+=1) {
+        r = array[ctr * 3];
+        g = array[ctr * 3 + 1];
+        b = array[ctr * 3 + 2];
+
+        buffer.setUint8(offset + ctr, parseInt((r + b + g) / 3), true);
     }
 };
+
 
 
 daikon.Utils.bind = function (scope, fn, args, appendArgs) {

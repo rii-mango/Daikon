@@ -14,7 +14,7 @@ daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js
 var jpeg = jpeg || ((typeof require !== 'undefined') ? require('../lib/lossless.js') : null);
 
 var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
-var JpxDecoder = JpxDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpxDecoder : null);
+var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
 
 /*** Constructor ***/
@@ -387,12 +387,17 @@ daikon.Image.prototype.decompress = function () {
             for (ctr = 0; ctr < jpegs.length; ctr+=1) {
                 decoder = new JpegDecoder();
                 temp = decoder.parse(new Uint8Array(jpegs[ctr]));
-
                 width = decoder.width;
                 height = decoder.height;
                 numComponents = decoder.numComponents;
                 decoded = decoder.getData(width, height);
-                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize));
+
+                if (this.getDataType() === daikon.Image.BYTE_TYPE_RGB) {
+                    daikon.Utils.fillBufferRGB(decoded, decompressed, (ctr * frameSize));
+                } else {
+                    daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize), parseInt(this.getBitsAllocated() / 8));
+                }
+
                 decoded = null;
             }
 
@@ -401,14 +406,18 @@ daikon.Image.prototype.decompress = function () {
             jpegs = this.getJpegs();
 
             for (ctr = 0; ctr < jpegs.length; ctr+=1) {
-                decoder = new JpxDecoder();
-                temp = decoder.parse(new Uint8Array(jpegs[ctr]));
-
+                decoder = new JpxImage();
+                decoder.parse(new Uint8Array(jpegs[ctr]));
                 width = decoder.width;
                 height = decoder.height;
-                numComponents = decoder.numComponents;
                 decoded = decoder.tiles[0].items;
-                daikon.Utils.fillBuffer2(decoded, decompressed, (ctr * frameSize));
+
+                if (this.getDataType() === daikon.Image.BYTE_TYPE_RGB) {
+                    daikon.Utils.fillBufferRGB(decoded, decompressed, (ctr * frameSize));
+                } else {
+                    daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize), parseInt(this.getBitsAllocated() / 8));
+                }
+
                 decoded = null;
             }
 
@@ -860,7 +869,7 @@ daikon.Image.prototype.getDataType = function () {
 
     interp = this.getPhotometricInterpretation();
     if (interp !== null) {
-        if (interp.trim() === "RGB") {
+        if ((interp.trim().indexOf('RGB') !== -1) || (interp.trim().indexOf('YBR') !== -1)) {
             return daikon.Image.BYTE_TYPE_RGB;
         }
     }

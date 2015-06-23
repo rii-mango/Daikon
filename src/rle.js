@@ -75,7 +75,7 @@ daikon.RLE.prototype.processData = function () {
             temp1 = (this.output.getInt8(ctr));
             temp2 = (this.output.getInt8(ctr + this.numElements));
             temp3 = (this.output.getInt8(ctr + offset));
-            outputProcessed.setInt8(parseInt((temp1 + temp2 + temp3) / 3.0) & 0xFF);
+            outputProcessed.setInt8(ctr, parseInt((temp1 + temp2 + temp3) / 3.0));
         }
 
         return outputProcessed;
