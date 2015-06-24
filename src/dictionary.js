@@ -21,7 +21,6 @@ daikon.Dictionary.dictPrivate = {
 
 daikon.Dictionary.dict = {
     "0002" : {
-        "0000" : ["UL", "Group0002Length"],
         "0001" : ["OB", "FileMetaInformationVersion"],
         "0002" : ["UI", "MediaStoredSOPClassUID"],
         "0003" : ["UI", "MediaStoredSOPInstanceUID"],
@@ -33,7 +32,6 @@ daikon.Dictionary.dict = {
         "0102" : ["OB", "PrivateInformation"]
     },
     "0004" : {
-        "0000" : ["UL", "Group0004Length"],
         "1130" : ["CS", "FilesetID"],
         "1141" : ["CS", "FilesetDescriptorFileFileID"],
         "1142" : ["CS", "FilesetDescriptorFileFormat"],
@@ -3634,6 +3632,8 @@ daikon.Dictionary.getVR = function (group, element) {
         elementData = groupData[daikon.Utils.dec2hex(element)];
         if (elementData) {
             vr = elementData[0];
+        } else if (element === 0) {
+            vr = 'UL';
         }
     }
 
@@ -3664,6 +3664,8 @@ daikon.Dictionary.getDescription = function (group, element) {
         elementData = groupData[daikon.Utils.dec2hex(element)];
         if (elementData) {
             des = elementData[1];
+        } else if (element === 0) {
+            des = ("Group " + daikon.Utils.dec2hex(group) + " Length");
         }
     }
 
