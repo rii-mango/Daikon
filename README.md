@@ -1,7 +1,7 @@
 Daikon 
 ======
 
-Daikon is a pure JavaScript DICOM reader.  Here are some of its keys features:
+Daikon is a pure JavaScript DICOM reader.  Here are some of its key features:
 
 - Works in the browser and Node.js environments.
 - Parses DICOM headers and reads image data.
@@ -24,9 +24,9 @@ Compressed:
 - 1.2.840.10008.1.2.4.91 (JPEG 2000 Image Compression)
 - 1.2.840.10008.1.2.5 (RLE Lossless)
 
-[Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
-
-[Click here](http://rii.uthscsa.edu/mango/papayabeta/) to try Papaya, a DICOM viewer that uses Daikon...
+###Demo
+- [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
+- [Click here](http://rii.uthscsa.edu/mango/papayabeta/) to try Papaya, a DICOM viewer that uses Daikon...
 
 ###Usage (Node.js)
 ####Single File
@@ -90,7 +90,7 @@ series.concatenateImageData(null, function (imageData) {
 });
 ```
 ###Usage (browser)
-See tests/debug.html for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
+See [tests/debug.html](http://rii.uthscsa.edu/mango/daikon/index.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
 ###Building
 ```shell
