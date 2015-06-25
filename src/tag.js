@@ -518,7 +518,7 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
 
 /*** Prototype Methods ***/
 
-daikon.Tag.prototype.toString = function (level) {
+daikon.Tag.prototype.toString = function (level, html) {
     var valueStr = '',
         ctr,
         groupStr = daikon.Utils.dec2hex(this.group),
@@ -538,7 +538,7 @@ daikon.Tag.prototype.toString = function (level) {
 
     if (this.sublist) {
         for (ctr = 0; ctr < this.value.length; ctr += 1) {
-            valueStr += ('\n' + (this.value[ctr].toString(level + 1)));
+            valueStr += ('\n' + (this.value[ctr].toString(level + 1, html)));
         }
     } else if (this.vr === 'SQ') {
         valueStr = '';
@@ -562,7 +562,14 @@ daikon.Tag.prototype.toString = function (level) {
         des = daikon.Utils.convertCamcelCaseToTitleCase(daikon.Dictionary.getDescription(this.group, this.element));
     }
 
-    return padding + tagStr + ' ' + des + ' ' + valueStr;
+    return padding + "<span style='color:#B5CBD3'>" + tagStr + "</span>&nbsp;&nbsp;&nbsp;" + des + '&nbsp;&nbsp;&nbsp;' + valueStr;
+};
+
+
+
+
+daikon.Tag.prototype.toHTMLString = function (level) {
+    return this.toString(level, true);
 };
 
 

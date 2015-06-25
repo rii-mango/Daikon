@@ -992,6 +992,24 @@ daikon.Image.prototype.getRLE = function () {
 };
 
 
+
+daikon.Image.prototype.toString = function () {
+    var ctr, tag, str = "";
+
+    for (var key in this.tags) {
+        if (this.tags.hasOwnProperty(key)) {
+            tag = this.tags[key];
+            str += (tag.toHTMLString() + "<br />");
+        }
+    }
+
+    str = str.replace(/^\s*/mg, function(x) { return new Array(++x.length).join('&nbsp;&nbsp;'); });
+    str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+    return str;
+};
+
+
 /*** Exports ***/
 
 var moduleType = typeof module;
