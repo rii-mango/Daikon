@@ -21,7 +21,16 @@ function toArrayBuffer(buffer) {
     return ab;
 }
 
-var buf = fs.readFileSync('./data/implicit_little.dcm');
+var buf = fs.readFileSync('./tests/data/implicit_little.dcm');
 var data = new DataView(toArrayBuffer(buf));
-daikon.Parser.verbose = true;
-var image = daikon.Series.parseImage(data);
+
+var assert = require("assert");
+describe('Daikon', function () {
+    describe('test implicit', function () {
+        it('should not throw error', function () {
+            assert.doesNotThrow(function() {
+                var image = daikon.Series.parseImage(data);
+            });
+        });
+    });
+});

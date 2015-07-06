@@ -29,10 +29,10 @@ function toArrayBuffer(buffer) {
  */
 
 var series = new daikon.Series();
-var files = fs.readdirSync('./data/volume/');
+var files = fs.readdirSync('./tests/data/volume/');
 
 for (var ctr in files) {
-    var name = './data/volume/' + files[ctr];
+    var name = './tests/data/volume/' + files[ctr];
     var buf = fs.readFileSync(name);
     var image = daikon.Series.parseImage(new DataView(toArrayBuffer(buf)));
 
@@ -47,11 +47,28 @@ for (var ctr in files) {
 
 series.buildSeries();
 
-console.log("Number of images read is " + series.images.length);
-console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
-console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits, " +
-(series.images[0].littleEndian ? "little" : "big") + " endian");
 
-series.concatenateImageData(null, function (imageData) {
-    console.log("Total image data size is " + imageData.byteLength + " bytes");
+var assert = require("assert");
+
+describe('Daikon', function () {
+    describe('test series', function () {
+        it('cols should equal 256', function () {
+            assert.equal(256, series.images[0].getCols());
+        });
+
+        it('rows should equal 256', function () {
+            assert.equal(256, series.images[0].getRows());
+        });
+
+        it('bits allocated should be 16', function () {
+            assert.equal(16, series.images[0].getBitsAllocated());
+        });
+
+        it('image size should be 2621440', function (done) {
+            series.concatenateImageData(null, function (imageData) {
+                assert.equal(2621440, imageData.byteLength);
+                done();
+            });
+        });
+    });
 });

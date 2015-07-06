@@ -23,7 +23,7 @@ function toArrayBuffer(buffer) {
     return ab;
 }
 
-var buf = fs.readFileSync('./tests/data/jpeg_lossless_sel1.dcm');
+var buf = fs.readFileSync('./tests/data/rle.dcm');
 
 var data = new DataView(toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
@@ -32,20 +32,20 @@ var image = daikon.Series.parseImage(data);
 var assert = require("assert");
 
 describe('Daikon', function () {
-    describe('test jpeg lossless sel1', function () {
-        it('image size should be 409600', function () {
-            assert.equal(409600, (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
+    describe('test rle', function () {
+        it('image size should be 524288', function () {
+            assert.equal(524288, (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
         });
 
-        it('pixel bytes compressed size should be 143498', function (done) {
-            assert.equal(143498, image.getPixelData().value.buffer.byteLength);
+        it('pixel bytes compressed size should be 248496', function (done) {
+            assert.equal(248496, image.getPixelData().value.buffer.byteLength);
             done();
         });
 
 
-        it('pixel bytes uncompressed size should be 409600', function (done) {
+        it('pixel bytes uncompressed size should be 524288', function (done) {
             image.decompress();
-            assert.equal(409600, image.getPixelData().value.buffer.byteLength);
+            assert.equal(524288, image.getPixelData().value.buffer.byteLength);
             done();
         });
     });

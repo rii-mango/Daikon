@@ -23,11 +23,28 @@ function toArrayBuffer(buffer) {
     return ab;
 }
 
-var buf = fs.readFileSync('./data/jpeg_2000.dcm');
+var buf = fs.readFileSync('./tests/data/jpeg_2000.dcm');
 
 var data = new DataView(toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
-console.log("size of image (bytes) = " + (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
-console.log("pixel bytes (compressed) = " + image.getPixelData().value.buffer.byteLength);
-image.decompress();
-console.log("pixel bytes (decompressed) = " + image.getPixelData().value.buffer.byteLength);
+
+var assert = require("assert");
+
+describe('Daikon', function () {
+    describe('test jpeg 2000', function () {
+        it('image size should be 524288', function () {
+            assert.equal(524288, (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
+        });
+
+        it('pixel bytes compressed size should be 7560', function (done) {
+            assert.equal(7560, image.getPixelData().value.buffer.byteLength);
+            done();
+        });
+
+        it('pixel bytes uncompressed size should be 524288', function (done) {
+            image.decompress();
+            assert.equal(524288, image.getPixelData().value.buffer.byteLength);
+            done();
+        });
+    });
+});

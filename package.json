@@ -1,0 +1,32 @@
+{
+  "name": "Daikon",
+  "version": "1.1.0",
+  "description": "A JavaScript DICOM reader.",
+  "main": "src/main.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "browserify": "*",
+    "JPEGLosslessDecoderJS": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+  },
+  "scripts": {
+    "test": "mocha tests",
+    "browser": "browserify --standalone daikon src/main.js -o build/daikon.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rii-mango/Daikon.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "DICOM"
+  ],
+  "author": "Michael Martinez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rii-mango/Daikon/issues"
+  },
+  "homepage": "https://github.com/rii-mango/Daikon"
+}

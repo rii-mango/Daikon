@@ -21,7 +21,18 @@ function toArrayBuffer(buffer) {
     return ab;
 }
 
-var buf = fs.readFileSync('./data/explicit_big.dcm');
+var buf = fs.readFileSync('./tests/data/explicit_big.dcm');
 var data = new DataView(toArrayBuffer(buf));
-daikon.Parser.verbose = true;
-var image = daikon.Series.parseImage(data);
+
+var assert = require("assert");
+describe('Daikon', function () {
+    describe('test explicit big', function () {
+        it('should not throw error', function () {
+            assert.doesNotThrow(function() {
+                var image = daikon.Series.parseImage(data);
+            });
+        });
+    });
+});
+
+

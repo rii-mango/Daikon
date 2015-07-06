@@ -23,11 +23,29 @@ function toArrayBuffer(buffer) {
     return ab;
 }
 
-var buf = fs.readFileSync('./data/jpeg_baseline_8bit.dcm');
+var buf = fs.readFileSync('./tests/data/jpeg_baseline_8bit.dcm');
 
 var data = new DataView(toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
-console.log("size of image (bytes) = " + (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
-console.log("pixel bytes (compressed) = " + image.getPixelData().value.buffer.byteLength);
-image.decompress();
-console.log("pixel bytes (decompressed) = " + image.getPixelData().value.buffer.byteLength);
+
+var assert = require("assert");
+
+describe('Daikon', function () {
+    describe('test jpeg baseline 8bit', function () {
+        it('image size should be 25165824', function () {
+            assert.equal(25165824, (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
+        });
+
+        it('pixel bytes compressed size should be 1691672', function (done) {
+            assert.equal(1691672, image.getPixelData().value.buffer.byteLength);
+            done();
+        });
+
+
+        it('pixel bytes uncompressed size should be 25165824', function (done) {
+            image.decompress();
+            assert.equal(25165824, image.getPixelData().value.buffer.byteLength);
+            done();
+        });
+    });
+});

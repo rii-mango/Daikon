@@ -6,7 +6,6 @@
 
 /*** Imports ***/
 var daikon = daikon || {};
-daikon.OrderedMap = daikon.OrderedMap || ((typeof require !== 'undefined') ? require('./orderedmap.js') : null);
 
 
 /*** Constructor ***/

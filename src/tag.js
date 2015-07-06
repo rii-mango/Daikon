@@ -562,7 +562,11 @@ daikon.Tag.prototype.toString = function (level, html) {
         des = daikon.Utils.convertCamcelCaseToTitleCase(daikon.Dictionary.getDescription(this.group, this.element));
     }
 
-    return padding + "<span style='color:#B5CBD3'>" + tagStr + "</span>&nbsp;&nbsp;&nbsp;" + des + '&nbsp;&nbsp;&nbsp;' + valueStr;
+    if (html) {
+        return padding + "<span style='color:#B5CBD3'>" + tagStr + "</span>&nbsp;&nbsp;&nbsp;" + des + '&nbsp;&nbsp;&nbsp;' + valueStr;
+    } else {
+        return padding + ' ' + tagStr + ' ' + des + ' ' + valueStr;
+    }
 };
 
 
