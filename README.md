@@ -28,7 +28,7 @@ Compressed:
 - [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
 - [Click here](http://rii.uthscsa.edu/mango/papayabeta/) to try Papaya, a DICOM viewer that uses Daikon...
 
-###Usage (Node.js)
+###Usage
 ####Single File
 See tests/driver-explicit-little.js to run this example:
 ```javascript
@@ -89,13 +89,17 @@ series.concatenateImageData(null, function (imageData) {
     console.log("Total image data size is " + imageData.byteLength + " bytes");
 });
 ```
-###Usage (browser)
+####Browser
 See [tests/debug.html](http://rii.uthscsa.edu/mango/daikon/index.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
+###Testing
+```
+npm test
+```
+
 ###Building
-```shell
-./build.sh # normal build
-./build-min.sh # minimized build
+```
+npm run browser
 ```
 
 ###Acknowledgments
