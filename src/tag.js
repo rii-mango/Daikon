@@ -533,7 +533,11 @@ daikon.Tag.prototype.toString = function (level, html) {
 
     padding = "";
     for (ctr = 0; ctr < level; ctr += 1) {
-        padding += "  ";
+        if (html) {
+            padding += "&nbsp;&nbsp;";
+        } else {
+            padding += "  ";
+        }
     }
 
     if (this.sublist) {

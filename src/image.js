@@ -1004,7 +1004,6 @@ daikon.Image.prototype.toString = function () {
         }
     }
 
-    str = str.replace(/^\s*/mg, function(x) { return new Array(++x.length).join('&nbsp;&nbsp;'); });
     str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
 
     return str;
