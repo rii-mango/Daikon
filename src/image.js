@@ -995,9 +995,12 @@ daikon.Image.prototype.getRLE = function () {
 
 
 daikon.Image.prototype.toString = function () {
-    var ctr, tag, str = "";
+    var ctr, tag, key, str = "";
 
-    for (var key in this.tags) {
+    var sorted_keys = Object.keys(this.tags).sort();
+
+    for (ctr = 0; ctr < sorted_keys.length; ctr+=1) {
+        key = sorted_keys[ctr];
         if (this.tags.hasOwnProperty(key)) {
             tag = this.tags[key];
             str += (tag.toHTMLString() + "<br />");
