@@ -90,7 +90,7 @@ series.concatenateImageData(null, function (imageData) {
 });
 ```
 ####Browser
-See [tests/debug.html](http://rii.uthscsa.edu/mango/daikon/index.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
+See [tests/debug.html](https://github.com/rii-mango/Daikon/blob/master/tests/debug.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
 ###Testing
 ```
