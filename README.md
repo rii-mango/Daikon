@@ -102,6 +102,7 @@ See the [release folder](https://github.com/rii-mango/Daikon/tree/master/release
 ```
 npm run build
 ```
+This will output daikon.js and daikon-min.js to build/.
 
 ###Acknowledgments
 Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support as well as the following third-party libraries:
