@@ -196,6 +196,19 @@ daikon.Utils.bind = function (scope, fn, args, appendArgs) {
 };
 
 
+
+daikon.Utils.toArrayBuffer = function (buffer) {
+    var ab, view, i;
+
+    ab = new ArrayBuffer(buffer.length);
+    view = new Uint8Array(ab);
+    for (i = 0; i < buffer.length; i += 1) {
+        view[i] = buffer[i];
+    }
+    return ab;
+};
+
+
 /*** Exports ***/
 
 var moduleType = typeof module;

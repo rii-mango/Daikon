@@ -9,11 +9,13 @@
   "devDependencies": {
     "mocha": "*",
     "browserify": "*",
+    "uglifyjs": "*",
     "JPEGLosslessDecoderJS": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
   },
   "scripts": {
     "test": "mocha tests",
-    "browser": "browserify --standalone daikon src/main.js -o build/daikon.js"
+    "build": "rm -rf build; mkdir build; browserify --standalone daikon src/main.js -o build/daikon.js; uglifyjs build/daikon.js -o build/daikon-min.js",
+    "release": "rm release/current/*.js; cp build/*.js release/current/."
   },
   "repository": {
     "type": "git",
