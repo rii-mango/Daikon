@@ -26,7 +26,7 @@ var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('..
 
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
-var pako = daikon.Utils || ((typeof require !== 'undefined') ? require('pako-inflate.js') : null);
+var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
 
 /*** Exports ***/
 
