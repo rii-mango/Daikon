@@ -10,6 +10,7 @@
     "mocha": "*",
     "browserify": "*",
     "uglifyjs": "*",
+    "pako": "*",
     "JPEGLosslessDecoderJS": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
   },
   "scripts": {

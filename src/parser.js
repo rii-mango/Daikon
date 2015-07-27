@@ -11,6 +11,8 @@ daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./ut
 daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? require('./dictionary.js') : null);
 daikon.Image = daikon.Image || ((typeof require !== 'undefined') ? require('./image.js') : null);
 
+var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
+
 
 /*** Constructor ***/
 daikon.Parser = daikon.Parser || function () {
@@ -19,6 +21,7 @@ daikon.Parser = daikon.Parser || function () {
     this.metaFound = false;
     this.metaFinished = false;
     this.metaFinishedOffset = -1;
+    this.needsDeflate = false;
     this.error = null;
 };
 
@@ -45,6 +48,7 @@ daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT = "1.2.840.10008.1
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS = "1.2.840.10008.1.2.4.90";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000 = "1.2.840.10008.1.2.4.91";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_RLE = "1.2.840.10008.1.2.5";
+daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE = "1.2.840.10008.1.2.1.99";
 daikon.Parser.UNDEFINED_LENGTH = 0xFFFFFFFF;
 
 
@@ -66,7 +70,7 @@ daikon.Parser.isMagicCookieFound = function (data) {
 /*** Prototype Methods ***/
 
 daikon.Parser.prototype.parse = function (data) {
-    var image = null, offset, tag;
+    var image = null, offset, tag, copyMeta, copyDeflated;
 
     try {
         image = new daikon.Image();
@@ -82,6 +86,13 @@ daikon.Parser.prototype.parse = function (data) {
 
             if (tag.isPixelData()) {
                 break;
+            }
+
+            if (this.needsDeflate && (tag.offsetEnd >= this.metaFinishedOffset)) {
+                this.needsDeflate = false;
+                copyMeta = data.buffer.slice(0, tag.offsetEnd);
+                copyDeflated = data.buffer.slice(tag.offsetEnd);
+                data = new DataView(daikon.Utils.concatArrayBuffers(copyMeta, pako.inflateRaw(copyDeflated)));
             }
 
             tag = this.getNextTag(data, tag.offsetEnd);
@@ -232,6 +243,10 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
         } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_BIG) {
             this.explicit = true;
             this.littleEndian = false;
+        } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE) {
+            this.needsDeflate = true;
+            this.explicit = true;
+            this.littleEndian = true;
         } else {
             this.explicit = true;
             this.littleEndian = true;
