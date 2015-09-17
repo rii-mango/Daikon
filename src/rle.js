@@ -67,15 +67,14 @@ daikon.RLE.prototype.processData = function () {
         }
 
         return outputProcessed;
-    } else if (this.numSegments === 3) {
-        outputProcessed = new DataView(new ArrayBuffer(this.numElements));
+    } else if (this.numSegments === 3) {  // rgb
+        outputProcessed = new DataView(new ArrayBuffer(this.size));
         offset = (2 * this.numElements);
 
         for (ctr = 0; ctr < this.numElements; ctr+=1) {
-            temp1 = (this.output.getInt8(ctr));
-            temp2 = (this.output.getInt8(ctr + this.numElements));
-            temp3 = (this.output.getInt8(ctr + offset));
-            outputProcessed.setInt8(ctr, parseInt((temp1 + temp2 + temp3) / 3.0));
+            outputProcessed.setInt8(ctr * 3, this.output.getInt8(ctr));
+            outputProcessed.setInt8(ctr * 3 + 1, this.output.getInt8(ctr + this.numElements));
+            outputProcessed.setInt8(ctr * 3 + 2, this.output.getInt8(ctr + offset));
         }
 
         return outputProcessed;

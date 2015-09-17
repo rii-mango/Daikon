@@ -24,7 +24,6 @@ describe('Daikon', function () {
             done();
         });
 
-
         it('pixel bytes uncompressed size should be 524288', function (done) {
             image.decompress();
             assert.equal(524288, image.getPixelData().value.buffer.byteLength);

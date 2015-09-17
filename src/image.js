@@ -362,22 +362,23 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 
 
 daikon.Image.prototype.decompress = function () {
-    var jpegs, rle, decoder, decompressed, size, frameSize, temp, ctr, width, height, numComponents, decoded;
+    var jpegs, rle, decoder, decompressed, numFrames, frameSize, temp, ctr, width, height, numComponents, decoded;
 
     if (!this.decompressed) {
         this.decompressed = true;
 
         frameSize = this.getRows() * this.getCols() * parseInt(this.getBitsAllocated() / 8);
-        size = frameSize * this.getNumberOfFrames();
-        decompressed = new DataView(new ArrayBuffer(size));
+        numFrames = this.getNumberOfFrames();
 
         if (this.isCompressedJPEGLossless()) {
             jpegs = this.getJpegs();
 
             for (ctr = 0; ctr < jpegs.length; ctr+=1) {
-                decoder = new jpeg.lossless.Decoder(jpegs[ctr], parseInt(this.getBitsAllocated() / 8));
-                temp = decoder.decode();
-                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
+                decoder = new jpeg.lossless.Decoder();
+                temp = decoder.decode(jpegs[ctr]);
+                numComponents = decoder.numComp;
+                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize * numComponents));
                 temp = null;
             }
 
@@ -391,13 +392,11 @@ daikon.Image.prototype.decompress = function () {
                 width = decoder.width;
                 height = decoder.height;
                 numComponents = decoder.numComponents;
+                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
                 decoded = decoder.getData(width, height);
 
-                if (this.getDataType() === daikon.Image.BYTE_TYPE_RGB) {
-                    daikon.Utils.fillBufferRGB(decoded, decompressed, (ctr * frameSize));
-                } else {
-                    daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize), parseInt(this.getBitsAllocated() / 8));
-                }
+                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
+                    parseInt(this.getBitsAllocated() / 8));
 
                 decoded = null;
             }
@@ -412,12 +411,11 @@ daikon.Image.prototype.decompress = function () {
                 width = decoder.width;
                 height = decoder.height;
                 decoded = decoder.tiles[0].items;
+                numComponents = decoder.componentsCount;
+                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
 
-                if (this.getDataType() === daikon.Image.BYTE_TYPE_RGB) {
-                    daikon.Utils.fillBufferRGB(decoded, decompressed, (ctr * frameSize));
-                } else {
-                    daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize), parseInt(this.getBitsAllocated() / 8));
-                }
+                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
+                    parseInt(this.getBitsAllocated() / 8));
 
                 decoded = null;
             }
@@ -429,7 +427,9 @@ daikon.Image.prototype.decompress = function () {
             for (ctr = 0; ctr < rle.length; ctr+=1) {
                 decoder = new daikon.RLE();
                 temp = decoder.decode(rle[ctr], this.littleEndian, this.getRows() * this.getCols());
-                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
+                numComponents = (decoder.numSegments === 3 ? 3 : 1);
+                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize * numComponents));
                 temp = null;
             }
 
@@ -832,6 +832,12 @@ daikon.Image.prototype.getTransferSyntax = function () {
 
 daikon.Image.prototype.getStudyDate = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_STUDY_DATE[0], daikon.Tag.TAG_STUDY_DATE[1]), 0);
+};
+
+
+
+daikon.Image.prototype.getPlanarConfig = function () {
+    return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PLANAR_CONFIG[0], daikon.Tag.TAG_PLANAR_CONFIG[1]), 0);
 };
 
 
