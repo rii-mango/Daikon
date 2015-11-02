@@ -17,6 +17,7 @@ daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js
 daikon.Series = daikon.Series || ((typeof require !== 'undefined') ? require('./series.js') : null);
 daikon.Tag = daikon.Tag || ((typeof require !== 'undefined') ? require('./tag.js') : null);
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
+daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('./siemens.js') : null);
 
 var jpeg = jpeg || {};
 jpeg.lossless = jpeg.lossless || {};

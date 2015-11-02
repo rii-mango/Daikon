@@ -24,6 +24,7 @@ daikon.Image = daikon.Image || function () {
     this.littleEndian = false;
     this.index = -1;
     this.decompressed = false;
+    this.privateDataAll = null;
 };
 
 
@@ -322,7 +323,40 @@ daikon.Image.prototype.getFrameTime = function () {
 
 
 daikon.Image.prototype.getAcquisitionMatrix = function () {
-    return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_ACQUISITION_MATRIX[0], daikon.Tag.TAG_ACQUISITION_MATRIX[1]), 0);
+    var mat, matPrivate, start, end, str;
+
+    mat = [0, 0];
+    mat[0] = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_ACQUISITION_MATRIX[0], daikon.Tag.TAG_ACQUISITION_MATRIX[1]), 0);
+
+    if (this.privateDataAll === null) {
+        this.privateDataAll = this.getAllInterpretedPrivateData();
+    }
+
+    if ((this.privateDataAll !== null) && (this.privateDataAll.length > 0)) {
+        start = this.privateDataAll.indexOf("AcquisitionMatrixText");
+        if (start !== -1) {
+
+            end = this.privateDataAll.indexOf('\n', start);
+
+            if (end !== -1) {
+                str = this.privateDataAll.substring(start, end);
+                matPrivate = str.match(/\d+/g);
+
+                if ((matPrivate !== null) && (matPrivate.length === 2)) {
+                    mat[0] = matPrivate[0];
+                    mat[1] = matPrivate[1];
+                } else if ((matPrivate !== null) && (matPrivate.length === 1)) {
+                    mat[0] = matPrivate[0];
+                }
+            }
+        }
+    }
+
+    if (mat[1] === 0) {
+        mat[1] = mat[0];
+    }
+
+    return mat;
 };
 
 
@@ -646,20 +680,20 @@ daikon.Image.prototype.isMosaic = function () {
     }
 
     matSize = this.getAcquisitionMatrix();
-    canReadAsMosaic = (matSize > 0) && ((matSize < this.getRows()) || (matSize < this.getCols()));
+    canReadAsMosaic = (matSize[0] > 0) && ((matSize[0] < this.getRows()) || (matSize[1] < this.getCols()));
     return labeledAsMosaic && canReadAsMosaic;
 };
 
 
 
 daikon.Image.prototype.getMosaicCols = function() {
-    return this.getCols() / this.getAcquisitionMatrix();
+    return this.getCols() / this.getAcquisitionMatrix()[1];
 };
 
 
 
 daikon.Image.prototype.getMosaicRows = function() {
-    return this.getRows() / this.getAcquisitionMatrix();
+    return this.getRows() / this.getAcquisitionMatrix()[0];
 };
 
 
@@ -1000,6 +1034,26 @@ daikon.Image.prototype.getRLE = function () {
 
 
 
+daikon.Image.prototype.getAllInterpretedPrivateData = function() {
+    var ctr, key, tag, str = "";
+
+    var sorted_keys = Object.keys(this.tags).sort();
+
+    for (ctr = 0; ctr < sorted_keys.length; ctr+=1) {
+        key = sorted_keys[ctr];
+        if (this.tags.hasOwnProperty(key)) {
+            tag = this.tags[key];
+            if (tag.hasInterpretedPrivateData()) {
+                str += tag.value;
+            }
+        }
+    }
+
+    return str;
+};
+
+
+
 daikon.Image.prototype.toString = function () {
     var ctr, tag, key, str = "";
 
@@ -1013,7 +1067,8 @@ daikon.Image.prototype.toString = function () {
         }
     }
 
-    str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    str = str.replace(/\n\s*\n/g, '\n');  // replace mutli-newlines with single newline
+    str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');  // replace newlines with <br>
 
     return str;
 };

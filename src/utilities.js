@@ -209,6 +209,13 @@ daikon.Utils.toArrayBuffer = function (buffer) {
 };
 
 
+
+// http://stackoverflow.com/questions/203739/why-does-instanceof-return-false-for-some-literals
+daikon.Utils.isString = function (s) {
+    return typeof(s) === 'string' || s instanceof String;
+};
+
+
 /*** Exports ***/
 
 var moduleType = typeof module;

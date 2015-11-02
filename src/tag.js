@@ -8,6 +8,7 @@
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? require('./dictionary.js') : null);
+daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('./siemens.js') : null);
 
 
 /*** Constructor ***/
@@ -25,7 +26,12 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
         this.value = value;
         this.sublist = true;
     } else if (value !== null) {
-        this.value = daikon.Tag.convertValue(vr, new DataView(value), littleEndian);
+        var dv = new DataView(value);
+        this.value = daikon.Tag.convertValue(vr, dv, littleEndian);
+
+        if ((this.value === dv) && this.isPrivateData()) {
+            this.value = daikon.Tag.convertPrivateValue(group, element, dv);
+        }
     } else {
         this.value = null;
     }
@@ -33,6 +39,8 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
 
 
 /*** Static Pseudo-constants ***/
+
+daikon.Tag.PRIVATE_DATA_READERS = [daikon.Siemens];
 
 daikon.Tag.VR_AE_MAX_LENGTH = 16;
 daikon.Tag.VR_AS_MAX_LENGTH = 4;
@@ -450,6 +458,21 @@ daikon.Tag.getPersonNameStringValue = function (rawData) {
 
 
 
+daikon.Tag.convertPrivateValue = function (group, element, rawData) {
+    var ctr, privReader;
+
+    for (ctr = 0; ctr < daikon.Tag.PRIVATE_DATA_READERS.length; ctr += 1) {
+        privReader = new daikon.Tag.PRIVATE_DATA_READERS[ctr](rawData.buffer);
+        if (privReader.canRead(group, element)) {
+            return privReader.readHeader();
+        }
+    }
+
+    return rawData;
+};
+
+
+
 daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
     var data = null;
 
@@ -591,6 +614,19 @@ daikon.Tag.prototype.isTransformSyntax = function () {
 
 daikon.Tag.prototype.isPixelData = function () {
     return (this.group === daikon.Tag.TAG_PIXEL_DATA[0]) && (this.element === daikon.Tag.TAG_PIXEL_DATA[1]);
+};
+
+
+
+daikon.Tag.prototype.isPrivateData = function () {
+    /*jslint bitwise: true */
+    return ((this.group & 1) === 1);
+};
+
+
+
+daikon.Tag.prototype.hasInterpretedPrivateData = function () {
+    return this.isPrivateData() && daikon.Utils.isString(this.value);
 };
 
 
