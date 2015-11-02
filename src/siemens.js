@@ -26,6 +26,7 @@ daikon.Siemens.GROUP_CSA = 0x029;
 
 /*** Prototype Methods ***/
 
+// http://nipy.org/nibabel/dicom/siemens_csa.html
 daikon.Siemens.prototype.readHeader = function () {
     /*jslint bitwise: true */
 
