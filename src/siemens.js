@@ -33,15 +33,19 @@ daikon.Siemens.prototype.readHeader = function () {
 
     this.output += "<pre>";
 
-    match = true;
-    for (ctr = 0; ctr < daikon.Siemens.CSA2_MAGIC_NUMBER.length; ctr += 1) {
-        match &= (this.data.getUint8(ctr) === daikon.Siemens.CSA2_MAGIC_NUMBER[ctr]);
-    }
+    try {
+        match = true;
+        for (ctr = 0; ctr < daikon.Siemens.CSA2_MAGIC_NUMBER.length; ctr += 1) {
+            match &= (this.data.getUint8(ctr) === daikon.Siemens.CSA2_MAGIC_NUMBER[ctr]);
+        }
 
-    if (match) {
-        returnVal = this.readHeaderAtOffset(daikon.Siemens.CSA2_MAGIC_NUMBER.length + 4);
-    } else {
-        returnVal = this.readHeaderAtOffset(0);
+        if (match) {
+            returnVal = this.readHeaderAtOffset(daikon.Siemens.CSA2_MAGIC_NUMBER.length + 4);
+        } else {
+            returnVal = this.readHeaderAtOffset(0);
+        }
+    } catch (error) {
+        console.log(error);
     }
 
     this.output += "</pre>";

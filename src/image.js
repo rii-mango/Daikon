@@ -401,7 +401,7 @@ daikon.Image.prototype.decompress = function () {
     if (!this.decompressed) {
         this.decompressed = true;
 
-        frameSize = this.getRows() * this.getCols() * parseInt(this.getBitsAllocated() / 8);
+        frameSize = this.getRows() * this.getCols() * parseInt(Math.ceil(this.getBitsAllocated() / 8));
         numFrames = this.getNumberOfFrames();
 
         if (this.isCompressedJPEGLossless()) {
@@ -430,7 +430,7 @@ daikon.Image.prototype.decompress = function () {
                 decoded = decoder.getData(width, height);
 
                 daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
-                    parseInt(this.getBitsAllocated() / 8));
+                    parseInt(Math.ceil(this.getBitsAllocated() / 8)));
 
                 decoded = null;
             }
@@ -449,7 +449,7 @@ daikon.Image.prototype.decompress = function () {
                 decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
 
                 daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
-                    parseInt(this.getBitsAllocated() / 8));
+                    parseInt(Math.ceil(this.getBitsAllocated() / 8)));
 
                 decoded = null;
             }
