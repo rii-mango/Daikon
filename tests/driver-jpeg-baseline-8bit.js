@@ -12,6 +12,7 @@ var daikon = require('../src/main.js');
 var buf = fs.readFileSync('./tests/data/jpeg_baseline_8bit.dcm');
 var data = new DataView(daikon.Utils.toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
+var imageData = null;
 
 describe('Daikon', function () {
     describe('test jpeg baseline 8bit', function () {
@@ -25,9 +26,14 @@ describe('Daikon', function () {
         });
 
         it('pixel bytes uncompressed size should be 25165824', function (done) {
-            image.decompress();
-            assert.equal(25165824, image.getPixelData().value.buffer.byteLength);
+            imageData = image.getPixelDataBytes();
+            assert.equal(25165824, imageData.byteLength);
             done();
+        });
+
+        it('image data checksum should equal 3962430437', function () {
+            var checksum = daikon.Utils.crc32(new DataView(imageData));
+            assert.equal(checksum, 3962430437);
         });
     });
 });

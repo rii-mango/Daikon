@@ -12,6 +12,7 @@ var daikon = require('../src/main.js');
 var buf = fs.readFileSync('./tests/data/deflated.dcm');
 var data = new DataView(daikon.Utils.toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
+var imageData = null;
 
 describe('Daikon', function () {
     describe('test deflated', function () {
@@ -20,8 +21,14 @@ describe('Daikon', function () {
         });
 
         it('pixel bytes uncompressed size should be 262144', function (done) {
-            assert.equal(262144, image.getPixelData().value.buffer.byteLength);
+            imageData = image.getPixelDataBytes();
+            assert.equal(262144, imageData.byteLength);
             done();
+        });
+
+        it('image data checksum should equal 3700532309', function () {
+            var checksum = daikon.Utils.crc32(new DataView(imageData));
+            assert.equal(checksum, 3700532309);
         });
     });
 });

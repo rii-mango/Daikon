@@ -12,6 +12,7 @@ var daikon = require('../src/main.js');
 var buf = fs.readFileSync('./tests/data/jpeg_lossless_sel1.dcm');
 var data = new DataView(daikon.Utils.toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
+var imageData = null;
 
 describe('Daikon', function () {
     describe('test jpeg lossless sel1', function () {
@@ -24,11 +25,15 @@ describe('Daikon', function () {
             done();
         });
 
-
         it('pixel bytes uncompressed size should be 409600', function (done) {
-            image.decompress();
-            assert.equal(409600, image.getPixelData().value.buffer.byteLength);
+            imageData = image.getPixelDataBytes();
+            assert.equal(409600, imageData.byteLength);
             done();
+        });
+
+        it('image data checksum should equal 4077593098', function () {
+            var checksum = daikon.Utils.crc32(new DataView(imageData));
+            assert.equal(checksum, 4077593098);
         });
     });
 });

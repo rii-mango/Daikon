@@ -9,6 +9,8 @@ var daikon = daikon || {};
 daikon.Utils = daikon.Utils || {};
 
 
+daikon.Utils.crcTable = null;
+
 /*** Static methods ***/
 
 daikon.Utils.dec2hex = function (i) {
@@ -227,6 +229,32 @@ daikon.Utils.swap32 = function (val) {
 daikon.Utils.swap16 = function (val) {
     /*jslint bitwise: true */
     return ((((val & 0xFF) << 8) | ((val >> 8) & 0xFF)) << 16) >> 16;  // since JS uses 32-bit when bit shifting
+};
+
+
+// http://stackoverflow.com/questions/18638900/javascript-crc32
+daikon.Utils.makeCRCTable = function(){
+    var c;
+    var crcTable = [];
+    for(var n =0; n < 256; n++){
+        c = n;
+        for(var k =0; k < 8; k++){
+            c = ((c&1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+        }
+        crcTable[n] = c;
+    }
+    return crcTable;
+};
+
+daikon.Utils.crc32 = function(dataView) {
+    var crcTable = daikon.Utils.crcTable || (daikon.Utils.crcTable = daikon.Utils.makeCRCTable());
+    var crc = 0 ^ (-1);
+
+    for (var i = 0; i < dataView.byteLength; i++ ) {
+        crc = (crc >>> 8) ^ crcTable[(crc ^ dataView.getUint8(i)) & 0xFF];
+    }
+
+    return (crc ^ (-1)) >>> 0;
 };
 
 /*** Exports ***/

@@ -12,6 +12,7 @@ var daikon = require('../src/main.js');
 var buf = fs.readFileSync('./tests/data/rle.dcm');
 var data = new DataView(daikon.Utils.toArrayBuffer(buf));
 var image = daikon.Series.parseImage(data);
+var imageData = null;
 
 describe('Daikon', function () {
     describe('test rle', function () {
@@ -25,9 +26,14 @@ describe('Daikon', function () {
         });
 
         it('pixel bytes uncompressed size should be 524288', function (done) {
-            image.decompress();
-            assert.equal(524288, image.getPixelData().value.buffer.byteLength);
+            imageData = image.getPixelDataBytes();
+            assert.equal(524288, imageData.byteLength);
             done();
+        });
+
+        it('image data checksum should equal 1052635650', function () {
+            var checksum = daikon.Utils.crc32(new DataView(imageData));
+            assert.equal(checksum, 1052635650);
         });
     });
 });
