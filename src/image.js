@@ -396,6 +396,8 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 daikon.Image.prototype.decompress = function () {
     var jpegs, rle, decoder, decompressed, numFrames, frameSize, temp, ctr, width, height, numComponents, decoded;
 
+    decompressed = null;
+
     if (!this.decompressed) {
         this.decompressed = true;
 
@@ -409,7 +411,11 @@ daikon.Image.prototype.decompress = function () {
                 decoder = new jpeg.lossless.Decoder();
                 temp = decoder.decode(jpegs[ctr]);
                 numComponents = decoder.numComp;
-                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
                 (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize * numComponents));
                 temp = null;
             }
@@ -424,7 +430,11 @@ daikon.Image.prototype.decompress = function () {
                 width = decoder.width;
                 height = decoder.height;
                 numComponents = decoder.numComponents;
-                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
                 decoded = decoder.getData(width, height);
 
                 daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
@@ -444,7 +454,10 @@ daikon.Image.prototype.decompress = function () {
                 height = decoder.height;
                 decoded = decoder.tiles[0].items;
                 numComponents = decoder.componentsCount;
-                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
 
                 daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
                     parseInt(Math.ceil(this.getBitsAllocated() / 8)));
@@ -460,7 +473,11 @@ daikon.Image.prototype.decompress = function () {
                 decoder = new daikon.RLE();
                 temp = decoder.decode(rle[ctr], this.littleEndian, this.getRows() * this.getCols());
                 numComponents = (decoder.numSegments === 3 ? 3 : 1);
-                decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
                 (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize * numComponents));
                 temp = null;
             }
