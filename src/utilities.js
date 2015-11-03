@@ -98,7 +98,7 @@ daikon.Utils.bytesToDouble = function (data) {
 
     var mul = Math.pow(2,exponent - 1023 - 52);
     var mantissa = data[7]+
-        data[6]*Math.pow(2,8*1)+
+        data[6]*Math.pow(2,8)+
         data[5]*Math.pow(2,8*2)+
         data[4]*Math.pow(2,8*3)+
         data[3]*Math.pow(2,8*4)+
@@ -215,6 +215,19 @@ daikon.Utils.isString = function (s) {
     return typeof(s) === 'string' || s instanceof String;
 };
 
+
+
+daikon.Utils.swap32 = function (val) {
+    /*jslint bitwise: true */
+    return ((val & 0xFF) << 24) | ((val & 0xFF00) << 8) | ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF);
+};
+
+
+
+daikon.Utils.swap16 = function (val) {
+    /*jslint bitwise: true */
+    return ((((val & 0xFF) << 8) | ((val >> 8) & 0xFF)) << 16) >> 16;  // since JS uses 32-bit when bit shifting
+};
 
 /*** Exports ***/
 

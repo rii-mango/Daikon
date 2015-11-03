@@ -6,6 +6,7 @@
 
 /*** Imports ***/
 var daikon = daikon || {};
+daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 
 
 /*** Constructor ***/
@@ -56,19 +57,12 @@ daikon.Siemens.prototype.readHeader = function () {
 
 
 
-daikon.Siemens.prototype.swap32 = function (val) {
-    /*jslint bitwise: true */
-    return ((val & 0xFF) << 24) | ((val & 0xFF00) << 8) | ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF);
-};
-
-
-
 daikon.Siemens.prototype.readHeaderAtOffset = function (offset) {
     var numTags, ctr;
 
     this.output += '\n';
 
-    numTags = this.swap32(this.data.getUint32(offset));
+    numTags = daikon.Utils.swap32(this.data.getUint32(offset));
     offset += 4;
 
     offset += 4; // unused
@@ -99,7 +93,7 @@ daikon.Siemens.prototype.readTag = function (offset) {
 
     offset += 4; // syngodt
 
-    numItems = this.swap32(this.data.getUint32(offset));
+    numItems = daikon.Utils.swap32(this.data.getUint32(offset));
     offset += 4;
 
     offset += 4; // unused
@@ -144,7 +138,7 @@ daikon.Siemens.prototype.readString = function (offset, length) {
 daikon.Siemens.prototype.readItem = function (offset) {
     var itemLength;
 
-    itemLength = this.swap32(this.data.getUint32(offset));
+    itemLength = daikon.Utils.swap32(this.data.getUint32(offset));
 
     if ((offset + itemLength) > this.data.buffer.length) {
         return -1;

@@ -388,8 +388,57 @@ daikon.Image.prototype.getPixelDataBytes = function () {
         this.decompress();
     }
 
+    if (this.isPalette()) {
+        this.convertPalette();
+    }
+
     return this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value.buffer;
 };
+
+
+daikon.Image.prototype.convertPalette = function () {
+    var data, reds, greens, blues, rgb, numBytes, numElements, ctr, index, rVal, gVal, bVal;
+
+    data = this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value;
+
+    reds = this.getPalleteValues(daikon.Tag.TAG_PALETTE_RED);
+    greens = this.getPalleteValues(daikon.Tag.TAG_PALETTE_GREEN);
+    blues = this.getPalleteValues(daikon.Tag.TAG_PALETTE_BLUE);
+
+    if ((reds !== null) && (reds.length > 0) && (greens !== null) && (greens.length > 0) && (blues !== null) &&
+            (blues.length > 0)) {
+        rgb = new DataView(new ArrayBuffer(this.getRows() * this.getCols() * this.getNumberOfFrames() * 3));
+        numBytes = parseInt(Math.ceil(this.getBitsAllocated() / 8));
+        numElements = data.byteLength / numBytes;
+
+        if (numBytes === 1) {
+            for (ctr = 0; ctr < numElements; ctr += 1) {
+                index = data.getUint8(ctr);
+                rVal = reds[index];
+                gVal = greens[index];
+                bVal = blues[index];
+                rgb.setUint8((ctr * 3), rVal);
+                rgb.setUint8((ctr * 3) + 1, gVal);
+                rgb.setUint8((ctr * 3) + 2, bVal);
+            }
+        } else if (numBytes === 2) {
+            for (ctr = 0; ctr < numElements; ctr += 1) {
+                index = data.getUint16(ctr * 2);
+                rVal = reds[index];
+                gVal = greens[index];
+                bVal = blues[index];
+                rgb.setUint8((ctr * 3), rVal);
+                rgb.setUint8((ctr * 3) + 1, gVal);
+                rgb.setUint8((ctr * 3) + 2, bVal);
+            }
+        }
+
+        data = rgb;
+    }
+
+    this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = data;
+};
+
 
 
 
@@ -701,6 +750,20 @@ daikon.Image.prototype.isMosaic = function () {
 
 
 
+daikon.Image.prototype.isPalette = function () {
+    var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[0], daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[1]), 0);
+
+    if (value != null) {
+        if (value.toLowerCase().indexOf("palette") !== -1) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
+
 daikon.Image.prototype.getMosaicCols = function() {
     return this.getCols() / this.getAcquisitionMatrix()[1];
 };
@@ -925,7 +988,8 @@ daikon.Image.prototype.getDataType = function () {
 
     interp = this.getPhotometricInterpretation();
     if (interp !== null) {
-        if ((interp.trim().indexOf('RGB') !== -1) || (interp.trim().indexOf('YBR') !== -1)) {
+        if ((interp.trim().indexOf('RGB') !== -1) || (interp.trim().indexOf('YBR') !== -1) ||
+                (interp.trim().toLowerCase().indexOf('palette') !== -1)) {
             return daikon.Image.BYTE_TYPE_RGB;
         }
     }
@@ -1087,6 +1151,67 @@ daikon.Image.prototype.toString = function () {
 
     return str;
 };
+
+
+
+daikon.Image.prototype.getPalleteValues = function (tagID) {
+    /*jslint bitwise: true */
+
+    var valsBig, valsLittle, value, numVals, ctr, valsBigMax, valsBigMin, valsLittleMax, valsLittleMin, valsBigDiff,
+        valsLittleDiff;
+
+    valsBig = null;
+    valsLittle = null;
+
+    value = daikon.Image.getValueSafely(this.getTag(tagID[0], tagID[1]));
+
+    if (value !== null) {
+        numVals = value.buffer.byteLength / 2;
+        valsBig = [];
+        valsLittle = [];
+
+        for (ctr = 0; ctr < numVals; ctr += 1) {
+            valsBig[ctr] = (value.getUint16(ctr * 2, false) & 0xFFFF);
+            valsLittle[ctr] = (value.getUint16(ctr * 2, true) & 0xFFFF);
+        }
+
+        valsBigMax = Math.max.apply(Math, valsBig);
+        valsBigMin = Math.min.apply(Math, valsBig);
+        valsLittleMax = Math.max.apply(Math, valsLittle);
+        valsLittleMin = Math.min.apply(Math, valsLittle);
+        valsBigDiff = Math.abs(valsBigMax - valsBigMin);
+        valsLittleDiff = Math.abs(valsLittleMax - valsLittleMin);
+
+        if (valsBigDiff < valsLittleDiff) {
+            return this.scalePalette(valsBig);
+        } else {
+            return this.scalePalette(valsLittle);
+        }
+    }
+
+    return null;
+};
+
+
+
+daikon.Image.prototype.scalePalette = function (pal) {
+    var min, max, ctr, slope, intercept;
+
+    max = Math.max.apply(Math, pal);
+    min = Math.min.apply(Math, pal);
+
+    if ((max > 255) || (min < 0)) {
+        slope = 255.0 / (max - min);
+        intercept = min;
+
+        for (ctr = 0; ctr < pal.length; ctr += 1) {
+            pal[ctr] = parseInt(Math.round((pal[ctr] - intercept) * slope));
+        }
+    }
+
+    return pal;
+};
+
 
 
 /*** Exports ***/
