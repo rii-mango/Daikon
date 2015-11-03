@@ -33,7 +33,7 @@ Compressed:
 
 ###Usage
 ####Single File
-See tests/driver-explicit-little.js to run this example:
+See [tests/driver-explicit-little.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-explicit-little.js) to run this example:
 ```javascript
 var buf = fs.readFileSync('./data/explicit_little.dcm');
 var data = new DataView(toArrayBuffer(buf));
@@ -42,7 +42,7 @@ var image = daikon.Series.parseImage(data);
 ```
 
 ####Compressed File
-See tests/driver-jpeg-2000.js to run this example:
+See [tests/driver-jpeg-2000.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-jpeg-2000.js) to run this example:
 ```javascript
 var buf = fs.readFileSync('./data/jpeg_2000.dcm');
 var data = new DataView(toArrayBuffer(buf));
@@ -54,7 +54,7 @@ console.log("pixel bytes (decompressed) = " + image.getPixelData().value.buffer.
 ```
 
 ####Series
-See tests/driver.js to run this example:
+See [tests/driver.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver.js) to run this example:
 ```javascript
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
