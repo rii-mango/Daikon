@@ -8347,30 +8347,30 @@ if ((moduleType !== 'undefined') && module.exports) {
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -8403,30 +8403,30 @@ if ((moduleType !== 'undefined') && module.exports) {
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -8440,8 +8440,8 @@ jpeg.lossless = jpeg.lossless || {};
 
 
 /*** Constructor ***/
-jpeg.lossless.DataStream = jpeg.lossless.DataStream || function (data) {
-    this.buffer = new DataView(data);
+jpeg.lossless.DataStream = jpeg.lossless.DataStream || function (data, offset, length) {
+    this.buffer = new DataView(data, offset, length);
     this.index = 0;
 };
 
@@ -8474,30 +8474,30 @@ if ((moduleType !== 'undefined') && module.exports) {
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -8518,7 +8518,7 @@ jpeg.lossless.Utils = jpeg.lossless.Utils || ((typeof require !== 'undefined') ?
 
 /*** Constructor ***/
 jpeg.lossless.Decoder = jpeg.lossless.Decoder || function (buffer, numBytes) {
-    this.stream = new jpeg.lossless.DataStream(buffer);
+    this.buffer = buffer;
     this.frame = new jpeg.lossless.FrameHeader();
     this.huffTable = new jpeg.lossless.HuffmanTable();
     this.quantTable = new jpeg.lossless.QuantizationTable();
@@ -8539,20 +8539,12 @@ jpeg.lossless.Decoder = jpeg.lossless.Decoder || function (buffer, numBytes) {
     this.yDim = 0;
     this.xLoc = 0;
     this.yLoc = 0;
+    this.numBytes = 0;
     this.outputData = null;
+    this.restarting = false;
 
-    if (typeof numBytes === "undefined") {
-        this.numBytes = 2;
-    } else {
+    if (typeof numBytes !== "undefined") {
         this.numBytes = numBytes;
-    }
-
-    if (this.numBytes === 2) {
-        this.getter = this.getValue16;
-        this.setter = this.setValue16;
-    } else if (this.numBytes === 1) {
-        this.getter = this.getValue8;
-        this.setter = this.setValue8;
     }
 };
 
@@ -8565,14 +8557,32 @@ jpeg.lossless.Decoder.TABLE = [0, 1, 5, 6, 14, 15, 27, 28, 2, 4, 7, 13, 16, 26, 
     10, 19, 23, 32, 39, 45, 52, 54, 20, 22, 33, 38, 46, 51, 55, 60, 21, 34, 37, 47, 50, 56, 59, 61, 35, 36, 48, 49, 57, 58, 62, 63];
 jpeg.lossless.Decoder.MAX_HUFFMAN_SUBTREE = 50;
 jpeg.lossless.Decoder.MSB = 0x80000000;
-
+jpeg.lossless.Decoder.RESTART_MARKER_BEGIN = 0xFFD0;
+jpeg.lossless.Decoder.RESTART_MARKER_END = 0xFFD7;
 
 /*** Prototype Methods ***/
 
-jpeg.lossless.Decoder.prototype.decode = function () {
+jpeg.lossless.Decoder.prototype.decompress = function (buffer, offset, length) {
+    return this.decode(buffer, offset, length).buffer;
+};
+
+
+
+jpeg.lossless.Decoder.prototype.decode = function (buffer, offset, length, numBytes) {
     /*jslint bitwise: true */
 
     var current, scanNum = 0, pred = [], i, compN, temp = [], index = [], mcuNum;
+
+    if (typeof buffer !== "undefined") {
+        this.buffer = buffer;
+    }
+
+    if (typeof numBytes !== "undefined") {
+        this.numBytes = numBytes;
+    }
+
+    this.stream = new jpeg.lossless.DataStream(this.buffer, offset, length);
+    this.buffer = null;
 
     this.xLoc = 0;
     this.yLoc = 0;
@@ -8681,9 +8691,53 @@ jpeg.lossless.Decoder.prototype.decode = function () {
         this.precision = this.frame.precision;
         this.components = this.frame.components;
 
+        if (!this.numBytes) {
+            this.numBytes = parseInt(Math.ceil(this.precision / 8));
+        }
+
         this.scan.read(this.stream);
         this.numComp = this.scan.numComp;
         this.selection = this.scan.selection;
+
+        if (this.numBytes === 1) {
+            if (this.numComp === 3) {
+                this.getter = this.getValueRGB;
+                this.setter = this.setValueRGB;
+                this.output = this.outputRGB;
+            } else {
+                this.getter = this.getValue8;
+                this.setter = this.setValue8;
+                this.output = this.outputSingle;
+            }
+        } else {
+            this.getter = this.getValue16;
+            this.setter = this.setValue16;
+            this.output = this.outputSingle;
+        }
+
+        switch (this.selection) {
+            case 2:
+                this.selector = this.select2;
+                break;
+            case 3:
+                this.selector = this.select3;
+                break;
+            case 4:
+                this.selector = this.select4;
+                break;
+            case 5:
+                this.selector = this.select5;
+                break;
+            case 6:
+                this.selector = this.select6;
+                break;
+            case 7:
+                this.selector = this.select7;
+                break;
+            default:
+                this.selector = this.select1;
+                break;
+        }
 
         this.scanComps = this.scan.components;
         this.quantTables = this.quantTable.quantTables;
@@ -8698,7 +8752,7 @@ jpeg.lossless.Decoder.prototype.decode = function () {
 
         this.xDim = this.frame.dimX;
         this.yDim = this.frame.dimY;
-        this.outputData = new DataView(new ArrayBuffer(this.xDim * this.yDim * this.numBytes));
+        this.outputData = new DataView(new ArrayBuffer(this.xDim * this.yDim * this.numBytes * this.numComp));
 
         scanNum+=1;
 
@@ -8722,6 +8776,7 @@ jpeg.lossless.Decoder.prototype.decode = function () {
             }
 
             for (mcuNum = 0; mcuNum < this.restartInterval; mcuNum+=1) {
+                this.restarting = (mcuNum == 0);
                 current = this.decodeUnit(pred, temp, index);
                 this.output(pred);
 
@@ -8739,7 +8794,8 @@ jpeg.lossless.Decoder.prototype.decode = function () {
                 }
             }
 
-            if (!((current >= 0xFFD0) && (current <= 0xFFD7))) {
+            if (!((current >= jpeg.lossless.Decoder.RESTART_MARKER_BEGIN) &&
+                (current <= jpeg.lossless.Decoder.RESTART_MARKER_END))) {
                 break; //current=MARKER
             }
         }
@@ -8756,88 +8812,140 @@ jpeg.lossless.Decoder.prototype.decode = function () {
 
 
 jpeg.lossless.Decoder.prototype.decodeUnit = function (prev, temp, index) {
+    if (this.numComp == 1) {
+        return this.decodeSingle(prev, temp, index);
+    } else if (this.numComp == 3) {
+        return this.decodeRGB(prev, temp, index);
+    } else {
+        return -1;
+    }
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select1 = function (compOffset) {
+    return this.getPreviousX(compOffset);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select2 = function (compOffset) {
+    return this.getPreviousY(compOffset);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select3 = function (compOffset) {
+    return this.getPreviousXY(compOffset);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select4 = function (compOffset) {
+    return (this.getPreviousX(compOffset) + this.getPreviousY(compOffset)) - this.getPreviousXY(compOffset);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select5 = function (compOffset) {
+    return this.getPreviousX(compOffset) + ((this.getPreviousY(compOffset) - this.getPreviousXY(compOffset)) >> 1);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select6 = function (compOffset) {
+    return this.getPreviousY(compOffset) + ((this.getPreviousX(compOffset) - this.getPreviousXY(compOffset)) >> 1);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.select7 = function (compOffset) {
+    return ((this.getPreviousX(compOffset) + this.getPreviousY(compOffset)) / 2);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.decodeRGB = function (prev, temp, index) {
     /*jslint bitwise: true */
 
     var value, actab, dctab, qtab, ctrC, i, k, j;
 
-    switch (this.selection) {
-        case 2:
-            prev[0] = this.getPreviousY();
-            break;
-        case 3:
-            prev[0] = this.getPreviousXY();
-            break;
-        case 4:
-            prev[0] = (this.getPreviousX() + this.getPreviousY()) - this.getPreviousXY();
-            break;
-        case 5:
-            prev[0] = this.getPreviousX() + ((this.getPreviousY() - this.getPreviousXY()) >> 1);
-            break;
-        case 6:
-            prev[0] = this.getPreviousY() + ((this.getPreviousX() - this.getPreviousXY()) >> 1);
-            break;
-        case 7:
-            prev[0] = ((this.getPreviousX() + this.getPreviousY()) / 2);
-            break;
-        default:
-            prev[0] = this.getPreviousX();
-            break;
-    }
+    prev[0] = this.selector(0);
+    prev[1] = this.selector(1);
+    prev[2] = this.selector(2);
 
-    if (this.numComp > 1) {
-        for (ctrC = 0; ctrC < this.numComp; ctrC+=1) {
-            qtab = this.qTab[ctrC];
-            actab = this.acTab[ctrC];
-            dctab = this.dcTab[ctrC];
-            for (i = 0; i < this.nBlock[ctrC]; i+=1) {
-                for (k = 0; k < this.IDCT_Source.length; k+=1) {
-                    this.IDCT_Source[k] = 0;
-                }
+    for (ctrC = 0; ctrC < this.numComp; ctrC+=1) {
+        qtab = this.qTab[ctrC];
+        actab = this.acTab[ctrC];
+        dctab = this.dcTab[ctrC];
+        for (i = 0; i < this.nBlock[ctrC]; i+=1) {
+            for (k = 0; k < this.IDCT_Source.length; k+=1) {
+                this.IDCT_Source[k] = 0;
+            }
 
-                value = this.getHuffmanValue(dctab, temp, index);
+            value = this.getHuffmanValue(dctab, temp, index);
+
+            if (value >= 0xFF00) {
+                return value;
+            }
+
+            prev[ctrC] = this.IDCT_Source[0] = prev[ctrC] + this.getn(index, value, temp, index);
+            this.IDCT_Source[0] *= qtab[0];
+
+            for (j = 1; j < 64; j+=1) {
+                value = this.getHuffmanValue(actab, temp, index);
 
                 if (value >= 0xFF00) {
                     return value;
                 }
 
-                prev[ctrC] = this.IDCT_Source[0] = prev[ctrC] + this.getn(index, value, temp, index);
-                this.IDCT_Source[0] *= qtab[0];
+                j += (value >> 4);
 
-                for (j = 1; j < 64; j+=1) {
-                    value = this.getHuffmanValue(actab, temp, index);
-
-                    if (value >= 0xFF00) {
-                        return value;
+                if ((value & 0x0F) === 0) {
+                    if ((value >> 4) === 0) {
+                        break;
                     }
-
-                    j += (value >> 4);
-
-                    if ((value & 0x0F) === 0) {
-                        if ((value >> 4) === 0) {
-                            break;
-                        }
-                    } else {
-                        this.IDCT_Source[jpeg.lossless.Decoder.IDCT_P[j]] = this.getn(index, value & 0x0F, temp, index) * qtab[j];
-                    }
+                } else {
+                    this.IDCT_Source[jpeg.lossless.Decoder.IDCT_P[j]] = this.getn(index, value & 0x0F, temp, index) * qtab[j];
                 }
-
-                this.scaleIDCT(this.DU[ctrC][i]);
             }
         }
-
-        return 0;
-    } else {
-        for (i = 0; i < this.nBlock[0]; i+=1) {
-            value = this.getHuffmanValue(this.dcTab[0], temp, index);
-            if (value >= 0xFF00) {
-                return value;
-            }
-
-            prev[0] += this.getn(prev, value, temp, index);
-        }
-
-        return 0;
     }
+
+    return 0;
+};
+
+
+
+jpeg.lossless.Decoder.prototype.decodeSingle = function (prev, temp, index) {
+    /*jslint bitwise: true */
+
+    var value, i, n, nRestart;
+
+    if (this.restarting) {
+        this.restarting = false;
+        prev[0] = (1 << (this.frame.precision - 1));
+    } else {
+        prev[0] = this.selector();
+    }
+
+    for (i = 0; i < this.nBlock[0]; i+=1) {
+        value = this.getHuffmanValue(this.dcTab[0], temp, index);
+        if (value >= 0xFF00) {
+            return value;
+        }
+
+        n = this.getn(prev, value, temp, index);
+        nRestart = (n >> 8);
+
+        if ((nRestart >= jpeg.lossless.Decoder.RESTART_MARKER_BEGIN) && (nRestart <= jpeg.lossless.Decoder.RESTART_MARKER_END)) {
+            return nRestart;
+        }
+
+        prev[0] += n;
+    }
+
+    return 0;
 };
 
 
@@ -9020,13 +9128,13 @@ jpeg.lossless.Decoder.prototype.getn = function (PRED, n, temp, index) {
 
 
 
-jpeg.lossless.Decoder.prototype.getPreviousX = function () {
+jpeg.lossless.Decoder.prototype.getPreviousX = function (compOffset) {
     /*jslint bitwise: true */
 
     if (this.xLoc > 0) {
-        return this.getter((((this.yLoc * this.xDim) + this.xLoc) - 1));
+        return this.getter((((this.yLoc * this.xDim) + this.xLoc) - 1), compOffset);
     } else if (this.yLoc > 0) {
-        return this.getPreviousY();
+        return this.getPreviousY(compOffset);
     } else {
         return (1 << (this.frame.precision - 1));
     }
@@ -9034,25 +9142,25 @@ jpeg.lossless.Decoder.prototype.getPreviousX = function () {
 
 
 
-jpeg.lossless.Decoder.prototype.getPreviousXY = function () {
+jpeg.lossless.Decoder.prototype.getPreviousXY = function (compOffset) {
     /*jslint bitwise: true */
 
     if ((this.xLoc > 0) && (this.yLoc > 0)) {
-        return this.getter(((((this.yLoc - 1) * this.xDim) + this.xLoc) - 1));
+        return this.getter(((((this.yLoc - 1) * this.xDim) + this.xLoc) - 1), compOffset);
     } else {
-        return this.getPreviousY();
+        return this.getPreviousY(compOffset);
     }
 };
 
 
 
-jpeg.lossless.Decoder.prototype.getPreviousY = function () {
+jpeg.lossless.Decoder.prototype.getPreviousY = function (compOffset) {
     /*jslint bitwise: true */
 
     if (this.yLoc > 0) {
-        return this.getter((((this.yLoc - 1) * this.xDim) + this.xLoc));
+        return this.getter((((this.yLoc - 1) * this.xDim) + this.xLoc), compOffset);
     } else {
-        return this.getPreviousX();
+        return this.getPreviousX(compOffset);
     }
 };
 
@@ -9064,9 +9172,28 @@ jpeg.lossless.Decoder.prototype.isLastPixel = function () {
 
 
 
-jpeg.lossless.Decoder.prototype.output = function (PRED) {
+jpeg.lossless.Decoder.prototype.outputSingle = function (PRED) {
     if ((this.xLoc < this.xDim) && (this.yLoc < this.yDim)) {
         this.setter((((this.yLoc * this.xDim) + this.xLoc)), PRED[0]);
+
+        this.xLoc+=1;
+
+        if (this.xLoc >= this.xDim) {
+            this.yLoc+=1;
+            this.xLoc = 0;
+        }
+    }
+};
+
+
+
+jpeg.lossless.Decoder.prototype.outputRGB = function (PRED) {
+    var offset = ((this.yLoc * this.xDim) + this.xLoc);
+
+    if ((this.xLoc < this.xDim) && (this.yLoc < this.yDim)) {
+        this.setter(offset, PRED[0], 0);
+        this.setter(offset, PRED[1], 1);
+        this.setter(offset, PRED[2], 2);
 
         this.xLoc+=1;
 
@@ -9099,6 +9226,18 @@ jpeg.lossless.Decoder.prototype.setValue8 = function (index, val) {
 
 jpeg.lossless.Decoder.prototype.getValue8 = function (index) {
     return this.outputData.getInt8(index);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.setValueRGB = function (index, val, compOffset) {
+    this.outputData.setUint8(index * 3 + compOffset, val);
+};
+
+
+
+jpeg.lossless.Decoder.prototype.getValueRGB = function (index, compOffset) {
+    return this.outputData.getUint8(index * 3 + compOffset);
 };
 
 
@@ -9145,103 +9284,6 @@ jpeg.lossless.Decoder.prototype.readNumber = function() {
 
 
 
-jpeg.lossless.Decoder.prototype.scaleIDCT = function (matrix) {
-    /*jslint bitwise: true */
-
-    var p = jpeg.lossless.Utils.createArray(8, 8), t0, t1, t2, t3, i, src0, src1, src2, src3, src4, src5, src6, src7, det0, det1, det2, det3, det4,
-        det5, det6, det7, mindex = 0;
-
-    for (i = 0; i < 8; i+=1) {
-        src0 = this.IDCT_Source[(0) + i];
-        src1 = this.IDCT_Source[(8) + i];
-        src2 = this.IDCT_Source[(16) + i] - this.IDCT_Source[(24) + i];
-        src3 = this.IDCT_Source[(24) + i] + this.IDCT_Source[(16) + i];
-        src4 = this.IDCT_Source[(32) + i] - this.IDCT_Source[(56) + i];
-        src6 = this.IDCT_Source[(40) + i] - this.IDCT_Source[(48) + i];
-        t0 = this.IDCT_Source[(40) + i] + this.IDCT_Source[(48) + i];
-        t1 = this.IDCT_Source[(32) + i] + this.IDCT_Source[(56) + i];
-        src5 = t0 - t1;
-        src7 = t0 + t1;
-
-        det4 = (-src4 * 480) - (src6 * 192);
-        det5 = src5 * 384;
-        det6 = (src6 * 480) - (src4 * 192);
-        det7 = src7 * 256;
-        t0 = src0 * 256;
-        t1 = src1 * 256;
-        t2 = src2 * 384;
-        t3 = src3 * 256;
-        det3 = t3;
-        det0 = t0 + t1;
-        det1 = t0 - t1;
-        det2 = t2 - t3;
-
-        src0 = det0 + det3;
-        src1 = det1 + det2;
-        src2 = det1 - det2;
-        src3 = det0 - det3;
-        src4 = det6 - det4 - det5 - det7;
-        src5 = (det5 - det6) + det7;
-        src6 = det6 - det7;
-        src7 = det7;
-
-        p[0][i] = (src0 + src7 + (1 << 12)) >> 13;
-        p[1][i] = (src1 + src6 + (1 << 12)) >> 13;
-        p[2][i] = (src2 + src5 + (1 << 12)) >> 13;
-        p[3][i] = (src3 + src4 + (1 << 12)) >> 13;
-        p[4][i] = ((src3 - src4) + (1 << 12)) >> 13;
-        p[5][i] = ((src2 - src5) + (1 << 12)) >> 13;
-        p[6][i] = ((src1 - src6) + (1 << 12)) >> 13;
-        p[7][i] = ((src0 - src7) + (1 << 12)) >> 13;
-    }
-
-    for (i = 0; i < 8; i+=1) {
-        src0 = p[i][0];
-        src1 = p[i][1];
-        src2 = p[i][2] - p[i][3];
-        src3 = p[i][3] + p[i][2];
-        src4 = p[i][4] - p[i][7];
-        src6 = p[i][5] - p[i][6];
-        t0 = p[i][5] + p[i][6];
-        t1 = p[i][4] + p[i][7];
-        src5 = t0 - t1;
-        src7 = t0 + t1;
-
-        det4 = (-src4 * 480) - (src6 * 192);
-        det5 = src5 * 384;
-        det6 = (src6 * 480) - (src4 * 192);
-        det7 = src7 * 256;
-        t0 = src0 * 256;
-        t1 = src1 * 256;
-        t2 = src2 * 384;
-        t3 = src3 * 256;
-        det3 = t3;
-        det0 = t0 + t1;
-        det1 = t0 - t1;
-        det2 = t2 - t3;
-
-        src0 = det0 + det3;
-        src1 = det1 + det2;
-        src2 = det1 - det2;
-        src3 = det0 - det3;
-        src4 = det6 - det4 - det5 - det7;
-        src5 = (det5 - det6) + det7;
-        src6 = det6 - det7;
-        src7 = det7;
-
-        matrix[mindex+=1] = (src0 + src7 + (1 << 12)) >> 13;
-        matrix[mindex+=1] = (src1 + src6 + (1 << 12)) >> 13;
-        matrix[mindex+=1] = (src2 + src5 + (1 << 12)) >> 13;
-        matrix[mindex+=1] = (src3 + src4 + (1 << 12)) >> 13;
-        matrix[mindex+=1] = ((src3 - src4) + (1 << 12)) >> 13;
-        matrix[mindex+=1] = ((src2 - src5) + (1 << 12)) >> 13;
-        matrix[mindex+=1] = ((src1 - src6) + (1 << 12)) >> 13;
-        matrix[mindex+=1] = ((src0 - src7) + (1 << 12)) >> 13;
-    }
-};
-
-
-
 /*** Exports ***/
 
 var moduleType = typeof module;
@@ -9249,35 +9291,35 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = jpeg.lossless.Decoder;
 }
 
-},{"./data-stream.js":4,"./frame-header.js":6,"./huffman-table.js":7,"./quantization-table.js":8,"./scan-header.js":10,"./utils.js":11}],6:[function(require,module,exports){
+},{"./data-stream.js":4,"./frame-header.js":6,"./huffman-table.js":7,"./quantization-table.js":9,"./scan-header.js":11,"./utils.js":12}],6:[function(require,module,exports){
 /*
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -9369,30 +9411,30 @@ if ((moduleType !== 'undefined') && module.exports) {
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -9534,7 +9576,7 @@ jpeg.lossless.HuffmanTable.prototype.buildHuffTable = function(tab, L, V) {
 
             if (k >= 256) {
                 if (k > 256) {
-                    this.error = "ERROR: Huffman table error(1)!";
+                    throw new Error("ERROR: Huffman table error(1)!");
                 }
 
                 k = 0;
@@ -9552,35 +9594,61 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = jpeg.lossless.HuffmanTable;
 }
 
-},{"./data-stream.js":4,"./utils.js":11}],8:[function(require,module,exports){
+},{"./data-stream.js":4,"./utils.js":12}],8:[function(require,module,exports){
+/*jslint browser: true, node: true */
+/*global require, module */
+
+"use strict";
+
+/*** Imports ***/
+var jpeg = jpeg || {};
+jpeg.lossless = jpeg.lossless || {};
+jpeg.lossless.ComponentSpec = jpeg.lossless.ComponentSpec || ((typeof require !== 'undefined') ? require('./component-spec.js') : null);
+jpeg.lossless.DataStream = jpeg.lossless.DataStream || ((typeof require !== 'undefined') ? require('./data-stream.js') : null);
+jpeg.lossless.Decoder = jpeg.lossless.Decoder || ((typeof require !== 'undefined') ? require('./decoder.js') : null);
+jpeg.lossless.FrameHeader = jpeg.lossless.FrameHeader || ((typeof require !== 'undefined') ? require('./frame-header.js') : null);
+jpeg.lossless.HuffmanTable = jpeg.lossless.HuffmanTable || ((typeof require !== 'undefined') ? require('./huffman-table.js') : null);
+jpeg.lossless.QuantizationTable = jpeg.lossless.QuantizationTable || ((typeof require !== 'undefined') ? require('./quantization-table.js') : null);
+jpeg.lossless.ScanComponent = jpeg.lossless.ScanComponent || ((typeof require !== 'undefined') ? require('./scan-component.js') : null);
+jpeg.lossless.ScanHeader = jpeg.lossless.ScanHeader || ((typeof require !== 'undefined') ? require('./scan-header.js') : null);
+jpeg.lossless.Utils = jpeg.lossless.Utils || ((typeof require !== 'undefined') ? require('./utils.js') : null);
+
+
+/*** Exports ***/
+var moduleType = typeof module;
+if ((moduleType !== 'undefined') && module.exports) {
+    module.exports = jpeg;
+}
+
+},{"./component-spec.js":3,"./data-stream.js":4,"./decoder.js":5,"./frame-header.js":6,"./huffman-table.js":7,"./quantization-table.js":9,"./scan-component.js":10,"./scan-header.js":11,"./utils.js":12}],9:[function(require,module,exports){
 /*
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -9716,35 +9784,35 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = jpeg.lossless.QuantizationTable;
 }
 
-},{"./data-stream.js":4,"./utils.js":11}],9:[function(require,module,exports){
+},{"./data-stream.js":4,"./utils.js":12}],10:[function(require,module,exports){
 /*
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -9773,35 +9841,35 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = jpeg.lossless.ScanComponent;
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -9884,35 +9952,35 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = jpeg.lossless.ScanHeader;
 }
 
-},{"./data-stream.js":4,"./scan-component.js":9}],11:[function(require,module,exports){
+},{"./data-stream.js":4,"./scan-component.js":10}],12:[function(require,module,exports){
 /*
  * Copyright (C) 2015 Michael Martinez
  * Changes: Added support for selection values 2-7, fixed minor bugs &
  * warnings, split into multiple class files, and general clean up.
- */
-
-/*
- * Copyright (C) 2003-2009 JNode.org
- * Original source: http://webuser.fh-furtwangen.de/~dersch/
- * Changed License to LGPL with the friendly permission of Helmut Dersch.
+ *
+ * 08-25-2015: Helmut Dersch agreed to a license change from LGPL to MIT.
  */
 
 /*
  * Copyright (C) Helmut Dersch
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*jslint browser: true, node: true */
@@ -9952,7 +10020,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = jpeg.lossless.Utils;
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // Top level file is just a mixin of submodules & constants
 'use strict';
 
@@ -9968,7 +10036,7 @@ assign(pako, deflate, inflate, constants);
 
 module.exports = pako;
 
-},{"./lib/deflate":13,"./lib/inflate":14,"./lib/utils/common":15,"./lib/zlib/constants":18}],13:[function(require,module,exports){
+},{"./lib/deflate":14,"./lib/inflate":15,"./lib/utils/common":16,"./lib/zlib/constants":19}],14:[function(require,module,exports){
 'use strict';
 
 
@@ -10346,7 +10414,7 @@ exports.deflate = deflate;
 exports.deflateRaw = deflateRaw;
 exports.gzip = gzip;
 
-},{"./utils/common":15,"./utils/strings":16,"./zlib/deflate.js":20,"./zlib/messages":25,"./zlib/zstream":27}],14:[function(require,module,exports){
+},{"./utils/common":16,"./utils/strings":17,"./zlib/deflate.js":21,"./zlib/messages":26,"./zlib/zstream":28}],15:[function(require,module,exports){
 'use strict';
 
 
@@ -10527,6 +10595,10 @@ Inflate.prototype.push = function(data, mode) {
   var status, _mode;
   var next_out_utf8, tail, utf8str;
 
+  // Flag to properly process Z_BUF_ERROR on testing inflate call
+  // when we check that all output data was flushed.
+  var allowBufError = false;
+
   if (this.ended) { return false; }
   _mode = (mode === ~~mode) ? mode : ((mode === true) ? c.Z_FINISH : c.Z_NO_FLUSH);
 
@@ -10551,6 +10623,11 @@ Inflate.prototype.push = function(data, mode) {
     }
 
     status = zlib_inflate.inflate(strm, c.Z_NO_FLUSH);    /* no bad return value */
+
+    if (status === c.Z_BUF_ERROR && allowBufError === true) {
+      status = c.Z_OK;
+      allowBufError = false;
+    }
 
     if (status !== c.Z_STREAM_END && status !== c.Z_OK) {
       this.onEnd(status);
@@ -10580,7 +10657,19 @@ Inflate.prototype.push = function(data, mode) {
         }
       }
     }
-  } while ((strm.avail_in > 0) && status !== c.Z_STREAM_END);
+
+    // When no more input data, we should check that internal inflate buffers
+    // are flushed. The only way to do it when avail_out = 0 - run one more
+    // inflate pass. But if output data not exists, inflate return Z_BUF_ERROR.
+    // Here we set flag to process this error properly.
+    //
+    // NOTE. Deflate does not return error in this case and does not needs such
+    // logic.
+    if (strm.avail_in === 0 && strm.avail_out === 0) {
+      allowBufError = true;
+    }
+
+  } while ((strm.avail_in > 0 || strm.avail_out === 0) && status !== c.Z_STREAM_END);
 
   if (status === c.Z_STREAM_END) {
     _mode = c.Z_FINISH;
@@ -10727,7 +10816,7 @@ exports.inflate = inflate;
 exports.inflateRaw = inflateRaw;
 exports.ungzip  = inflate;
 
-},{"./utils/common":15,"./utils/strings":16,"./zlib/constants":18,"./zlib/gzheader":21,"./zlib/inflate.js":23,"./zlib/messages":25,"./zlib/zstream":27}],15:[function(require,module,exports){
+},{"./utils/common":16,"./utils/strings":17,"./zlib/constants":19,"./zlib/gzheader":22,"./zlib/inflate.js":24,"./zlib/messages":26,"./zlib/zstream":28}],16:[function(require,module,exports){
 'use strict';
 
 
@@ -10831,7 +10920,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // String encode/decode helpers
 'use strict';
 
@@ -11018,7 +11107,7 @@ exports.utf8border = function(buf, max) {
   return (pos + _utf8len[buf[pos]] > max) ? pos : max;
 };
 
-},{"./common":15}],17:[function(require,module,exports){
+},{"./common":16}],18:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -11052,7 +11141,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -11101,7 +11190,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -11144,7 +11233,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -12911,7 +13000,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":15,"./adler32":17,"./crc32":19,"./messages":25,"./trees":26}],21:[function(require,module,exports){
+},{"../utils/common":16,"./adler32":18,"./crc32":20,"./messages":26,"./trees":27}],22:[function(require,module,exports){
 'use strict';
 
 
@@ -12953,7 +13042,7 @@ function GZheader() {
 
 module.exports = GZheader;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -13008,7 +13097,8 @@ module.exports = function inflate_fast(strm, start) {
   var wsize;                  /* window size or zero if not using window */
   var whave;                  /* valid bytes in the window */
   var wnext;                  /* window write index */
-  var window;                 /* allocated sliding window, if wsize != 0 */
+  // Use `s_window` instead `window`, avoid conflict with instrumentation tools
+  var s_window;               /* allocated sliding window, if wsize != 0 */
   var hold;                   /* local strm.hold */
   var bits;                   /* local strm.bits */
   var lcode;                  /* local strm.lencode */
@@ -13042,7 +13132,7 @@ module.exports = function inflate_fast(strm, start) {
   wsize = state.wsize;
   whave = state.whave;
   wnext = state.wnext;
-  window = state.window;
+  s_window = state.window;
   hold = state.hold;
   bits = state.bits;
   lcode = state.lencode;
@@ -13160,13 +13250,13 @@ module.exports = function inflate_fast(strm, start) {
 //#endif
               }
               from = 0; // window index
-              from_source = window;
+              from_source = s_window;
               if (wnext === 0) {           /* very common case */
                 from += wsize - op;
                 if (op < len) {         /* some from window */
                   len -= op;
                   do {
-                    output[_out++] = window[from++];
+                    output[_out++] = s_window[from++];
                   } while (--op);
                   from = _out - dist;  /* rest from output */
                   from_source = output;
@@ -13178,14 +13268,14 @@ module.exports = function inflate_fast(strm, start) {
                 if (op < len) {         /* some from end of window */
                   len -= op;
                   do {
-                    output[_out++] = window[from++];
+                    output[_out++] = s_window[from++];
                   } while (--op);
                   from = 0;
                   if (wnext < len) {  /* some from start of window */
                     op = wnext;
                     len -= op;
                     do {
-                      output[_out++] = window[from++];
+                      output[_out++] = s_window[from++];
                     } while (--op);
                     from = _out - dist;      /* rest from output */
                     from_source = output;
@@ -13197,7 +13287,7 @@ module.exports = function inflate_fast(strm, start) {
                 if (op < len) {         /* some from window */
                   len -= op;
                   do {
-                    output[_out++] = window[from++];
+                    output[_out++] = s_window[from++];
                   } while (--op);
                   from = _out - dist;  /* rest from output */
                   from_source = output;
@@ -13280,7 +13370,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 
@@ -14785,7 +14875,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":15,"./adler32":17,"./crc32":19,"./inffast":22,"./inftrees":24}],24:[function(require,module,exports){
+},{"../utils/common":16,"./adler32":18,"./crc32":20,"./inffast":23,"./inftrees":25}],25:[function(require,module,exports){
 'use strict';
 
 
@@ -15114,7 +15204,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":15}],25:[function(require,module,exports){
+},{"../utils/common":16}],26:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -15129,7 +15219,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 
@@ -16330,7 +16420,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":15}],27:[function(require,module,exports){
+},{"../utils/common":16}],28:[function(require,module,exports){
 'use strict';
 
 
@@ -16361,7 +16451,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -16421,7 +16511,7 @@ var moduleType = typeof module;
 if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.CompressionUtils;
 }
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -20118,7 +20208,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.Dictionary;
 }
 
-},{"./utilities.js":38}],30:[function(require,module,exports){
+},{"./utilities.js":40}],31:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -20132,9 +20222,7 @@ daikon.CompressionUtils = daikon.CompressionUtils || ((typeof require !== 'undef
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js') : null);
 
-var jpeg = jpeg || {};
-jpeg.lossless = jpeg.lossless || {};
-jpeg.lossless.Decoder = ((typeof require !== 'undefined') ? require('JPEGLosslessDecoderJS') : null);
+var jpeg = ((typeof require !== 'undefined') ? require('JPEGLosslessDecoderJS') : null);
 var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
@@ -20145,6 +20233,7 @@ daikon.Image = daikon.Image || function () {
     this.littleEndian = false;
     this.index = -1;
     this.decompressed = false;
+    this.privateDataAll = null;
 };
 
 
@@ -20443,7 +20532,40 @@ daikon.Image.prototype.getFrameTime = function () {
 
 
 daikon.Image.prototype.getAcquisitionMatrix = function () {
-    return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_ACQUISITION_MATRIX[0], daikon.Tag.TAG_ACQUISITION_MATRIX[1]), 0);
+    var mat, matPrivate, start, end, str;
+
+    mat = [0, 0];
+    mat[0] = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_ACQUISITION_MATRIX[0], daikon.Tag.TAG_ACQUISITION_MATRIX[1]), 0);
+
+    if (this.privateDataAll === null) {
+        this.privateDataAll = this.getAllInterpretedPrivateData();
+    }
+
+    if ((this.privateDataAll !== null) && (this.privateDataAll.length > 0)) {
+        start = this.privateDataAll.indexOf("AcquisitionMatrixText");
+        if (start !== -1) {
+
+            end = this.privateDataAll.indexOf('\n', start);
+
+            if (end !== -1) {
+                str = this.privateDataAll.substring(start, end);
+                matPrivate = str.match(/\d+/g);
+
+                if ((matPrivate !== null) && (matPrivate.length === 2)) {
+                    mat[0] = matPrivate[0];
+                    mat[1] = matPrivate[1];
+                } else if ((matPrivate !== null) && (matPrivate.length === 1)) {
+                    mat[0] = matPrivate[0];
+                }
+            }
+        }
+    }
+
+    if (mat[1] === 0) {
+        mat[1] = mat[0];
+    }
+
+    return mat;
 };
 
 
@@ -20483,22 +20605,29 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 
 
 daikon.Image.prototype.decompress = function () {
-    var jpegs, rle, decoder, decompressed, size, frameSize, temp, ctr, width, height, numComponents, decoded;
+    var jpegs, rle, decoder, decompressed, numFrames, frameSize, temp, ctr, width, height, numComponents, decoded;
+
+    decompressed = null;
 
     if (!this.decompressed) {
         this.decompressed = true;
 
-        frameSize = this.getRows() * this.getCols() * parseInt(this.getBitsAllocated() / 8);
-        size = frameSize * this.getNumberOfFrames();
-        decompressed = new DataView(new ArrayBuffer(size));
+        frameSize = this.getRows() * this.getCols() * parseInt(Math.ceil(this.getBitsAllocated() / 8));
+        numFrames = this.getNumberOfFrames();
 
         if (this.isCompressedJPEGLossless()) {
             jpegs = this.getJpegs();
 
             for (ctr = 0; ctr < jpegs.length; ctr+=1) {
-                decoder = new jpeg.lossless.Decoder(jpegs[ctr], parseInt(this.getBitsAllocated() / 8));
-                temp = decoder.decode();
-                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
+                decoder = new jpeg.lossless.Decoder();
+                temp = decoder.decode(jpegs[ctr]);
+                numComponents = decoder.numComp;
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
+                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize * numComponents));
                 temp = null;
             }
 
@@ -20512,13 +20641,15 @@ daikon.Image.prototype.decompress = function () {
                 width = decoder.width;
                 height = decoder.height;
                 numComponents = decoder.numComponents;
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
                 decoded = decoder.getData(width, height);
 
-                if (this.getDataType() === daikon.Image.BYTE_TYPE_RGB) {
-                    daikon.Utils.fillBufferRGB(decoded, decompressed, (ctr * frameSize));
-                } else {
-                    daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize), parseInt(this.getBitsAllocated() / 8));
-                }
+                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
+                    parseInt(Math.ceil(this.getBitsAllocated() / 8)));
 
                 decoded = null;
             }
@@ -20533,12 +20664,14 @@ daikon.Image.prototype.decompress = function () {
                 width = decoder.width;
                 height = decoder.height;
                 decoded = decoder.tiles[0].items;
+                numComponents = decoder.componentsCount;
 
-                if (this.getDataType() === daikon.Image.BYTE_TYPE_RGB) {
-                    daikon.Utils.fillBufferRGB(decoded, decompressed, (ctr * frameSize));
-                } else {
-                    daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize), parseInt(this.getBitsAllocated() / 8));
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
                 }
+
+                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
+                    parseInt(Math.ceil(this.getBitsAllocated() / 8)));
 
                 decoded = null;
             }
@@ -20550,7 +20683,13 @@ daikon.Image.prototype.decompress = function () {
             for (ctr = 0; ctr < rle.length; ctr+=1) {
                 decoder = new daikon.RLE();
                 temp = decoder.decode(rle[ctr], this.littleEndian, this.getRows() * this.getCols());
-                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize));
+                numComponents = (decoder.numSegments === 3 ? 3 : 1);
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
+                (new Uint8Array(decompressed.buffer)).set(new Uint8Array(temp.buffer), (ctr * frameSize * numComponents));
                 temp = null;
             }
 
@@ -20767,20 +20906,20 @@ daikon.Image.prototype.isMosaic = function () {
     }
 
     matSize = this.getAcquisitionMatrix();
-    canReadAsMosaic = (matSize > 0) && ((matSize < this.getRows()) || (matSize < this.getCols()));
+    canReadAsMosaic = (matSize[0] > 0) && ((matSize[0] < this.getRows()) || (matSize[1] < this.getCols()));
     return labeledAsMosaic && canReadAsMosaic;
 };
 
 
 
 daikon.Image.prototype.getMosaicCols = function() {
-    return this.getCols() / this.getAcquisitionMatrix();
+    return this.getCols() / this.getAcquisitionMatrix()[1];
 };
 
 
 
 daikon.Image.prototype.getMosaicRows = function() {
-    return this.getRows() / this.getAcquisitionMatrix();
+    return this.getRows() / this.getAcquisitionMatrix()[0];
 };
 
 
@@ -20957,6 +21096,12 @@ daikon.Image.prototype.getStudyDate = function () {
 
 
 
+daikon.Image.prototype.getPlanarConfig = function () {
+    return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PLANAR_CONFIG[0], daikon.Tag.TAG_PLANAR_CONFIG[1]), 0);
+};
+
+
+
 daikon.Image.prototype.getImageDescription = function () {
     var value, string = "";
 
@@ -21115,6 +21260,26 @@ daikon.Image.prototype.getRLE = function () {
 
 
 
+daikon.Image.prototype.getAllInterpretedPrivateData = function() {
+    var ctr, key, tag, str = "";
+
+    var sorted_keys = Object.keys(this.tags).sort();
+
+    for (ctr = 0; ctr < sorted_keys.length; ctr+=1) {
+        key = sorted_keys[ctr];
+        if (this.tags.hasOwnProperty(key)) {
+            tag = this.tags[key];
+            if (tag.hasInterpretedPrivateData()) {
+                str += tag.value;
+            }
+        }
+    }
+
+    return str;
+};
+
+
+
 daikon.Image.prototype.toString = function () {
     var ctr, tag, key, str = "";
 
@@ -21128,7 +21293,8 @@ daikon.Image.prototype.toString = function () {
         }
     }
 
-    str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    str = str.replace(/\n\s*\n/g, '\n');  // replace mutli-newlines with single newline
+    str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');  // replace newlines with <br>
 
     return str;
 };
@@ -21141,7 +21307,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.Image;
 }
 
-},{"../lib/jpg.js":1,"../lib/jpx.js":2,"./compression-utils.js":28,"./parser.js":34,"./rle.js":35,"./tag.js":37,"./utilities.js":38,"JPEGLosslessDecoderJS":5}],31:[function(require,module,exports){
+},{"../lib/jpg.js":1,"../lib/jpx.js":2,"./compression-utils.js":29,"./parser.js":35,"./rle.js":36,"./tag.js":39,"./utilities.js":40,"JPEGLosslessDecoderJS":8}],32:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require */
@@ -21181,7 +21347,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.OrderedMapIterator;
 }
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -21201,6 +21367,7 @@ daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js
 daikon.Series = daikon.Series || ((typeof require !== 'undefined') ? require('./series.js') : null);
 daikon.Tag = daikon.Tag || ((typeof require !== 'undefined') ? require('./tag.js') : null);
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
+daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('./siemens.js') : null);
 
 var jpeg = jpeg || {};
 jpeg.lossless = jpeg.lossless || {};
@@ -21219,7 +21386,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon;
 }
 
-},{"../lib/jpg.js":1,"../lib/jpx.js":2,"./compression-utils.js":28,"./dictionary.js":29,"./image.js":30,"./iterator.js":31,"./orderedmap.js":33,"./parser.js":34,"./rle.js":35,"./series.js":36,"./tag.js":37,"./utilities.js":38,"JPEGLosslessDecoderJS":5,"pako":12}],33:[function(require,module,exports){
+},{"../lib/jpg.js":1,"../lib/jpx.js":2,"./compression-utils.js":29,"./dictionary.js":30,"./image.js":31,"./iterator.js":32,"./orderedmap.js":34,"./parser.js":35,"./rle.js":36,"./series.js":37,"./siemens.js":38,"./tag.js":39,"./utilities.js":40,"JPEGLosslessDecoderJS":8,"pako":13}],34:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require */
@@ -21300,7 +21467,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.OrderedMap;
 }
 
-},{"./iterator.js":31}],34:[function(require,module,exports){
+},{"./iterator.js":32}],35:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -21680,7 +21847,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.Parser;
 }
 
-},{"./dictionary.js":29,"./image.js":30,"./tag.js":37,"./utilities.js":38,"pako":12}],35:[function(require,module,exports){
+},{"./dictionary.js":30,"./image.js":31,"./tag.js":39,"./utilities.js":40,"pako":13}],36:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -21750,15 +21917,14 @@ daikon.RLE.prototype.processData = function () {
         }
 
         return outputProcessed;
-    } else if (this.numSegments === 3) {
-        outputProcessed = new DataView(new ArrayBuffer(this.numElements));
+    } else if (this.numSegments === 3) {  // rgb
+        outputProcessed = new DataView(new ArrayBuffer(this.size));
         offset = (2 * this.numElements);
 
         for (ctr = 0; ctr < this.numElements; ctr+=1) {
-            temp1 = (this.output.getInt8(ctr));
-            temp2 = (this.output.getInt8(ctr + this.numElements));
-            temp3 = (this.output.getInt8(ctr + offset));
-            outputProcessed.setInt8(ctr, parseInt((temp1 + temp2 + temp3) / 3.0));
+            outputProcessed.setInt8(ctr * 3, this.output.getInt8(ctr));
+            outputProcessed.setInt8(ctr * 3 + 1, this.output.getInt8(ctr + this.numElements));
+            outputProcessed.setInt8(ctr * 3 + 2, this.output.getInt8(ctr + offset));
         }
 
         return outputProcessed;
@@ -21879,7 +22045,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.RLE;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -22395,7 +22561,183 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.Series;
 }
 
-},{"./image.js":30,"./iterator.js":31,"./orderedmap.js":33,"./parser.js":34,"./utilities.js":38}],37:[function(require,module,exports){
+},{"./image.js":31,"./iterator.js":32,"./orderedmap.js":34,"./parser.js":35,"./utilities.js":40}],38:[function(require,module,exports){
+
+/*jslint browser: true, node: true */
+/*global require, module */
+
+"use strict";
+
+/*** Imports ***/
+var daikon = daikon || {};
+
+
+/*** Constructor ***/
+daikon.Siemens = daikon.Siemens || function (buffer) {
+    this.output = "";
+    this.data = new DataView(buffer, 0);
+};
+
+
+/*** Static Pseudo-constants ***/
+
+daikon.Siemens.CSA2_MAGIC_NUMBER = [83, 86, 49, 48];
+daikon.Siemens.NAME_LENGTH = 64;
+daikon.Siemens.ELEMENT_CSA1 = 0x1010;
+daikon.Siemens.ELEMENT_CSA2 = 0x1020;
+daikon.Siemens.GROUP_CSA = 0x029;
+
+
+/*** Prototype Methods ***/
+
+// http://nipy.org/nibabel/dicom/siemens_csa.html
+daikon.Siemens.prototype.readHeader = function () {
+    /*jslint bitwise: true */
+
+    var returnVal, ctr, match;
+
+    this.output += "<pre>";
+
+    try {
+        match = true;
+        for (ctr = 0; ctr < daikon.Siemens.CSA2_MAGIC_NUMBER.length; ctr += 1) {
+            match &= (this.data.getUint8(ctr) === daikon.Siemens.CSA2_MAGIC_NUMBER[ctr]);
+        }
+
+        if (match) {
+            returnVal = this.readHeaderAtOffset(daikon.Siemens.CSA2_MAGIC_NUMBER.length + 4);
+        } else {
+            returnVal = this.readHeaderAtOffset(0);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    this.output += "</pre>";
+
+    return returnVal;
+};
+
+
+
+daikon.Siemens.prototype.swap32 = function (val) {
+    /*jslint bitwise: true */
+    return ((val & 0xFF) << 24) | ((val & 0xFF00) << 8) | ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF);
+};
+
+
+
+daikon.Siemens.prototype.readHeaderAtOffset = function (offset) {
+    var numTags, ctr;
+
+    this.output += '\n';
+
+    numTags = this.swap32(this.data.getUint32(offset));
+    offset += 4;
+
+    offset += 4; // unused
+
+    for (ctr = 0; ctr < numTags; ctr += 1) {
+        offset = this.readTag(offset);
+
+        if (offset === -1) {
+            break;
+        }
+    }
+
+    return this.output;
+};
+
+
+
+daikon.Siemens.prototype.readTag = function (offset) {
+    var name, ctr, numItems;
+
+    name = this.readString(offset, daikon.Siemens.NAME_LENGTH);
+
+    offset += daikon.Siemens.NAME_LENGTH;
+
+    offset += 4; // vm
+
+    offset += 4;
+
+    offset += 4; // syngodt
+
+    numItems = this.swap32(this.data.getUint32(offset));
+    offset += 4;
+
+    offset += 4; // unused
+
+    this.output += ("    " + name + "=");
+
+    for (ctr = 0; ctr < numItems; ctr += 1) {
+        offset = this.readItem(offset);
+
+        if (offset === -1) {
+            break;
+        } else if ((offset % 4) !== 0) {
+            offset += (4 - (offset % 4));
+        }
+    }
+
+    this.output += ('\n');
+
+    return offset;
+};
+
+
+
+daikon.Siemens.prototype.readString = function (offset, length) {
+    var char, ctr, str = "";
+
+    for (ctr = 0; ctr < length; ctr += 1) {
+        char = this.data.getUint8(offset + ctr);
+
+        if (char === 0) {
+            break;
+        }
+
+        str += String.fromCharCode(char);
+    }
+
+    return str;
+};
+
+
+
+daikon.Siemens.prototype.readItem = function (offset) {
+    var itemLength;
+
+    itemLength = this.swap32(this.data.getUint32(offset));
+
+    if ((offset + itemLength) > this.data.buffer.length) {
+        return -1;
+    }
+
+    offset += 16;
+
+    if (itemLength > 0) {
+        this.output += (this.readString(offset, itemLength) + " ");
+    }
+
+    return offset + itemLength;
+};
+
+
+
+daikon.Siemens.prototype.canRead = function (group, element) {
+    return (group === daikon.Siemens.GROUP_CSA) && ((element === daikon.Siemens.ELEMENT_CSA1) || (element === daikon.Siemens.ELEMENT_CSA2));
+};
+
+
+/*** Exports ***/
+
+var moduleType = typeof module;
+if ((moduleType !== 'undefined') && module.exports) {
+    module.exports = daikon.Siemens;
+}
+
+},{}],39:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require */
@@ -22406,6 +22748,7 @@ if ((moduleType !== 'undefined') && module.exports) {
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? require('./dictionary.js') : null);
+daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('./siemens.js') : null);
 
 
 /*** Constructor ***/
@@ -22423,7 +22766,12 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
         this.value = value;
         this.sublist = true;
     } else if (value !== null) {
-        this.value = daikon.Tag.convertValue(vr, new DataView(value), littleEndian);
+        var dv = new DataView(value);
+        this.value = daikon.Tag.convertValue(vr, dv, littleEndian);
+
+        if ((this.value === dv) && this.isPrivateData()) {
+            this.value = daikon.Tag.convertPrivateValue(group, element, dv);
+        }
     } else {
         this.value = null;
     }
@@ -22431,6 +22779,8 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
 
 
 /*** Static Pseudo-constants ***/
+
+daikon.Tag.PRIVATE_DATA_READERS = [daikon.Siemens];
 
 daikon.Tag.VR_AE_MAX_LENGTH = 16;
 daikon.Tag.VR_AS_MAX_LENGTH = 4;
@@ -22490,6 +22840,7 @@ daikon.Tag.TAG_PIXEL_REPRESENTATION = [0x0028, 0x0103];
 daikon.Tag.TAG_HIGH_BIT = [0x0028, 0x0102];
 daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION = [0x0028, 0x0004];
 daikon.Tag.TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002];
+daikon.Tag.TAG_PLANAR_CONFIG = [0x0028, 0x0006];
 
 // data scale
 daikon.Tag.TAG_DATA_SCALE_SLOPE = [0x0028, 0x1053];
@@ -22847,6 +23198,21 @@ daikon.Tag.getPersonNameStringValue = function (rawData) {
 
 
 
+daikon.Tag.convertPrivateValue = function (group, element, rawData) {
+    var ctr, privReader;
+
+    for (ctr = 0; ctr < daikon.Tag.PRIVATE_DATA_READERS.length; ctr += 1) {
+        privReader = new daikon.Tag.PRIVATE_DATA_READERS[ctr](rawData.buffer);
+        if (privReader.canRead(group, element)) {
+            return privReader.readHeader();
+        }
+    }
+
+    return rawData;
+};
+
+
+
 daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
     var data = null;
 
@@ -22992,6 +23358,19 @@ daikon.Tag.prototype.isPixelData = function () {
 
 
 
+daikon.Tag.prototype.isPrivateData = function () {
+    /*jslint bitwise: true */
+    return ((this.group & 1) === 1);
+};
+
+
+
+daikon.Tag.prototype.hasInterpretedPrivateData = function () {
+    return this.isPrivateData() && daikon.Utils.isString(this.value);
+};
+
+
+
 daikon.Tag.prototype.isSublistItem = function () {
     return (this.group === daikon.Tag.TAG_SUBLIST_ITEM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_ITEM[1]);
 };
@@ -23022,7 +23401,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.Tag;
 }
 
-},{"./dictionary.js":29,"./utilities.js":38}],38:[function(require,module,exports){
+},{"./dictionary.js":30,"./siemens.js":38,"./utilities.js":40}],40:[function(require,module,exports){
 
 /*jslint browser: true, node: true */
 /*global require, module */
@@ -23234,6 +23613,13 @@ daikon.Utils.toArrayBuffer = function (buffer) {
 };
 
 
+
+// http://stackoverflow.com/questions/203739/why-does-instanceof-return-false-for-some-literals
+daikon.Utils.isString = function (s) {
+    return typeof(s) === 'string' || s instanceof String;
+};
+
+
 /*** Exports ***/
 
 var moduleType = typeof module;
@@ -23241,5 +23627,5 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = daikon.Utils;
 }
 
-},{}]},{},[32])(32)
+},{}]},{},[33])(33)
 });
