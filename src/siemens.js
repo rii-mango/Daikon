@@ -118,16 +118,16 @@ daikon.Siemens.prototype.readTag = function (offset) {
 
 
 daikon.Siemens.prototype.readString = function (offset, length) {
-    var char, ctr, str = "";
+    var char2, ctr, str = "";
 
     for (ctr = 0; ctr < length; ctr += 1) {
-        char = this.data.getUint8(offset + ctr);
+        char2 = this.data.getUint8(offset + ctr);
 
-        if (char === 0) {
+        if (char2 === 0) {
             break;
         }
 
-        str += String.fromCharCode(char);
+        str += String.fromCharCode(char2);
     }
 
     return str;
