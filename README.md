@@ -103,11 +103,15 @@ Get a packaged source file:
 
 Or install via [NPM](https://www.npmjs.com/):
 
-> npm install daikon
+```
+npm install daikon
+```
 
 Or install via [Bower](http://bower.io/):
 
-> bower install daikon
+```
+bower install daikon
+```
 
 ###Testing
 ```
