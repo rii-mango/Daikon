@@ -95,6 +95,20 @@ series.concatenateImageData(null, function (imageData) {
 ####Browser
 See [tests/debug.html](https://github.com/rii-mango/Daikon/blob/master/tests/debug.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
+###Install
+Get a packaged source file:
+
+* [daikon.js](https://raw.githubusercontent.com/rii-mango/Daikon/master/release/current/daikon.js)
+* [daikon-min.js](https://raw.githubusercontent.com/rii-mango/Daikon/master/release/current/daikon-min.js)
+
+Or install via [NPM](https://www.npmjs.com/):
+
+> npm install daikon
+
+Or install via [Bower](http://bower.io/):
+
+> bower install daikon
+
 ###Testing
 ```
 npm test
