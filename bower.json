@@ -10,12 +10,14 @@
       "README.md",
       ".gitignore"
   ],
+  "dependencies": {
+    "pako": "*",
+    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+  },
   "devDependencies": {
     "mocha": "*",
     "browserify": "*",
-    "uglifyjs": "*",
-    "pako": "*",
-    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+    "uglifyjs": "*"
   },
   "license": "MIT",
   "authors" : ["Michael Martinez"],
@@ -27,5 +29,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rii-mango/Daikon.git"
-  },
+  }
 }

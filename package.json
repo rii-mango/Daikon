@@ -6,12 +6,14 @@
   "directories": {
     "test": "tests"
   },
+  "dependencies": {
+    "pako": "*",
+    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+  },
   "devDependencies": {
     "mocha": "*",
     "browserify": "*",
-    "uglifyjs": "*",
-    "pako": "*",
-    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+    "uglifyjs": "*"
   },
   "scripts": {
     "test": "mocha --timeout 0 tests",
