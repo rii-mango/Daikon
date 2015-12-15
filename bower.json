@@ -1,8 +1,8 @@
 {
   "name": "daikon",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A JavaScript DICOM reader.",
-  "main" : "release/1.2.1/daikon.js",
+  "main" : "release/1.2.2/daikon.js",
   "ignore": [
       "src",
       "tests",
