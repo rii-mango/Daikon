@@ -1,6 +1,6 @@
 {
-  "name": "Daikon",
-  "version": "1.1.0",
+  "name": "daikon",
+  "version": "1.2.1",
   "description": "A JavaScript DICOM reader.",
   "main": "src/main.js",
   "directories": {
@@ -11,7 +11,7 @@
     "browserify": "*",
     "uglifyjs": "*",
     "pako": "*",
-    "JPEGLosslessDecoderJS": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
   },
   "scripts": {
     "test": "mocha --timeout 0 tests",

@@ -21,7 +21,7 @@ daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('
 
 var jpeg = jpeg || {};
 jpeg.lossless = jpeg.lossless || {};
-jpeg.lossless.Decoder = ((typeof require !== 'undefined') ? require('JPEGLosslessDecoderJS') : null);
+jpeg.lossless.Decoder = ((typeof require !== 'undefined') ? require('jpeg-lossless-decoder-js') : null);
 
 var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
 

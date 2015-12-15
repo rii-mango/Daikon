@@ -11,7 +11,7 @@ daikon.CompressionUtils = daikon.CompressionUtils || ((typeof require !== 'undef
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js') : null);
 
-var jpeg = ((typeof require !== 'undefined') ? require('JPEGLosslessDecoderJS') : null);
+var jpeg = ((typeof require !== 'undefined') ? require('jpeg-lossless-decoder-js') : null);
 var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
