@@ -5,7 +5,7 @@ Daikon is a pure JavaScript DICOM reader.  Here are some of its features:
 
 - Works in the browser and Node.js environments.
 - Parses DICOM headers and reads image data.
-- Supports most DICOM compressed formats.
+- Supports compressed DICOM data.
 - Orders and concatenates multi-file image data.
 - Supports RGB and Palette data.
 - Supports Siemens "Mosaic" image data.
