@@ -23,7 +23,7 @@ var jpeg = jpeg || {};
 jpeg.lossless = jpeg.lossless || {};
 jpeg.lossless.Decoder = ((typeof require !== 'undefined') ? require('jpeg-lossless-decoder-js') : null);
 
-var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
+var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-baseline.js').JpegImage : null);
 
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
