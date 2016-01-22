@@ -12,7 +12,7 @@ daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./ut
 daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js') : null);
 
 var jpeg = ((typeof require !== 'undefined') ? require('jpeg-lossless-decoder-js') : null);
-var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpg.js').JpegDecoder : null);
+var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-baseline.js').JpegImage : null);
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
 
@@ -475,16 +475,20 @@ daikon.Image.prototype.decompress = function () {
 
             for (ctr = 0; ctr < jpegs.length; ctr+=1) {
                 decoder = new JpegDecoder();
-                temp = decoder.parse(new Uint8Array(jpegs[ctr]));
+                decoder.parse(new Uint8Array(jpegs[ctr]));
                 width = decoder.width;
                 height = decoder.height;
-                numComponents = decoder.numComponents;
+                numComponents = decoder.components.length;
 
                 if (decompressed === null) {
                     decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
                 }
 
-                decoded = decoder.getData(width, height);
+                if (this.getBitsAllocated() === 8) {
+                    decoded = decoder.getData(width, height);
+                } else if (this.getBitsAllocated() === 16) {
+                    decoded = decoder.getData16(width, height);
+                }
 
                 daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
                     parseInt(Math.ceil(this.getBitsAllocated() / 8)));
@@ -753,7 +757,7 @@ daikon.Image.prototype.isMosaic = function () {
 daikon.Image.prototype.isPalette = function () {
     var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[0], daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[1]), 0);
 
-    if (value != null) {
+    if (value !== null) {
         if (value.toLowerCase().indexOf("palette") !== -1) {
             return true;
         }
