@@ -4,3 +4,4 @@
 /build/
 .jshint*
 node_modules/
+release.sh
