@@ -19,6 +19,7 @@ var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/j
 /*** Constructor ***/
 daikon.Image = daikon.Image || function () {
     this.tags = {};
+    this.tagsFlat = {};
     this.littleEndian = false;
     this.index = -1;
     this.decompressed = false;
@@ -367,12 +368,29 @@ daikon.Image.prototype.getTR = function () {
 
 daikon.Image.prototype.putTag = function (tag) {
     this.tags[tag.id] = tag;
+    this.putFlattenedTag(this.tagsFlat, tag);
+};
+
+
+
+daikon.Image.prototype.putFlattenedTag = function (tags, tag) {
+    var ctr;
+
+    if (tag.sublist) {
+        for (ctr = 0; ctr < tag.value.length; ctr += 1) {
+            this.putFlattenedTag(tags, tag.value[ctr]);
+        }
+    } else {
+        if (!tags[tag.id]) {
+            tags[tag.id] = tag;
+        }
+    }
 };
 
 
 
 daikon.Image.prototype.getTag = function (group, element) {
-    return this.tags[daikon.Tag.createId(group, element)];
+    return this.tagsFlat[daikon.Tag.createId(group, element)];
 };
 
 
