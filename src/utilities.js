@@ -11,6 +11,14 @@ daikon.Utils = daikon.Utils || {};
 
 daikon.Utils.crcTable = null;
 
+
+/*** Static Pseudo-constants ***/
+
+daikon.Utils.MAX_VALUE = 9007199254740991;
+daikon.Utils.MIN_VALUE = -9007199254740991;
+
+
+
 /*** Static methods ***/
 
 daikon.Utils.dec2hex = function (i) {
@@ -256,6 +264,31 @@ daikon.Utils.crc32 = function(dataView) {
 
     return (crc ^ (-1)) >>> 0;
 };
+
+
+
+daikon.Utils.createBitMask = function (numBytes, bitsStored, unsigned) {
+    var mask = 0xFFFFFFFF;
+    mask >>>= (((4 - numBytes) * 8) + ((numBytes * 8) - bitsStored));
+
+    if (unsigned) {
+        if (numBytes == 1) {
+            mask &= 0x000000FF;
+        } else if (numBytes == 2) {
+            mask &= 0x0000FFFF;
+        } else if (numBytes == 4) {
+            mask &= 0xFFFFFFFF;
+        } else if (numBytes == 8) {
+            mask = 0xFFFFFFFF;
+        }
+    } else {
+        mask = 0xFFFFFFFF;
+    }
+
+    return mask;
+};
+
+
 
 /*** Exports ***/
 
