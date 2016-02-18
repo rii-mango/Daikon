@@ -33,7 +33,7 @@ Compressed:
 - [Click here](http://rii.uthscsa.edu/mango/papayabeta/) to try Papaya, a DICOM viewer that uses Daikon...
 
 ###Usage
-####Single File
+####Simple Example
 See [tests/driver-explicit-little.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-explicit-little.js) to run this example:
 ```javascript
 var buf = fs.readFileSync('./data/explicit_little.dcm');
@@ -44,19 +44,7 @@ var rawData = image.getRawData();  // ArrayBuffer
 var interpretedData = image.getInterpretedData();  // Float32Array (handles byte order, datatype, data scale, data mask)
 ```
 
-####Compressed File
-See [tests/driver-jpeg-2000.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-jpeg-2000.js) to run this example:
-```javascript
-var buf = fs.readFileSync('./data/jpeg_2000.dcm');
-var data = new DataView(toArrayBuffer(buf));
-var image = daikon.Series.parseImage(data);
-console.log("size of image (bytes) = " + (image.getRows() * image.getCols() * image.getNumberOfFrames() * (image.getBitsAllocated() / 8)));
-console.log("pixel bytes (compressed) = " + image.getPixelData().value.buffer.byteLength);
-image.decompress();
-console.log("pixel bytes (decompressed) = " + image.getPixelData().value.buffer.byteLength);
-```
-
-####Series
+####Series Example
 See [tests/driver.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver.js) to run this example:
 ```javascript
 var series = new daikon.Series();
