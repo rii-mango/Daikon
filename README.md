@@ -41,7 +41,9 @@ var data = new DataView(toArrayBuffer(buf));
 daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
 var rawData = image.getRawData();  // ArrayBuffer
-var interpretedData = image.getInterpretedData();  // Float32Array (handles byte order, datatype, data scale, data mask)
+var interpretedData = image.getInterpretedData();  // Float32Array (handles byte order, datatype, scale, mask)
+//var interpretedData = image.getInterpretedData(true);  // Array
+//var interpretedData = image.getInterpretedData(false, true);  // Object with properties: data, min, max, minIndex, maxIndex, cols, rows
 ```
 
 ####Series Example
