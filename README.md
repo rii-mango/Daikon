@@ -36,8 +36,6 @@ Compressed:
 ####Simple Example
 See [tests/driver-explicit-little.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-explicit-little.js) to run this example:
 ```javascript
-var buf = fs.readFileSync('./data/explicit_little.dcm');
-var data = new DataView(toArrayBuffer(buf));
 daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
 var rawData = image.getRawData();  // ArrayBuffer
