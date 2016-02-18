@@ -40,6 +40,8 @@ var buf = fs.readFileSync('./data/explicit_little.dcm');
 var data = new DataView(toArrayBuffer(buf));
 daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
+var rawData = image.getRawData();  // ArrayBuffer
+var interpretedData = image.getInterpretedData();  // Float32Array (handles byte order, datatype, data scale, data mask)
 ```
 
 ####Compressed File
