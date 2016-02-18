@@ -476,7 +476,8 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
     }
 
     if (asObject) {
-        return {data: data, min: min, minIndex: minIndex, max: max, maxIndex: maxIndex};
+        return {data: data, min: min, minIndex: minIndex, max: max, maxIndex: maxIndex, numCols: this.getCols(),
+            numRows: this.getRows()};
     }
 
     return data;
