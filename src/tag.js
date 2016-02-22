@@ -567,7 +567,7 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
 /**
  * Returns a string representation of this tag.
  * @param {number} [level] - the indentation level
- * @param {boolean} html
+ * @param {boolean} [html]
  * @returns {string}
  */
 daikon.Tag.prototype.toString = function (level, html) {
