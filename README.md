@@ -33,7 +33,6 @@ Compressed:
 [API](https://github.com/rii-mango/Daikon/wiki/API) and [more examples](https://github.com/rii-mango/Daikon/tree/master/tests)
 
 ####Simple Example
-See [tests/driver-explicit-little.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-explicit-little.js) to run this example:
 ```javascript
 daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
@@ -44,7 +43,6 @@ var interpretedData = image.getInterpretedData();  // Float32Array (handles byte
 ```
 
 ####Series Example
-See [tests/driver.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver.js) to run this example:
 ```javascript
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
