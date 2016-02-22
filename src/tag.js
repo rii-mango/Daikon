@@ -12,6 +12,19 @@ daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('
 
 
 /*** Constructor ***/
+
+/**
+ * The Tag constuctor.
+ * @property {number} group
+ * @property {number} element
+ * @property {string} vr
+ * @property {number} offsetStart
+ * @property {number} offsetValue
+ * @property {number} offsetEnd
+ * @property {boolean} sublist - true if this tag is a sublist
+ * @property {number|number[]|string|string[]|object} value
+ * @type {Function}
+ */
 daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, offsetValue, offsetEnd, littleEndian) {
     this.group = group;
     this.element = element;
@@ -156,6 +169,12 @@ daikon.Tag.TAG_PIXEL_DATA = [0x7FE0, 0x0010];
 
 /*** Static methods ***/
 
+/**
+ * Create an ID string based on the specified group and element
+ * @param {number} group
+ * @param {number} element
+ * @returns {string}
+ */
 daikon.Tag.createId = function (group, element) {
     var groupStr = daikon.Utils.dec2hex(group),
         elemStr = daikon.Utils.dec2hex(element);
@@ -545,6 +564,12 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
 
 /*** Prototype Methods ***/
 
+/**
+ * Returns a string representation of this tag.
+ * @param {number} [level] - the indentation level
+ * @param {boolean} html
+ * @returns {string}
+ */
 daikon.Tag.prototype.toString = function (level, html) {
     var valueStr = '',
         ctr,
@@ -601,57 +626,84 @@ daikon.Tag.prototype.toString = function (level, html) {
 };
 
 
-
-
+/**
+ * Returns an HTML string representation of this tag.
+ * @param {number} level - the indentation level
+ * @returns {string}
+ */
 daikon.Tag.prototype.toHTMLString = function (level) {
     return this.toString(level, true);
 };
 
 
-
+/**
+ * Returns true if this is the transform syntax tag.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isTransformSyntax = function () {
     return (this.group === daikon.Tag.TAG_TRANSFER_SYNTAX[0]) && (this.element === daikon.Tag.TAG_TRANSFER_SYNTAX[1]);
 };
 
 
-
+/**
+ * Returns true if this is the pixel data tag.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isPixelData = function () {
     return (this.group === daikon.Tag.TAG_PIXEL_DATA[0]) && (this.element === daikon.Tag.TAG_PIXEL_DATA[1]);
 };
 
 
-
+/**
+ * Returns true if this tag contains private data.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isPrivateData = function () {
     /*jslint bitwise: true */
     return ((this.group & 1) === 1);
 };
 
 
-
+/**
+ * Returns true if this tag contains private data that can be read.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.hasInterpretedPrivateData = function () {
     return this.isPrivateData() && daikon.Utils.isString(this.value);
 };
 
 
-
+/**
+ * Returns true if this tag is a sublist item.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isSublistItem = function () {
     return (this.group === daikon.Tag.TAG_SUBLIST_ITEM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_ITEM[1]);
 };
 
 
-
+/**
+ * Returns true if this tag is a sublist item delimiter.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isSublistItemDelim = function () {
     return (this.group === daikon.Tag.TAG_SUBLIST_ITEM_DELIM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_ITEM_DELIM[1]);
 };
 
 
-
+/**
+ * Returns true if this tag is a sequence delimiter.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isSequenceDelim = function () {
     return (this.group === daikon.Tag.TAG_SUBLIST_SEQ_DELIM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_SEQ_DELIM[1]);
 };
 
 
-
+/**
+ * Returns true if this is a meta length tag.
+ * @returns {boolean}
+ */
 daikon.Tag.prototype.isMetaLength = function () {
     return (this.group === daikon.Tag.TAG_META_LENGTH[0]) && (this.element === daikon.Tag.TAG_META_LENGTH[1]);
 };

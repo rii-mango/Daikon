@@ -17,6 +17,13 @@ var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/j
 
 
 /*** Constructor ***/
+
+/**
+ * The Image constructor.
+ * @property {object} tags - a map of tag id to tag (see daikon.Tag.createId)
+ * @property {object} tagsFlat - a flattened map of tags
+ * @type {Function}
+ */
 daikon.Image = daikon.Image || function () {
     this.tags = {};
     this.tagsFlat = {};
@@ -99,48 +106,81 @@ daikon.Image.getMajorAxisFromPatientRelativeDirectionCosine = function(x, y, z) 
 
 /*** Prototype Methods ***/
 
+/**
+ * Returns the number of columns.
+ * @returns {number}
+ */
 daikon.Image.prototype.getCols = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_COLS[0], daikon.Tag.TAG_COLS[1]), 0);
 };
 
 
 
+/**
+ * Returns the number of rows.
+ * @returns {number}
+ */
 daikon.Image.prototype.getRows = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_ROWS[0], daikon.Tag.TAG_ROWS[1]), 0);
 };
 
 
 
+/**
+ * Returns the series description.
+ * @returns {string}
+ */
 daikon.Image.prototype.getSeriesDescription = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SERIES_DESCRIPTION[0], daikon.Tag.TAG_SERIES_DESCRIPTION[1]), 0);
 };
 
 
 
+/**
+ * Returns the series instance UID.
+ * @returns {string}
+ */
 daikon.Image.prototype.getSeriesInstanceUID = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SERIES_INSTANCE_UID[0], daikon.Tag.TAG_SERIES_INSTANCE_UID[1]), 0);
 };
 
 
 
+/**
+ * Returns the series number.
+ * @returns {number}
+ */
 daikon.Image.prototype.getSeriesNumber = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SERIES_NUMBER[0], daikon.Tag.TAG_SERIES_NUMBER[1]), 0);
 };
 
 
 
+/**
+ * Returns the echo number.
+ * @returns {number}
+ */
 daikon.Image.prototype.getEchoNumber = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_ECHO_NUMBER[0], daikon.Tag.TAG_ECHO_NUMBER[1]), 0);
 };
 
 
 
+/**
+ * Returns the image position.
+ * @return {number[]}
+ */
 daikon.Image.prototype.getImagePosition = function () {
     return daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_POSITION[0], daikon.Tag.TAG_IMAGE_POSITION[1]));
 };
 
 
 
+/**
+ * Returns the image position value by index.
+ * @param {number} sliceDir - the index
+ * @returns {number}
+ */
 daikon.Image.prototype.getImagePositionSliceDir = function (sliceDir) {
     var imagePos = daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_POSITION[0], daikon.Tag.TAG_IMAGE_POSITION[1]));
     if (imagePos) {
@@ -154,66 +194,102 @@ daikon.Image.prototype.getImagePositionSliceDir = function (sliceDir) {
 
 
 
+/**
+ * Returns the slice location.
+ * @returns {number}
+ */
 daikon.Image.prototype.getSliceLocation = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SLICE_LOCATION[0], daikon.Tag.TAG_SLICE_LOCATION[1]), 0);
 };
 
 
 
+/**
+ * Returns the slice location vector.
+ * @returns {number[]}
+ */
 daikon.Image.prototype.getSliceLocationVector = function () {
     return daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_SLICE_LOCATION_VECTOR[0], daikon.Tag.TAG_SLICE_LOCATION_VECTOR[1]));
 };
 
 
 
+/**
+ * Returns the image number.
+ * @returns {number}
+ */
 daikon.Image.prototype.getImageNumber = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_NUM[0], daikon.Tag.TAG_IMAGE_NUM[1]), 0);
 };
 
 
-
+/**
+ * Returns the temporal position.
+ * @returns {number}
+ */
 daikon.Image.prototype.getTemporalPosition = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_TEMPORAL_POSITION[0], daikon.Tag.TAG_TEMPORAL_POSITION[1]), 0);
 };
 
 
-
+/**
+ * Returns the temporal number.
+ * @returns {number}
+ */
 daikon.Image.prototype.getTemporalNumber = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_NUMBER_TEMPORAL_POSITIONS[0], daikon.Tag.TAG_NUMBER_TEMPORAL_POSITIONS[1]), 0);
 };
 
 
-
+/**
+ * Returns the slice gap.
+ * @returns {number}
+ */
 daikon.Image.prototype.getSliceGap = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SLICE_GAP[0], daikon.Tag.TAG_SLICE_GAP[1]), 0);
 };
 
 
-
+/**
+ * Returns the slice thickness.
+ * @returns {number}
+ */
 daikon.Image.prototype.getSliceThickness = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SLICE_THICKNESS[0], daikon.Tag.TAG_SLICE_THICKNESS[1]), 0);
 };
 
 
-
+/**
+ * Returns the image maximum.
+ * @returns {number}
+ */
 daikon.Image.prototype.getImageMax = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_MAX[0], daikon.Tag.TAG_IMAGE_MAX[1]), 0);
 };
 
 
-
+/**
+ * Returns the image minimum.
+ * @returns {number}
+ */
 daikon.Image.prototype.getImageMin = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_MIN[0], daikon.Tag.TAG_IMAGE_MIN[1]), 0);
 };
 
 
-
+/**
+ * Returns the rescale slope.
+ * @returns {number}
+ */
 daikon.Image.prototype.getDataScaleSlope = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_DATA_SCALE_SLOPE[0], daikon.Tag.TAG_DATA_SCALE_SLOPE[1]), 0);
 };
 
 
-
+/**
+ * Returns the rescale intercept.
+ * @returns {number}
+ */
 daikon.Image.prototype.getDataScaleIntercept = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_DATA_SCALE_INTERCEPT[0], daikon.Tag.TAG_DATA_SCALE_INTERCEPT[1]), 0);
 };
@@ -238,13 +314,19 @@ daikon.Image.prototype.getDataScaleElscint = function () {
 };
 
 
-
+/**
+ * Returns the window width.
+ * @returns {number}
+ */
 daikon.Image.prototype.getWindowWidth = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_WINDOW_WIDTH[0], daikon.Tag.TAG_WINDOW_WIDTH[1]), 0);
 };
 
 
-
+/**
+ * Returns the window center.
+ * @returns {number}
+ */
 daikon.Image.prototype.getWindowCenter = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_WINDOW_CENTER[0], daikon.Tag.TAG_WINDOW_CENTER[1]), 0);
 };
@@ -290,37 +372,55 @@ daikon.Image.prototype.getSeriesId = function () {
 };
 
 
-
+/**
+ * Returns the pixel spacing.
+ * @returns {number[]}
+ */
 daikon.Image.prototype.getPixelSpacing = function () {
     return daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_PIXEL_SPACING[0], daikon.Tag.TAG_PIXEL_SPACING[1]));
 };
 
 
-
+/**
+ * Returns the image type.
+ * @returns {string[]}
+ */
 daikon.Image.prototype.getImageType = function () {
     return daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_TYPE[0], daikon.Tag.TAG_IMAGE_TYPE[1]));
 };
 
 
-
+/**
+ * Returns the number of bits stored.
+ * @returns {number}
+ */
 daikon.Image.prototype.getBitsStored = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_BITS_STORED[0], daikon.Tag.TAG_BITS_STORED[1]), 0);
 };
 
 
-
+/**
+ * Returns the number of bits allocated.
+ * @returns {number}
+ */
 daikon.Image.prototype.getBitsAllocated = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_BITS_ALLOCATED[0], daikon.Tag.TAG_BITS_ALLOCATED[1]), 0);
 };
 
 
-
+/**
+ * Returns the frame time.
+ * @returns {number}
+ */
 daikon.Image.prototype.getFrameTime = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_FRAME_TIME[0], daikon.Tag.TAG_FRAME_TIME[1]), 0);
 };
 
 
-
+/**
+ * Returns the acquisition matrix (e.g., "mosaic" data).
+ * @returns {number[]}
+ */
 daikon.Image.prototype.getAcquisitionMatrix = function () {
     var mat, matPrivate, start, end, str;
 
@@ -359,7 +459,10 @@ daikon.Image.prototype.getAcquisitionMatrix = function () {
 };
 
 
-
+/**
+ * Returns the TR.
+ * @returns {number}
+ */
 daikon.Image.prototype.getTR = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_TR, daikon.Tag.TAG_TR[1]), 0);
 };
@@ -388,13 +491,21 @@ daikon.Image.prototype.putFlattenedTag = function (tags, tag) {
 };
 
 
-
+/**
+ * Returns a tag matching the specified group and element.
+ * @param {number} group
+ * @param {number} element
+ * @returns {daikon.Tag}
+ */
 daikon.Image.prototype.getTag = function (group, element) {
     return this.tagsFlat[daikon.Tag.createId(group, element)];
 };
 
 
-
+/**
+ * Returns the pixel data tag.
+ * @returns {daikon.Tag}
+ */
 daikon.Image.prototype.getPixelData = function () {
     return this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])];
 };
@@ -559,7 +670,10 @@ daikon.Image.prototype.decompress = function () {
 };
 
 
-
+/**
+ * Returns true if pixel data is found.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.hasPixelData = function () {
     return (this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])] !== undefined);
 };
@@ -571,7 +685,10 @@ daikon.Image.prototype.clearPixelData = function () {
 };
 
 
-
+/**
+ * Returns an orientation string (e.g., XYZ+--).
+ * @returns {string}
+ */
 daikon.Image.prototype.getOrientation = function () {
     var orientation = null,
         dirCos = daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_ORIENTATION[0], daikon.Tag.TAG_IMAGE_ORIENTATION[1])),
@@ -750,7 +867,10 @@ daikon.Image.prototype.getOrientation = function () {
 };
 
 
-
+/**
+ * Returns true if this image is "mosaic".
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isMosaic = function () {
     var imageType, labeledAsMosaic = false, canReadAsMosaic, ctr, matSize;
 
@@ -771,7 +891,10 @@ daikon.Image.prototype.isMosaic = function () {
 };
 
 
-
+/**
+ * Returns true if this image uses palette colors.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isPalette = function () {
     var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[0], daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[1]), 0);
 
@@ -804,7 +927,10 @@ daikon.Image.prototype.isElscint = function() {
 };
 
 
-
+/**
+ * Returns true if this image stores compressed data.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isCompressed = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -821,7 +947,10 @@ daikon.Image.prototype.isCompressed = function() {
 };
 
 
-
+/**
+ * Returns true if this image stores JPEG data.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isCompressedJPEG = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -836,7 +965,10 @@ daikon.Image.prototype.isCompressedJPEG = function() {
 };
 
 
-
+/**
+ * Returns true of this image stores lossless JPEG data.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isCompressedJPEGLossless = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -852,7 +984,10 @@ daikon.Image.prototype.isCompressedJPEGLossless = function() {
 };
 
 
-
+/**
+ * Returns true if this image stores baseline JPEG data.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isCompressedJPEGBaseline = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -868,7 +1003,10 @@ daikon.Image.prototype.isCompressedJPEGBaseline = function() {
 };
 
 
-
+/**
+ * Returns true if this image stores JPEG2000 data.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isCompressedJPEG2000 = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -884,7 +1022,10 @@ daikon.Image.prototype.isCompressedJPEG2000 = function() {
 };
 
 
-
+/**
+ * Returns true if this image stores RLE data.
+ * @returns {boolean}
+ */
 daikon.Image.prototype.isCompressedRLE = function() {
     daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
 
@@ -899,7 +1040,10 @@ daikon.Image.prototype.isCompressedRLE = function() {
 };
 
 
-
+/**
+ * Returns the number of frames.
+ * @returns {number}
+ */
 daikon.Image.prototype.getNumberOfFrames = function () {
     var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_NUMBER_OF_FRAMES[0], daikon.Tag.TAG_NUMBER_OF_FRAMES[1]), 0);
 
@@ -927,55 +1071,82 @@ daikon.Image.prototype.getNumberOfImplicitFrames = function () {
 };
 
 
-
+/**
+ * Returns the pixel representation.
+ * @returns {number}
+ */
 daikon.Image.prototype.getPixelRepresentation = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PIXEL_REPRESENTATION[0], daikon.Tag.TAG_PIXEL_REPRESENTATION[1]), 0);
 };
 
 
-
+/**
+ * Returns the photometric interpretation.
+ * @returns {string}
+ */
 daikon.Image.prototype.getPhotometricInterpretation = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[0], daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION[1]), 0);
 };
 
 
-
+/**
+ * Returns the patient name.
+ * @returns {string}
+ */
 daikon.Image.prototype.getPatientName = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PATIENT_NAME[0], daikon.Tag.TAG_PATIENT_NAME[1]), 0);
 };
 
 
-
+/**
+ * Returns the patient ID.
+ * @returns {string}
+ */
 daikon.Image.prototype.getPatientID = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PATIENT_ID[0], daikon.Tag.TAG_PATIENT_ID[1]), 0);
 };
 
 
-
+/**
+ * Returns the study time.
+ * @returns {string}
+ */
 daikon.Image.prototype.getStudyTime = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_STUDY_TIME[0], daikon.Tag.TAG_STUDY_TIME[1]), 0);
 };
 
 
-
+/**
+ * Returns the transfer syntax.
+ * @returns {string}
+ */
 daikon.Image.prototype.getTransferSyntax = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_TRANSFER_SYNTAX[0], daikon.Tag.TAG_TRANSFER_SYNTAX[1]), 0);
 };
 
 
-
+/**
+ * Returns the study date.
+ * @returns {string}
+ */
 daikon.Image.prototype.getStudyDate = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_STUDY_DATE[0], daikon.Tag.TAG_STUDY_DATE[1]), 0);
 };
 
 
-
+/**
+ * Returns the planar configuration.
+ * @returns {number}
+ */
 daikon.Image.prototype.getPlanarConfig = function () {
     return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_PLANAR_CONFIG[0], daikon.Tag.TAG_PLANAR_CONFIG[1]), 0);
 };
 
 
-
+/**
+ * Returns all descriptive info for this image.
+ * @returns {string}
+ */
 daikon.Image.prototype.getImageDescription = function () {
     var value, string = "";
 
@@ -998,7 +1169,10 @@ daikon.Image.prototype.getImageDescription = function () {
 };
 
 
-
+/**
+ * Returns the datatype (e.g., daikon.Image.BYTE_TYPE_INTEGER_UNSIGNED).
+ * @returns {number}
+ */
 daikon.Image.prototype.getDataType = function () {
     var interp, dataType;
 
@@ -1064,6 +1238,10 @@ daikon.Image.prototype.getAcquiredSliceDirection = function () {
 
 
 // returns an array of tags
+/**
+ * Returns encapsulated data tags.
+ * @returns {daikon.Tag[]}
+ */
 daikon.Image.prototype.getEncapsulatedData = function () {
     var buffer, parser;
 
@@ -1134,7 +1312,10 @@ daikon.Image.prototype.getRLE = function () {
 };
 
 
-
+/**
+ * Returns a string of interpreted private data.
+ * @returns {string}
+ */
 daikon.Image.prototype.getAllInterpretedPrivateData = function() {
     var ctr, key, tag, str = "";
 
@@ -1154,7 +1335,10 @@ daikon.Image.prototype.getAllInterpretedPrivateData = function() {
 };
 
 
-
+/**
+ * Returns a string representation of this image.
+ * @returns {string}
+ */
 daikon.Image.prototype.toString = function () {
     var ctr, tag, key, str = "";
 

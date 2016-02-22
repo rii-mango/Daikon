@@ -14,6 +14,12 @@ daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./ut
 
 
 /*** Constructor ***/
+
+/**
+ * The Series constructor.
+ * @property {daikon.Image[]} images
+ * @type {Function}
+ */
 daikon.Series = daikon.Series || function () {
     this.images = [];
     this.imagesOriginalOrder = null;
@@ -38,6 +44,11 @@ daikon.Series.parserError = null;
 
 /*** Static Methods ***/
 
+/**
+ * Parses the DICOM header and return an image object.
+ * @param {DataView} data
+ * @returns {daikon.Image|null}
+ */
 daikon.Series.parseImage = function (data) {
     var parser, image;
 
@@ -283,13 +294,19 @@ daikon.Series.prototype.getOrder = function () {
 };
 
 
-
+/**
+ * Returns the series ID.
+ * @returns {string}
+ */
 daikon.Series.prototype.toString = function () {
     return this.images[0].getSeriesId();
 };
 
 
-
+/**
+ * Returns a nice name for the series.
+ * @returns {string|null}
+ */
 daikon.Series.prototype.getName = function () {
     var des = this.images[0].getSeriesDescription();
     var uid = this.images[0].getSeriesInstanceUID();
@@ -306,13 +323,20 @@ daikon.Series.prototype.getName = function () {
 };
 
 
-
+/**
+ * Adds an image to the series.
+ * @param {daikon.Image} image
+ */
 daikon.Series.prototype.addImage = function (image) {
     this.images.push(image);
 };
 
 
-
+/**
+ * Returns true if the specified image is part of the series (or if no images are yet part of the series).
+ * @param {daikon.Image} image
+ * @returns {boolean}
+ */
 daikon.Series.prototype.matchesSeries = function (image) {
     if (this.images.length === 0) {
         return true;
@@ -322,7 +346,9 @@ daikon.Series.prototype.matchesSeries = function (image) {
 };
 
 
-
+/**
+ * Orders and organizes the images in this series.
+ */
 daikon.Series.prototype.buildSeries = function () {
     var hasFrameTime, ctr, sliceLoc, orderedImages, sliceLocationFirst, sliceLocationLast, sliceLocDiff,
         sliceLocations, orientation, imagePos;
@@ -420,7 +446,11 @@ daikon.Series.prototype.buildSeries = function () {
 };
 
 
-
+/**
+ * Concatenates image data (asynchronously).
+ * @param {object} progressMeter -- the object must have a drawProgress(percent, label) function [e.g., drawProgress(.5, "Loading...")]
+ * @param {Function} onFinishedImageRead -- callback
+ */
 daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinishedImageRead) {
     var buffer, data;
 

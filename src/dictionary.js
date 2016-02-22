@@ -6,6 +6,11 @@
 
 /*** Imports ***/
 var daikon = daikon || {};
+
+/**
+ * daikon.Dictionary
+ * @type {{}|*}
+ */
 daikon.Dictionary = daikon.Dictionary || {};
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
 
@@ -3624,6 +3629,12 @@ daikon.Dictionary.dict = {
 
 /*** Static Methods ***/
 
+/**
+ * Returns the VR for the specified group and element.
+ * @param {number} group
+ * @param {number} element
+ * @returns {string}
+ */
 daikon.Dictionary.getVR = function (group, element) {
     var vr, elementData, groupData;
 
@@ -3656,6 +3667,12 @@ daikon.Dictionary.getVR = function (group, element) {
 
 
 
+/**
+ * Returns the description for the specified group and element.
+ * @param {number} group
+ * @param {number} element
+ * @returns {string}
+ */
 daikon.Dictionary.getDescription = function (group, element) {
     var des, elementData, groupData;
 

@@ -10,6 +10,12 @@ daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./ut
 
 
 /*** Constructor ***/
+
+/**
+ * The Siemens constructor.
+ * @params {ArrayBuffer} buffer
+ * @type {Function}
+ */
 daikon.Siemens = daikon.Siemens || function (buffer) {
     this.output = "";
     this.data = new DataView(buffer, 0);
@@ -27,7 +33,10 @@ daikon.Siemens.GROUP_CSA = 0x029;
 
 /*** Prototype Methods ***/
 
-// http://nipy.org/nibabel/dicom/siemens_csa.html
+/**
+ * Reads the Siemens header.  (See http://nipy.org/nibabel/dicom/siemens_csa.html)
+ * @returns {string}
+ */
 daikon.Siemens.prototype.readHeader = function () {
     /*jslint bitwise: true */
 
@@ -154,7 +163,12 @@ daikon.Siemens.prototype.readItem = function (offset) {
 };
 
 
-
+/**
+ * Returns true if the specified group and element indicate this tag can be read.
+ * @param {number} group
+ * @param {number} element
+ * @returns {boolean}
+ */
 daikon.Siemens.prototype.canRead = function (group, element) {
     return (group === daikon.Siemens.GROUP_CSA) && ((element === daikon.Siemens.ELEMENT_CSA1) || (element === daikon.Siemens.ELEMENT_CSA2));
 };

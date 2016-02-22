@@ -15,6 +15,13 @@ var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
 
 
 /*** Constructor ***/
+
+/**
+ * The Parser constructor.
+ * @property {boolean} explicit
+ * @property {boolean} littleEndian
+ * @type {Function}
+ */
 daikon.Parser = daikon.Parser || function () {
     this.littleEndian = true;
     this.explicit = true;
@@ -27,6 +34,11 @@ daikon.Parser = daikon.Parser || function () {
 
 
 /*** Static Fields ***/
+
+/**
+ * Global property to output string representation of tags as they are parsed.
+ * @type {boolean}
+ */
 daikon.Parser.verbose = false;
 
 
@@ -54,6 +66,11 @@ daikon.Parser.UNDEFINED_LENGTH = 0xFFFFFFFF;
 
 /*** Static Methods ***/
 
+/**
+ * Returns true if the DICOM magic cookie is found.
+ * @param {DataView} data
+ * @returns {boolean}
+ */
 daikon.Parser.isMagicCookieFound = function (data) {
     var offset = daikon.Parser.MAGIC_COOKIE_OFFSET, magicCookieLength = daikon.Parser.MAGIC_COOKIE.length, ctr;
 
@@ -69,6 +86,11 @@ daikon.Parser.isMagicCookieFound = function (data) {
 
 /*** Prototype Methods ***/
 
+/**
+ * Parses this data and returns an image object.
+ * @param {DataView} data
+ * @returns {daikon.Image|null}
+ */
 daikon.Parser.prototype.parse = function (data) {
     var image = null, offset, tag, copyMeta, copyDeflated;
 

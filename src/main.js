@@ -6,7 +6,12 @@
 
 /*** Imports ****/
 
+/**
+ * daikon
+ * @type {*|{}}
+ */
 var daikon = daikon || {};
+
 daikon.CompressionUtils = daikon.CompressionUtils || ((typeof require !== 'undefined') ? require('./compression-utils.js') : null);
 daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? require('./dictionary.js') : null);
 daikon.Image = daikon.Image || ((typeof require !== 'undefined') ? require('./image.js') : null);

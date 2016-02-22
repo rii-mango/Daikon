@@ -9,12 +9,17 @@ var daikon = daikon || {};
 
 
 /*** Constructor ***/
+
+/**
+ * The RLE constructor.
+ * @type {Function}
+ */
 daikon.RLE = daikon.RLE || function () {
     this.rawData = null;
     this.bytesRead = 0;
     this.bytesPut = 0;
     this.segElemPut = 0;
-    this.numSegments = 0;  // number of bytes of each voxel
+    this.numSegments = 0;
     this.segmentOffsets = [];
     this.littleEndian = true;
     this.segmentIndex = 0;
@@ -31,6 +36,13 @@ daikon.RLE.HEADER_SIZE = 64;
 
 /*** Prototype Methods ***/
 
+/**
+ * Decodes the RLE data.
+ * @param {ArrayBuffer} data
+ * @param {boolean} littleEndian
+ * @param {number} numElements
+ * @returns {DataView}
+ */
 daikon.RLE.prototype.decode = function (data, littleEndian, numElements) {
     var ctr;
 
