@@ -526,13 +526,21 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 };
 
 
-
+/**
+ * Returns the raw pixel data.
+ * @returns {ArrayBuffer}
+ */
 daikon.Image.prototype.getRawData = function () {
     return this.getPixelDataBytes();
 };
 
 
-
+/**
+ * Returns interpreted pixel data (considers datatype, byte order, data scales).
+ * @param {boolean} asArray - if true, the returned data is a JavaScript Array
+ * @param {boolean} asObject - if true, an object is returned with properties: data, min, max, minIndex, maxIndex, numCols, numRows
+ * @returns {Float32Array|Array|object}
+ */
 daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
     var datatype, numBytes, numElements, dataView, data, ctr, mask, slope, intercept, min, max, value, minIndex,
         maxIndex, littleEndian, rawValue, rawData;
