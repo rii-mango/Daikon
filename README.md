@@ -28,11 +28,10 @@ Compressed:
 - 1.2.840.10008.1.2.4.91 (JPEG 2000 Image Compression)
 - 1.2.840.10008.1.2.5 (RLE Lossless)
 
-###Demo
-- [Click here](http://rii.uthscsa.edu/mango/daikon/index.html) to try the Daikon parser now...
-- [Click here](http://rii.uthscsa.edu/mango/papayabeta/) to try Papaya, a DICOM viewer that uses Daikon...
 
 ###Usage
+[API](https://github.com/rii-mango/Daikon/wiki/API) and [more examples](https://github.com/rii-mango/Daikon/tree/master/tests)
+
 ####Simple Example
 See [tests/driver-explicit-little.js](https://github.com/rii-mango/Daikon/blob/master/tests/driver-explicit-little.js) to run this example:
 ```javascript
