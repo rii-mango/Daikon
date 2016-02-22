@@ -6008,7 +6008,7 @@ jpeg.lossless.Decoder.prototype.setValue16 = function (index, val) {
 
 
 jpeg.lossless.Decoder.prototype.getValue16 = function (index) {
-    return this.outputData.getInt16(index * 2, true);
+    return this.outputData.getInt16(index * 2, true) & this.mask;
 };
 
 
@@ -6020,7 +6020,7 @@ jpeg.lossless.Decoder.prototype.setValue8 = function (index, val) {
 
 
 jpeg.lossless.Decoder.prototype.getValue8 = function (index) {
-    return this.outputData.getInt8(index);
+    return this.outputData.getInt8(index) & this.mask;
 };
 
 
@@ -6395,7 +6395,7 @@ if ((moduleType !== 'undefined') && module.exports) {
 
 "use strict";
 
-/*** Imports ***/
+/*** Imports ****/
 var jpeg = jpeg || {};
 jpeg.lossless = jpeg.lossless || {};
 jpeg.lossless.ComponentSpec = jpeg.lossless.ComponentSpec || ((typeof require !== 'undefined') ? require('./component-spec.js') : null);
@@ -17056,6 +17056,7 @@ daikon.Image = daikon.Image || function () {
     this.index = -1;
     this.decompressed = false;
     this.privateDataAll = null;
+    this.convertedPalette = false;
 };
 
 
@@ -17446,6 +17447,75 @@ daikon.Image.prototype.getPixelDataBytes = function () {
 };
 
 
+
+daikon.Image.prototype.getRawData = function () {
+    return this.getPixelDataBytes();
+};
+
+
+
+daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
+    var datatype, numBytes, numElements, dataView, data, ctr, mask, slope, intercept, min, max, value, minIndex,
+        maxIndex, littleEndian, rawValue, rawData;
+    mask = daikon.Utils.createBitMask(this.getBitsAllocated() / 8, this.getBitsStored(),
+        this.getDataType() === daikon.Image.BYTE_TYPE_INTEGER_UNSIGNED);
+    datatype = this.getDataType();
+    numBytes = this.getBitsAllocated() / 8;
+    rawData = this.getRawData();
+    dataView = new DataView(rawData);
+    numElements = rawData.byteLength / numBytes;
+    slope = this.getDataScaleSlope() || 1;
+    intercept = this.getDataScaleIntercept() || 0;
+    min = daikon.Utils.MAX_VALUE;
+    max = daikon.Utils.MIN_VALUE;
+    minIndex = -1;
+    maxIndex = -1;
+    littleEndian = this.littleEndian;
+
+    if (asArray) {
+        data = [];
+    } else {
+        data = new Float32Array(numElements);
+    }
+
+    for (ctr = 0; ctr < numElements; ctr += 1) {
+        if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
+            if (numBytes === 1) {
+                rawValue = dataView.getInt8(ctr * numBytes);
+            } else if (numBytes === 2) {
+                rawValue = dataView.getInt16(ctr * numBytes, littleEndian);
+            }
+        } else if (datatype === daikon.Image.BYTE_TYPE_INTEGER_UNSIGNED) {
+            if (numBytes === 1) {
+                rawValue = dataView.getUint8(ctr * numBytes);
+            } else if (numBytes === 2) {
+                rawValue = dataView.getUint16(ctr * numBytes, littleEndian);
+            }
+        }
+
+        value = ((rawValue & mask) * slope) + intercept;
+        data[ctr] = value;
+
+        if (value < min) {
+            min = value;
+            minIndex = ctr;
+        }
+
+        if (value > max) {
+            max = value;
+            maxIndex = ctr;
+        }
+    }
+
+    if (asObject) {
+        return {data: data, min: min, minIndex: minIndex, max: max, maxIndex: maxIndex};
+    }
+
+    return data;
+};
+
+
+
 daikon.Image.prototype.convertPalette = function () {
     var data, reds, greens, blues, rgb, numBytes, numElements, ctr, index, rVal, gVal, bVal;
 
@@ -17456,7 +17526,7 @@ daikon.Image.prototype.convertPalette = function () {
     blues = this.getPalleteValues(daikon.Tag.TAG_PALETTE_BLUE);
 
     if ((reds !== null) && (reds.length > 0) && (greens !== null) && (greens.length > 0) && (blues !== null) &&
-            (blues.length > 0)) {
+            (blues.length > 0) && !this.convertedPalette) {
         rgb = new DataView(new ArrayBuffer(this.getRows() * this.getCols() * this.getNumberOfFrames() * 3));
         numBytes = parseInt(Math.ceil(this.getBitsAllocated() / 8));
         numElements = data.byteLength / numBytes;
@@ -17484,6 +17554,7 @@ daikon.Image.prototype.convertPalette = function () {
         }
 
         data = rgb;
+        this.convertedPalette = true;
     }
 
     this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = data;
@@ -20380,6 +20451,14 @@ daikon.Utils = daikon.Utils || {};
 
 daikon.Utils.crcTable = null;
 
+
+/*** Static Pseudo-constants ***/
+
+daikon.Utils.MAX_VALUE = 9007199254740991;
+daikon.Utils.MIN_VALUE = -9007199254740991;
+
+
+
 /*** Static methods ***/
 
 daikon.Utils.dec2hex = function (i) {
@@ -20625,6 +20704,31 @@ daikon.Utils.crc32 = function(dataView) {
 
     return (crc ^ (-1)) >>> 0;
 };
+
+
+
+daikon.Utils.createBitMask = function (numBytes, bitsStored, unsigned) {
+    var mask = 0xFFFFFFFF;
+    mask >>>= (((4 - numBytes) * 8) + ((numBytes * 8) - bitsStored));
+
+    if (unsigned) {
+        if (numBytes == 1) {
+            mask &= 0x000000FF;
+        } else if (numBytes == 2) {
+            mask &= 0x0000FFFF;
+        } else if (numBytes == 4) {
+            mask &= 0xFFFFFFFF;
+        } else if (numBytes == 8) {
+            mask = 0xFFFFFFFF;
+        }
+    } else {
+        mask = 0xFFFFFFFF;
+    }
+
+    return mask;
+};
+
+
 
 /*** Exports ***/
 
