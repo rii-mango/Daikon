@@ -81,7 +81,7 @@ series.concatenateImageData(null, function (imageData) {
 });
 ```
 ####Browser
-See [tests/debug.html](https://github.com/rii-mango/Daikon/blob/master/tests/debug.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
+See [tests/browser.html](https://github.com/rii-mango/Daikon/blob/master/tests/debug.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
 ###Install
 Get a packaged source file:
