@@ -1,2 +1,3 @@
 lib/* linguist-vendored
 tests/* linguist-vendored
+tests/data/* linguist-vendored
