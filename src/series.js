@@ -452,7 +452,7 @@ daikon.Series.prototype.buildSeries = function () {
  * @param {Function} onFinishedImageRead -- callback
  */
 daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinishedImageRead) {
-    var buffer, data;
+    var buffer, data, length;
 
     if (this.isMosaic) {
         data = this.getMosaicData(this.images[0], this.images[0].getPixelDataBytes());
@@ -460,18 +460,19 @@ daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinish
         data = this.images[0].getPixelDataBytes();
     }
 
+    length = this.validatePixelDataLength(this.images[0]);
     this.images[0].clearPixelData();
-    buffer = new Uint8Array(new ArrayBuffer(data.byteLength * this.images.length));
-    buffer.set(new Uint8Array(data), 0);
+    buffer = new Uint8Array(new ArrayBuffer(length * this.images.length));
+    buffer.set(new Uint8Array(data, 0, length), 0);
 
-    setTimeout(this.concatenateNextImageData(buffer, data.byteLength, progressMeter, 1, onFinishedImageRead), 0);
+    setTimeout(this.concatenateNextImageData(buffer, length, progressMeter, 1, onFinishedImageRead), 0);
 };
 
 
 
 daikon.Series.prototype.concatenateNextImageData = function (buffer, frameSize, progressMeter, index,
                                                              onFinishedImageRead) {
-    var data;
+    var data, length;
 
     if (index >= this.images.length) {
         if (progressMeter) {
@@ -490,12 +491,27 @@ daikon.Series.prototype.concatenateNextImageData = function (buffer, frameSize, 
             data = this.images[index].getPixelDataBytes();
         }
 
+        length = this.validatePixelDataLength(this.images[index]);
         this.images[index].clearPixelData();
-        buffer.set(new Uint8Array(data), (frameSize * index));
+        buffer.set(new Uint8Array(data, 0, length), (frameSize * index));
 
         setTimeout(daikon.Utils.bind(this, function() {this.concatenateNextImageData(buffer, frameSize, progressMeter,
             index + 1, onFinishedImageRead);}), 0);
     }
+};
+
+
+
+daikon.Series.prototype.validatePixelDataLength = function (image) {
+    var length = image.getPixelDataBytes().byteLength,
+        sliceLength = image.getCols() * image.getRows();
+
+    // pixel data length should be divisible by slice size, if not, try to figure out correct pixel data length
+    if ((length % sliceLength) === 0) {
+        return length;
+    }
+
+    return sliceLength * image.getNumberOfFrames() * image.getNumberOfSamplesPerPixel() * (image.getBitsAllocated() / 8);
 };
 
 

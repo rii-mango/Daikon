@@ -346,6 +346,8 @@ daikon.Image.prototype.getSeriesId = function () {
     var num = this.getSeriesNumber();
     var echo = this.getEchoNumber();
     var orientation = this.getOrientation();
+    var cols = this.getCols();
+    var rows = this.getRows();
 
     var id = "";
 
@@ -368,6 +370,8 @@ daikon.Image.prototype.getSeriesId = function () {
     if (orientation !== null) {
         id += (" " + orientation);
     }
+
+    id += (" (" + cols + " x " + rows + ")");
 
     return id;
 };
@@ -1126,6 +1130,21 @@ daikon.Image.prototype.isCompressedRLE = function() {
  */
 daikon.Image.prototype.getNumberOfFrames = function () {
     var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_NUMBER_OF_FRAMES[0], daikon.Tag.TAG_NUMBER_OF_FRAMES[1]), 0);
+
+    if (value !== null) {
+        return value;
+    }
+
+    return 1;
+};
+
+
+/**
+ * Returns the number of samples per pixel.
+ * @returns {number}
+ */
+daikon.Image.prototype.getNumberOfSamplesPerPixel = function () {
+    var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SAMPLES_PER_PIXEL[0], daikon.Tag.TAG_SAMPLES_PER_PIXEL[1]), 0);
 
     if (value !== null) {
         return value;
