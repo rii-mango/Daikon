@@ -5297,6 +5297,15 @@ jpeg.lossless.Utils = jpeg.lossless.Utils || ((typeof require !== 'undefined') ?
 
 
 /*** Constructor ***/
+
+/**
+ * The Decoder constructor.
+ * @property {number} xDim - size of x dimension
+ * @property {number} yDim - size of y dimension
+ * @property {number} numComp - number of components
+ * @property {number} numBytes - number of bytes per component
+ * @type {Function}
+ */
 jpeg.lossless.Decoder = jpeg.lossless.Decoder || function (buffer, numBytes) {
     this.buffer = buffer;
     this.frame = new jpeg.lossless.FrameHeader();
@@ -5343,6 +5352,13 @@ jpeg.lossless.Decoder.RESTART_MARKER_END = 0xFFD7;
 
 /*** Prototype Methods ***/
 
+/**
+ * Returns decompressed data.
+ * @param {ArrayBuffer} buffer
+ * @param {number} [offset]
+ * @param {number} [length]
+ * @returns {ArrayBufer}
+ */
 jpeg.lossless.Decoder.prototype.decompress = function (buffer, offset, length) {
     return this.decode(buffer, offset, length).buffer;
 };
@@ -6388,8 +6404,20 @@ if ((moduleType !== 'undefined') && module.exports) {
 "use strict";
 
 /*** Imports ****/
+
+/**
+ * jpeg
+  * @type {*|{}}
+ */
 var jpeg = jpeg || {};
+
+/**
+ * jpeg.lossless
+ * @type {*|{}}
+ */
 jpeg.lossless = jpeg.lossless || {};
+
+
 jpeg.lossless.ComponentSpec = jpeg.lossless.ComponentSpec || ((typeof require !== 'undefined') ? require('./component-spec.js') : null);
 jpeg.lossless.DataStream = jpeg.lossless.DataStream || ((typeof require !== 'undefined') ? require('./data-stream.js') : null);
 jpeg.lossless.Decoder = jpeg.lossless.Decoder || ((typeof require !== 'undefined') ? require('./decoder.js') : null);
@@ -17387,6 +17415,8 @@ daikon.Image.prototype.getSeriesId = function () {
     var num = this.getSeriesNumber();
     var echo = this.getEchoNumber();
     var orientation = this.getOrientation();
+    var cols = this.getCols();
+    var rows = this.getRows();
 
     var id = "";
 
@@ -17409,6 +17439,8 @@ daikon.Image.prototype.getSeriesId = function () {
     if (orientation !== null) {
         id += (" " + orientation);
     }
+
+    id += (" (" + cols + " x " + rows + ")");
 
     return id;
 };
@@ -18167,6 +18199,21 @@ daikon.Image.prototype.isCompressedRLE = function() {
  */
 daikon.Image.prototype.getNumberOfFrames = function () {
     var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_NUMBER_OF_FRAMES[0], daikon.Tag.TAG_NUMBER_OF_FRAMES[1]), 0);
+
+    if (value !== null) {
+        return value;
+    }
+
+    return 1;
+};
+
+
+/**
+ * Returns the number of samples per pixel.
+ * @returns {number}
+ */
+daikon.Image.prototype.getNumberOfSamplesPerPixel = function () {
+    var value = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_SAMPLES_PER_PIXEL[0], daikon.Tag.TAG_SAMPLES_PER_PIXEL[1]), 0);
 
     if (value !== null) {
         return value;
@@ -19565,7 +19612,7 @@ daikon.Series.orderByTime = function (images, numFrames, sliceDir, hasImagePosit
                     timeBySliceMap.put(sliceMarker, slice);
                 }
 
-                slice.put(imageNum, images[ctr]);
+                slice.put(ctr, images[ctr]);
             }
         }
 
@@ -19780,7 +19827,7 @@ daikon.Series.prototype.buildSeries = function () {
  * @param {Function} onFinishedImageRead -- callback
  */
 daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinishedImageRead) {
-    var buffer, data;
+    var buffer, data, length;
 
     if (this.isMosaic) {
         data = this.getMosaicData(this.images[0], this.images[0].getPixelDataBytes());
@@ -19788,18 +19835,19 @@ daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinish
         data = this.images[0].getPixelDataBytes();
     }
 
+    length = this.validatePixelDataLength(this.images[0]);
     this.images[0].clearPixelData();
-    buffer = new Uint8Array(new ArrayBuffer(data.byteLength * this.images.length));
-    buffer.set(new Uint8Array(data), 0);
+    buffer = new Uint8Array(new ArrayBuffer(length * this.images.length));
+    buffer.set(new Uint8Array(data, 0, length), 0);
 
-    setTimeout(this.concatenateNextImageData(buffer, data.byteLength, progressMeter, 1, onFinishedImageRead), 0);
+    setTimeout(this.concatenateNextImageData(buffer, length, progressMeter, 1, onFinishedImageRead), 0);
 };
 
 
 
 daikon.Series.prototype.concatenateNextImageData = function (buffer, frameSize, progressMeter, index,
                                                              onFinishedImageRead) {
-    var data;
+    var data, length;
 
     if (index >= this.images.length) {
         if (progressMeter) {
@@ -19818,12 +19866,27 @@ daikon.Series.prototype.concatenateNextImageData = function (buffer, frameSize, 
             data = this.images[index].getPixelDataBytes();
         }
 
+        length = this.validatePixelDataLength(this.images[index]);
         this.images[index].clearPixelData();
-        buffer.set(new Uint8Array(data), (frameSize * index));
+        buffer.set(new Uint8Array(data, 0, length), (frameSize * index));
 
         setTimeout(daikon.Utils.bind(this, function() {this.concatenateNextImageData(buffer, frameSize, progressMeter,
             index + 1, onFinishedImageRead);}), 0);
     }
+};
+
+
+
+daikon.Series.prototype.validatePixelDataLength = function (image) {
+    var length = image.getPixelDataBytes().byteLength,
+        sliceLength = image.getCols() * image.getRows();
+
+    // pixel data length should be divisible by slice size, if not, try to figure out correct pixel data length
+    if ((length % sliceLength) === 0) {
+        return length;
+    }
+
+    return sliceLength * image.getNumberOfFrames() * image.getNumberOfSamplesPerPixel() * (image.getBitsAllocated() / 8);
 };
 
 
