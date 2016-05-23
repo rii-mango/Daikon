@@ -237,7 +237,7 @@ daikon.Series.orderByTime = function (images, numFrames, sliceDir, hasImagePosit
                     timeBySliceMap.put(sliceMarker, slice);
                 }
 
-                slice.put(imageNum, images[ctr]);
+                slice.put(ctr, images[ctr]);
             }
         }
 
