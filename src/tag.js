@@ -326,9 +326,13 @@ daikon.Tag.getDateStringValue = function (rawData) {
     for (ctr = 0; ctr < stringData.length; ctr += 1) {
         if (dotFormat) {
             parts = stringData[ctr].split('.');
-            data[ctr] = new Date(daikon.Utils.safeParseInt(parts[0]),
-                daikon.Utils.safeParseInt(parts[1]) - 1,
-                daikon.Utils.safeParseInt(parts[2]));
+            if (parts.length === 3) {
+                data[ctr] = new Date(daikon.Utils.safeParseInt(parts[0]),
+                    daikon.Utils.safeParseInt(parts[1]) - 1,
+                    daikon.Utils.safeParseInt(parts[2]));
+            } else {
+                data[ctr] = new Date();
+            }
         } else if (stringData[ctr].length === 8) {
             data[ctr] = new Date(daikon.Utils.safeParseInt(stringData[ctr].substring(0, 4)),
                 daikon.Utils.safeParseInt(stringData[ctr].substring(4, 6)) - 1,
