@@ -72,6 +72,11 @@ daikon.Siemens.prototype.readHeaderAtOffset = function (offset) {
     this.output += '\n';
 
     numTags = daikon.Utils.swap32(this.data.getUint32(offset));
+
+    if ((numTags < 1) || (numTags > 128)) {
+        return this.output;
+    }
+
     offset += 4;
 
     offset += 4; // unused
