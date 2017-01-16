@@ -17551,7 +17551,13 @@ daikon.Image.prototype.putFlattenedTag = function (tags, tag) {
  * @returns {daikon.Tag}
  */
 daikon.Image.prototype.getTag = function (group, element) {
-    return this.tagsFlat[daikon.Tag.createId(group, element)];
+    var tagId = daikon.Tag.createId(group, element);
+
+    if (this.tags[tagId]) {
+        return this.tags[tagId];
+    }
+
+    return this.tagsFlat[tagId];
 };
 
 
