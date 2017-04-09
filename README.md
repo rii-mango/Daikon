@@ -11,7 +11,7 @@ Daikon is a pure JavaScript DICOM reader.  Here are some of its features:
 - Supports Siemens "Mosaic" image data.
 - Parses Siemens CSA header.
 
-###Supported Transfer Syntax
+### Supported Transfer Syntax
 
 Uncompressed:
 - 1.2.840.10008.1.2 (Implicit VR Little Endian)
@@ -29,10 +29,10 @@ Compressed:
 - 1.2.840.10008.1.2.5 (RLE Lossless)
 
 
-###Usage
+### Usage
 [API](https://github.com/rii-mango/Daikon/wiki/API) and [more examples](https://github.com/rii-mango/Daikon/tree/master/tests)
 
-####Simple Example
+#### Simple Example
 ```javascript
 daikon.Parser.verbose = true;
 var image = daikon.Series.parseImage(data);
@@ -42,7 +42,7 @@ var interpretedData = image.getInterpretedData();  // Float32Array (handles byte
 //var interpretedData = image.getInterpretedData(false, true);  // Object with properties: data, min, max, minIndex, maxIndex, numCols, numRows
 ```
 
-####Series Example
+#### Series Example
 ```javascript
 var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
@@ -80,10 +80,10 @@ series.concatenateImageData(null, function (imageData) {
     console.log("Total image data size is " + imageData.byteLength + " bytes");
 });
 ```
-####Browser
+#### Browser
 See [tests/browser.html](https://github.com/rii-mango/Daikon/blob/master/tests/browser.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
-###Install
+### Install
 Get a packaged source file:
 
 * [daikon.js](https://raw.githubusercontent.com/rii-mango/Daikon/master/release/current/daikon.js)
@@ -101,19 +101,19 @@ Or install via [Bower](http://bower.io/):
 bower install daikon
 ```
 
-###Testing
+### Testing
 ```
 npm test
 ```
 
-###Building
+### Building
 See the [release folder](https://github.com/rii-mango/Daikon/tree/master/release) for the latest builds or build it yourself using:
 ```
 npm run build
 ```
 This will output daikon.js and daikon-min.js to build/.
 
-###Acknowledgments
+### Acknowledgments
 Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support as well as the following third-party libraries:
 - [g-squared](https://github.com/g-squared/cornerstoneWADOImageLoader) for JPEG Baseline support.
 - [image-JPEG2000](https://github.com/OHIF/image-JPEG2000) for JPEG 2000 support.
