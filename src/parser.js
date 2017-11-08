@@ -29,6 +29,8 @@ daikon.Parser = daikon.Parser || function () {
     this.metaFinished = false;
     this.metaFinishedOffset = -1;
     this.needsDeflate = false;
+    this.inflated = null;
+    this.level = 0;
     this.error = null;
 };
 
@@ -57,6 +59,8 @@ daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS = "1.2.840.10008.1.2.4.5
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1 = "1.2.840.10008.1.2.4.70";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT = "1.2.840.10008.1.2.4.50";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT = "1.2.840.10008.1.2.4.51";
+daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LS_LOSSLESS = "1.2.840.10008.1.2.4.80";
+daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LS = "1.2.840.10008.1.2.4.81";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS = "1.2.840.10008.1.2.4.90";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000 = "1.2.840.10008.1.2.4.91";
 daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_RLE = "1.2.840.10008.1.2.5";
@@ -114,7 +118,8 @@ daikon.Parser.prototype.parse = function (data) {
                 this.needsDeflate = false;
                 copyMeta = data.buffer.slice(0, tag.offsetEnd);
                 copyDeflated = data.buffer.slice(tag.offsetEnd);
-                data = new DataView(daikon.Utils.concatArrayBuffers(copyMeta, pako.inflateRaw(copyDeflated)));
+                this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, pako.inflateRaw(copyDeflated));
+                data = new DataView(this.inflated);
             }
 
             tag = this.getNextTag(data, tag.offsetEnd);
@@ -239,8 +244,8 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
     offsetValue = offset;
 
-    if (vr === 'SQ') {
-        value = this.parseSublist(data, offset, length);
+    if ((vr === 'SQ') || ((this.level > 0) && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
+        value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
             length = value[value.length - 1].offsetEnd - offset;
@@ -282,36 +287,40 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
 
 
-daikon.Parser.prototype.parseSublist = function (data, offset, length) {
+daikon.Parser.prototype.parseSublist = function (data, offset, length, raw) {
     var sublistItem,
         offsetEnd = offset + length,
         tags = [];
 
+    this.level++;
+
     if (length === daikon.Parser.UNDEFINED_LENGTH) {
-        sublistItem = this.parseSublistItem(data, offset);
+        sublistItem = this.parseSublistItem(data, offset, raw);
 
         while (!sublistItem.isSequenceDelim()) {
             tags.push(sublistItem);
             offset = sublistItem.offsetEnd;
-            sublistItem = this.parseSublistItem(data, offset);
+            sublistItem = this.parseSublistItem(data, offset, raw);
         }
 
         tags.push(sublistItem);
     } else {
         while (offset < offsetEnd) {
-            sublistItem = this.parseSublistItem(data, offset);
+            sublistItem = this.parseSublistItem(data, offset, raw);
             tags.push(sublistItem);
             offset = sublistItem.offsetEnd;
         }
     }
+
+    this.level--;
 
     return tags;
 };
 
 
 
-daikon.Parser.prototype.parseSublistItem = function (data, offset) {
-    var group, element, length, offsetEnd, tag, offsetStart = offset, offsetValue, sublistItemTag, tags = [];
+daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
+    var group, element, length, offsetEnd, tag, offsetStart = offset, value = null, offsetValue, sublistItemTag, tags = [];
 
     group = data.getUint16(offset, this.littleEndian);
     offset += 2;
@@ -335,6 +344,9 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset) {
 
         tags.push(tag);
         offset = tag.offsetEnd;
+    } else if (raw) {
+        value = data.buffer.slice(offset, offset + length);
+        offset = offset + length;
     } else {
         offsetEnd = offset + length;
 
@@ -345,7 +357,7 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset) {
         }
     }
 
-    sublistItemTag = new daikon.Tag(group, element, null, tags, offsetStart, offsetValue, offset, this.littleEndian);
+    sublistItemTag = new daikon.Tag(group, element, null, value || tags, offsetStart, offsetValue, offset, this.littleEndian);
 
     return sublistItemTag;
 };

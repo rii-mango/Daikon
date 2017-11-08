@@ -227,6 +227,21 @@ daikon.Utils.isString = function (s) {
 
 
 
+// http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
+daikon.Utils.isValidDate = function(d) {
+    if (Object.prototype.toString.call(d) === "[object Date]") {
+        if (isNaN(d.getTime())) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+};
+
+
+
 daikon.Utils.swap32 = function (val) {
     /*jslint bitwise: true */
     return ((val & 0xFF) << 24) | ((val & 0xFF00) << 8) | ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF);

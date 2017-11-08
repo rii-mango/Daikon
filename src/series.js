@@ -60,6 +60,10 @@ daikon.Series.parseImage = function (data) {
         return null;
     }
 
+    if (parser.inflated) {
+        image.inflated = parser.inflated;
+    }
+
     return image;
 };
 
@@ -465,7 +469,7 @@ daikon.Series.prototype.concatenateImageData = function (progressMeter, onFinish
     buffer = new Uint8Array(new ArrayBuffer(length * this.images.length));
     buffer.set(new Uint8Array(data, 0, length), 0);
 
-    setTimeout(this.concatenateNextImageData(buffer, length, progressMeter, 1, onFinishedImageRead), 0);
+    setTimeout(daikon.Utils.bind(this, function() { this.concatenateNextImageData(buffer, length, progressMeter, 1, onFinishedImageRead)}), 0);
 };
 
 

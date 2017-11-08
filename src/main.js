@@ -32,6 +32,9 @@ var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('..
 
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
 
+var CharLS = CharLS || ((typeof require !== 'undefined') ? require('../lib/charLS-DynamicMemory-browser.js') : null);
+var JpegLSDecoder = JpegLSDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-ls.js') : null);
+
 var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
 
 /*** Exports ***/

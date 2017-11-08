@@ -340,6 +340,10 @@ daikon.Tag.getDateStringValue = function (rawData) {
         } else {
             data[ctr] = Date.parse(stringData[ctr]);
         }
+
+        if (!daikon.Utils.isValidDate(data[ctr])) {
+            data[ctr] = stringData[ctr];
+        }
     }
 
     return data;
@@ -385,6 +389,10 @@ daikon.Tag.getDateTimeStringValue = function (rawData) {
             data[ctr] = new Date(year, month, date, hours, minutes, seconds);
         } else {
             data[ctr] = Date.parse(stringData[ctr]);
+        }
+
+        if (!daikon.Utils.isValidDate(data[ctr])) {
+            data[ctr] = stringData[ctr];
         }
     }
 

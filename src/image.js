@@ -14,6 +14,7 @@ daikon.RLE = daikon.RLE || ((typeof require !== 'undefined') ? require('./rle.js
 var jpeg = ((typeof require !== 'undefined') ? require('jpeg-lossless-decoder-js') : null);
 var JpegDecoder = JpegDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-baseline.js').JpegImage : null);
 var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/jpx.js') : null);
+var JpegLSDecoder = JpegLSDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-ls.js') : null);
 
 
 /*** Constructor ***/
@@ -54,6 +55,9 @@ daikon.Image.BYTE_TYPE_RGB = 6;
 
 
 /*** Static Methods ***/
+
+daikon.Image.skipPaletteConversion = false;
+
 
 daikon.Image.getSingleValueSafely = function (tag, index) {
     if (tag && tag.value) {
@@ -535,7 +539,7 @@ daikon.Image.prototype.getPixelDataBytes = function () {
         this.decompress();
     }
 
-    if (this.isPalette()) {
+    if (this.isPalette() && !daikon.Image.skipPaletteConversion) {
         this.convertPalette();
     }
 
@@ -667,6 +671,35 @@ daikon.Image.prototype.convertPalette = function () {
 
 
 
+daikon.Image.prototype.decompressJPEG = function (jpg) {
+    if (this.isCompressedJPEGLossless()) {
+        var decoder = new jpeg.lossless.Decoder();
+        return decoder.decode(jpg);
+    } else if (this.isCompressedJPEGBaseline()) {
+        var decoder = new JpegDecoder();
+        decoder.parse(new Uint8Array(jpg));
+        var width = decoder.width;
+        var height = decoder.height;
+
+        var decoded;
+        if (this.getBitsAllocated() === 8) {
+            decoded = decoder.getData(width, height);
+        } else if (this.getBitsAllocated() === 16) {
+            decoded = decoder.getData16(width, height);
+        }
+
+        return decoded;
+    } else if (this.isCompressedJPEG2000()) {
+        var decoder = new JpxImage();
+        decoder.parse(new Uint8Array(jpg));
+        return decoder.tiles[0].items;
+    } else if (this.isCompressedJPEGLS()) {
+        var decoder = new JpegLSDecoder();
+        return decoder.decodeJPEGLS(new Uint8Array(jpg), this.getDataType() === daikon.Image.BYTE_TYPE_INTEGER);
+    }
+};
+
+
 
 daikon.Image.prototype.decompress = function () {
     var jpegs, rle, decoder, decompressed, numFrames, frameSize, temp, ctr, width, height, numComponents, decoded;
@@ -733,6 +766,28 @@ daikon.Image.prototype.decompress = function () {
                 height = decoder.height;
                 decoded = decoder.tiles[0].items;
                 numComponents = decoder.componentsCount;
+
+                if (decompressed === null) {
+                    decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
+                }
+
+                daikon.Utils.fillBuffer(decoded, decompressed, (ctr * frameSize * numComponents),
+                    parseInt(Math.ceil(this.getBitsAllocated() / 8)));
+
+                decoded = null;
+            }
+
+            this.tags[daikon.Tag.createId(daikon.Tag.TAG_PIXEL_DATA[0], daikon.Tag.TAG_PIXEL_DATA[1])].value = decompressed;
+        } else if (this.isCompressedJPEGLS()) {
+            jpegs = this.getJpegs();
+
+            for (ctr = 0; ctr < jpegs.length; ctr+=1) {
+                decoder = new JpegLSDecoder();
+                var decoded = decoder.decodeJPEGLS(new Uint8Array(jpegs[ctr]), this.getDataType() === daikon.Image.BYTE_TYPE_INTEGER);
+                width = decoded.columns;
+                height = decoded.rows;
+                decoded = decoded.pixelData;
+                numComponents = this.getNumberOfSamplesPerPixel();
 
                 if (decompressed === null) {
                     decompressed = new DataView(new ArrayBuffer(frameSize * numFrames * numComponents));
@@ -1111,6 +1166,25 @@ daikon.Image.prototype.isCompressedJPEG2000 = function() {
     if (transferSyntax) {
         if ((transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000) !== -1) ||
             (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS) !== -1)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+
+/**
+ * Returns true if this image stores JPEG-LS data.
+ * @returns {boolean}
+ */
+daikon.Image.prototype.isCompressedJPEGLS = function() {
+    daikon.Parser = daikon.Parser || ((typeof require !== 'undefined') ? require('./parser.js') : null);
+
+    var transferSyntax = this.getTransferSyntax();
+    if (transferSyntax) {
+        if ((transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LS) !== -1) ||
+            (transferSyntax.indexOf(daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LS_LOSSLESS) !== -1)) {
             return true;
         }
     }
