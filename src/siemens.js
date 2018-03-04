@@ -40,31 +40,27 @@ daikon.Siemens.GROUP_CSA = 0x029;
 daikon.Siemens.prototype.readHeader = function () {
     /*jslint bitwise: true */
 
-    var returnVal, ctr, match;
-
-    this.output += "<pre>";
+    var ctr, match;
 
     try {
-        match = true;
         if (this.data.byteLength > daikon.Siemens.CSA2_MAGIC_NUMBER.length) {
+            match = true;
+
             for (ctr = 0; ctr < daikon.Siemens.CSA2_MAGIC_NUMBER.length; ctr += 1) {
                 match &= (this.data.getUint8(ctr) === daikon.Siemens.CSA2_MAGIC_NUMBER[ctr]);
             }
 
             if (match) {
-                returnVal = this.readHeaderAtOffset(daikon.Siemens.CSA2_MAGIC_NUMBER.length + 4);
+                this.readHeaderAtOffset(daikon.Siemens.CSA2_MAGIC_NUMBER.length + 4);
             } else {
-                returnVal = this.readHeaderAtOffset(0);
+                this.readHeaderAtOffset(0);
             }
         }
-
     } catch (error) {
         console.log(error);
     }
 
-    this.output += "</pre>";
-
-    return returnVal;
+    return this.output;
 };
 
 

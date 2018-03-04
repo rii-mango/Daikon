@@ -33,6 +33,7 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
     this.offsetValue = offsetValue;
     this.offsetEnd = offsetEnd;
     this.sublist = false;
+    this.preformatted = false;
     this.id = daikon.Tag.createId(group, element);
 
     if (value instanceof Array) {
@@ -44,6 +45,7 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
 
         if ((this.value === dv) && this.isPrivateData()) {
             this.value = daikon.Tag.convertPrivateValue(group, element, dv);
+            this.preformatted = (this.value !== dv);
         }
     } else {
         this.value = null;
@@ -615,7 +617,11 @@ daikon.Tag.prototype.toString = function (level, html) {
     } else if (!this.value) {
         valueStr = '';
     } else {
-        valueStr = '[' + this.value + ']';
+        if (html && this.preformatted) {
+            valueStr = "[<pre>"+this.value +"</pre>]";
+        } else {
+            valueStr = '[' + this.value + ']';
+        }
     }
 
     if (this.isSublistItem()) {
