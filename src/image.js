@@ -560,18 +560,23 @@ daikon.Image.prototype.getRawData = function () {
  * Returns interpreted pixel data (considers datatype, byte order, data scales).
  * @param {boolean} asArray - if true, the returned data is a JavaScript Array
  * @param {boolean} asObject - if true, an object is returned with properties: data, min, max, minIndex, maxIndex, numCols, numRows
+ * @param {number} frameIndex - if provided, only the desired frame in a multi-frame dataset is returned
  * @returns {Float32Array|Array|object}
  */
-daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
+daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIndex) {
     var datatype, numBytes, numElements, dataView, data, ctr, mask, slope, intercept, min, max, value, minIndex,
-        maxIndex, littleEndian, rawValue, rawData;
+        maxIndex, littleEndian, rawValue, rawData, allFrames, elementsPerFrame, totalElements, offset, dataCtr;
+    allFrames = arguments.length < 3;
     mask = daikon.Utils.createBitMask(this.getBitsAllocated() / 8, this.getBitsStored(),
         this.getDataType() === daikon.Image.BYTE_TYPE_INTEGER_UNSIGNED);
     datatype = this.getDataType();
     numBytes = this.getBitsAllocated() / 8;
     rawData = this.getRawData();
     dataView = new DataView(rawData);
-    numElements = rawData.byteLength / numBytes;
+    totalElements = rawData.byteLength / numBytes;
+    elementsPerFrame = totalElements / this.getNumberOfFrames();
+    numElements = allFrames ? totalElements : elementsPerFrame;
+    offset = allFrames ? 0 : frameIndex * elementsPerFrame;
     slope = this.getDataScaleSlope() || 1;
     intercept = this.getDataScaleIntercept() || 0;
     min = daikon.Utils.MAX_VALUE;
@@ -586,7 +591,7 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
         data = new Float32Array(numElements);
     }
 
-    for (ctr = 0; ctr < numElements; ctr += 1) {
+    for (ctr = offset, dataCtr = 0; dataCtr < numElements; ctr++, dataCtr++) {
         if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
             if (numBytes === 1) {
                 rawValue = dataView.getInt8(ctr * numBytes);
@@ -602,16 +607,16 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
         }
 
         value = ((rawValue & mask) * slope) + intercept;
-        data[ctr] = value;
+        data[dataCtr] = value;
 
         if (value < min) {
             min = value;
-            minIndex = ctr;
+            minIndex = dataCtr;
         }
 
         if (value > max) {
             max = value;
-            maxIndex = ctr;
+            maxIndex = dataCtr;
         }
     }
 
