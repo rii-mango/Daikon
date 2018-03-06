@@ -581,7 +581,7 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject) {
     littleEndian = this.littleEndian;
 
     if (asArray) {
-        data = [];
+        data = new Array(numElements);
     } else {
         data = new Float32Array(numElements);
     }
