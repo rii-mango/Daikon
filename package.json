@@ -7,14 +7,14 @@
     "test": "tests"
   },
   "dependencies": {
-    "pako": "*",
-    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
+    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git",
+    "pako": "^1.0.6"
   },
   "devDependencies": {
-    "mocha": "*",
-    "browserify": "*",
-    "uglifyjs": "*",
-    "jsdoc-to-markdown": "*"
+    "browserify": "^16.1.1",
+    "jsdoc-to-markdown": "^4.0.1",
+    "mocha": "^5.0.5",
+    "uglifyjs": "^2.4.11"
   },
   "scripts": {
     "test": "mocha --timeout 0 tests",
