@@ -119,3 +119,6 @@ This will output daikon.js and daikon-min.js to build/.
 Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support as well as the following third-party libraries:
 - [g-squared](https://github.com/g-squared/cornerstoneWADOImageLoader) for JPEG Baseline support.
 - [image-JPEG2000](https://github.com/OHIF/image-JPEG2000) for JPEG 2000 support.
+
+Also thanks to these contributors:
+- [DLiblik](https://github.com/DLiblik)
