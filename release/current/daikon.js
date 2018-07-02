@@ -20505,7 +20505,18 @@ daikon.Series = daikon.Series || function () {
 
 /*** Static fields ***/
 daikon.Series.parserError = null;
+
+/**
+ * True to keep original order of images, ignoring metadata-based ordering.
+ * @type {boolean}
+ */
 daikon.Series.useExplicitOrdering = false;
+
+/**
+ * A hint to software to use this explicit distance (mm) between slices (see daikon.Series.useExplicitOrdering)
+ * @type {number}
+ */
+daikon.Series.useExplicitSpacing = 0;
 
 
 /*** Static Methods ***/
