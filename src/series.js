@@ -40,6 +40,7 @@ daikon.Series = daikon.Series || function () {
 
 /*** Static fields ***/
 daikon.Series.parserError = null;
+daikon.Series.useExplicitOrdering = false;
 
 
 /*** Static Methods ***/
@@ -404,7 +405,12 @@ daikon.Series.prototype.buildSeries = function () {
     }
 
     this.sliceDir = this.images[0].getAcquiredSliceDirection();
-    orderedImages = daikon.Series.orderDicoms(this.images, this.numberOfFrames, this.sliceDir);
+
+    if (daikon.Series.useExplicitOrdering) {
+        orderedImages = this.images.slice();
+    } else {
+        orderedImages = daikon.Series.orderDicoms(this.images, this.numberOfFrames, this.sliceDir);
+    }
 
     sliceLocationFirst = orderedImages[0].getImagePositionSliceDir(this.sliceDir);
     sliceLocationLast = orderedImages[orderedImages.length - 1].getImagePositionSliceDir(this.sliceDir);
