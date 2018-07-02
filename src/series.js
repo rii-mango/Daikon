@@ -427,7 +427,9 @@ daikon.Series.prototype.buildSeries = function () {
     sliceLocationLast = orderedImages[orderedImages.length - 1].getImagePositionSliceDir(this.sliceDir);
     sliceLocDiff = sliceLocationLast - sliceLocationFirst;
 
-    if (this.isMosaic) {
+    if (daikon.Series.useExplicitOrdering) {
+        this.sliceSense = false;
+    } else if (this.isMosaic) {
         this.sliceSense = true;
     } else if (this.isMultiFrame) {
         sliceLocations = orderedImages[0].getSliceLocationVector();
