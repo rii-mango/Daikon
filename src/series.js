@@ -47,6 +47,12 @@ daikon.Series.parserError = null;
  */
 daikon.Series.useExplicitOrdering = false;
 
+/**
+ * A hint to software to use this explicit distance (mm) between slices (see daikon.Series.useExplicitOrdering)
+ * @type {number}
+ */
+daikon.Series.useExplicitSpacing = 0;
+
 
 /*** Static Methods ***/
 
