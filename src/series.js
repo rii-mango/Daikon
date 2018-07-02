@@ -40,6 +40,11 @@ daikon.Series = daikon.Series || function () {
 
 /*** Static fields ***/
 daikon.Series.parserError = null;
+
+/**
+ * True to keep original order of images, ignoring metadata-based ordering.
+ * @type {boolean}
+ */
 daikon.Series.useExplicitOrdering = false;
 
 
