@@ -18229,7 +18229,7 @@ daikon.Image.prototype.getImagePosition = function () {
  */
 daikon.Image.prototype.getImageDirections = function () {
     return daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_ORIENTATION[0], daikon.Tag.TAG_IMAGE_ORIENTATION[1]))
-}
+};
 
 
 /**
@@ -18248,6 +18248,14 @@ daikon.Image.prototype.getImagePositionSliceDir = function (sliceDir) {
     return 0;
 };
 
+
+/**
+ * Returns the modality
+ * @returns {string}
+ */
+daikon.Image.prototype.getModality = function () {
+    return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_MODALITY[0], daikon.Tag.TAG_MODALITY[1]), 0);
+};
 
 
 /**
@@ -20498,6 +20506,18 @@ daikon.Series = daikon.Series || function () {
 /*** Static fields ***/
 daikon.Series.parserError = null;
 
+/**
+ * True to keep original order of images, ignoring metadata-based ordering.
+ * @type {boolean}
+ */
+daikon.Series.useExplicitOrdering = false;
+
+/**
+ * A hint to software to use this explicit distance (mm) between slices (see daikon.Series.useExplicitOrdering)
+ * @type {number}
+ */
+daikon.Series.useExplicitSpacing = 0;
+
 
 /*** Static Methods ***/
 
@@ -20861,13 +20881,20 @@ daikon.Series.prototype.buildSeries = function () {
     }
 
     this.sliceDir = this.images[0].getAcquiredSliceDirection();
-    orderedImages = daikon.Series.orderDicoms(this.images, this.numberOfFrames, this.sliceDir);
+
+    if (daikon.Series.useExplicitOrdering) {
+        orderedImages = this.images.slice();
+    } else {
+        orderedImages = daikon.Series.orderDicoms(this.images, this.numberOfFrames, this.sliceDir);
+    }
 
     sliceLocationFirst = orderedImages[0].getImagePositionSliceDir(this.sliceDir);
     sliceLocationLast = orderedImages[orderedImages.length - 1].getImagePositionSliceDir(this.sliceDir);
     sliceLocDiff = sliceLocationLast - sliceLocationFirst;
 
-    if (this.isMosaic) {
+    if (daikon.Series.useExplicitOrdering) {
+        this.sliceSense = false;
+    } else if (this.isMosaic) {
         this.sliceSense = true;
     } else if (this.isMultiFrame) {
         sliceLocations = orderedImages[0].getSliceLocationVector();
@@ -21468,6 +21495,10 @@ daikon.Tag.getUnsignedInteger32 = function (rawData, littleEndian) {
 
 daikon.Tag.getFloat64 = function (rawData, littleEndian) {
     var data, mul, ctr;
+
+    if (rawData.byteLength < 8) {
+        return 0;
+    }
 
     mul = rawData.byteLength / 8;
     data = [];

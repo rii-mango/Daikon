@@ -185,7 +185,7 @@ daikon.Image.prototype.getImagePosition = function () {
  */
 daikon.Image.prototype.getImageDirections = function () {
     return daikon.Image.getValueSafely(this.getTag(daikon.Tag.TAG_IMAGE_ORIENTATION[0], daikon.Tag.TAG_IMAGE_ORIENTATION[1]))
-}
+};
 
 
 /**
@@ -204,6 +204,14 @@ daikon.Image.prototype.getImagePositionSliceDir = function (sliceDir) {
     return 0;
 };
 
+
+/**
+ * Returns the modality
+ * @returns {string}
+ */
+daikon.Image.prototype.getModality = function () {
+    return daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_MODALITY[0], daikon.Tag.TAG_MODALITY[1]), 0);
+};
 
 
 /**
