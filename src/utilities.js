@@ -16,7 +16,9 @@ daikon.Utils.crcTable = null;
 
 daikon.Utils.MAX_VALUE = 9007199254740991;
 daikon.Utils.MIN_VALUE = -9007199254740991;
-
+// daikon.Utils.utfLabel = 'gb18030';
+// daikon.Utils.utfLabel = 'utf-8';
+daikon.Utils.utfLabel = 'gbk';
 
 
 /*** Static methods ***/
@@ -42,17 +44,17 @@ daikon.Utils.createArray = function (length) {
 
 
 daikon.Utils.getStringAt = function (dataview, start, length) {
-    var str = "", ctr, ch;
+    var strBuff = [], ctr, ch;
 
     for (ctr = 0; ctr < length; ctr += 1) {
         ch = dataview.getUint8(start + ctr);
 
         if (ch !== 0) {
-            str += String.fromCharCode(ch);
+            strBuff.push(ch)
         }
     }
 
-    return str;
+    return (new TextDecoder(daikon.Utils.utfLabel)).decode(new Uint8Array(strBuff));
 };
 
 
