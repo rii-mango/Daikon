@@ -7,6 +7,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "iconv-lite": "^0.4.23",
     "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git",
     "pako": "^1.0.6"
   },

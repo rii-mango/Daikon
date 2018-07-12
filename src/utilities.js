@@ -5,6 +5,7 @@
 "use strict";
 
 /*** Imports ***/
+var iconv = require('iconv-lite');
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || {};
 
@@ -16,8 +17,9 @@ daikon.Utils.crcTable = null;
 
 daikon.Utils.MAX_VALUE = 9007199254740991;
 daikon.Utils.MIN_VALUE = -9007199254740991;
-// daikon.Utils.utfLabel = 'gb18030';
+//daikon.Utils.utfLabel = 'gb18030';
 // daikon.Utils.utfLabel = 'utf-8';
+//daikon.Utils.utfLabel = 'big5';
 daikon.Utils.utfLabel = 'gbk';
 
 
@@ -54,7 +56,7 @@ daikon.Utils.getStringAt = function (dataview, start, length) {
         }
     }
 
-    return (new TextDecoder(daikon.Utils.utfLabel)).decode(new Uint8Array(strBuff));
+    return iconv.decode(Buffer.from(strBuff), daikon.Utils.utfLabel);
 };
 
 
