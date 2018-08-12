@@ -598,7 +598,7 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
     } else {
         data = new Float32Array(numElements);
     }
-    var getWord; 
+    var getWord;
     if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
         if (numBytes === 1) {
             getWord = dataView.getInt8.bind(dataView)
@@ -610,6 +610,18 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
             getWord = dataView.getUint8.bind(dataView)
         } else if (numBytes === 2) {
             getWord = dataView.getUint16.bind(dataView)
+        }
+    }
+    
+    var lutShape = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_LUT_SHAPE[0], daikon.Tag.TAG_LUT_SHAPE[1]), 0);
+    if (lutShape === "INVERSE") {
+        var maxVal = Math.pow(2, this.getBitsStored());
+        if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
+            maxVal /= 2;
+        }
+        var originalGetWord = getWord;
+        getWord = function(offset, endian) { 
+            return (maxVal - originalGetWord(offset, endian)); 
         }
     }
 
