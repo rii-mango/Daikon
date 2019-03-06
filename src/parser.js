@@ -172,7 +172,7 @@ daikon.Parser.prototype.testForValidTag = function (data) {
 
     try {
         offset = this.findFirstTagOffset(data);
-        tag = this.getNextTag(data, offset, true);
+        tag = this.getNextTag(data, offset, false);
     } catch (err) {
         this.error = err;
     }
