@@ -410,45 +410,51 @@ daikon.Tag.getDateTimeStringValue = function (rawData) {
 
 
 
-daikon.Tag.getTimeStringValue = function (rawData) {
+daikon.Tag.getTimeStringValue = function (rawData, ms) {
     var stringData = daikon.Tag.getStringValue(rawData),
-        data = [],
-        parts = null,
-        ctr,
-        hours = 0,
-        minutes = 0,
-        seconds = 0;
+    data = [];
 
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        if (stringData[ctr].indexOf(':') !== -1) {
-            parts = stringData[ctr].split(':');
-            hours = daikon.Utils.safeParseInt(parts[0]);
+    if (ms) {
+        var parts = null,
+            ctr,
+            hours = 0,
+            minutes = 0,
+            seconds = 0;
 
-            if (parts.length > 1) {
-                minutes = daikon.Utils.safeParseInt(parts[1]);
+        for (ctr = 0; ctr < stringData.length; ctr += 1) {
+            if (stringData[ctr].indexOf(':') !== -1) {
+                parts = stringData[ctr].split(':');
+                hours = daikon.Utils.safeParseInt(parts[0]);
+
+                if (parts.length > 1) {
+                    minutes = daikon.Utils.safeParseInt(parts[1]);
+                }
+
+                if (parts.length > 2) {
+                    seconds = daikon.Utils.safeParseFloat(parts[2]);
+                }
+            } else {
+                if (stringData[ctr].length >= 2) {
+                    hours = daikon.Utils.safeParseInt(stringData[ctr].substring(0, 2));
+                }
+
+                if (stringData[ctr].length >= 4) {
+                    minutes = daikon.Utils.safeParseInt(stringData[ctr].substring(2, 4));
+                }
+
+                if (stringData[ctr].length >= 6) {
+                    seconds = daikon.Utils.safeParseFloat(stringData[ctr].substring(4));
+                }
             }
 
-            if (parts.length > 2) {
-                seconds = daikon.Utils.safeParseFloat(parts[2]);
-            }
-        } else {
-            if (stringData[ctr].length >= 2) {
-                hours = daikon.Utils.safeParseInt(stringData[ctr].substring(0, 2));
-            }
-
-            if (stringData[ctr].length >= 4) {
-                minutes = daikon.Utils.safeParseInt(stringData[ctr].substring(2, 4));
-            }
-
-            if (stringData[ctr].length >= 6) {
-                seconds = daikon.Utils.safeParseFloat(stringData[ctr].substring(4));
-            }
+            data[ctr] = Math.round((hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000));
         }
 
-        data[ctr] = Math.round((hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000));
+        return data;
     }
 
-    return data;
+
+    return stringData;
 };
 
 
