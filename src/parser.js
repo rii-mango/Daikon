@@ -172,7 +172,7 @@ daikon.Parser.prototype.testForValidTag = function (data) {
 
     try {
         offset = this.findFirstTagOffset(data);
-        tag = this.getNextTag(data, offset, true);
+        tag = this.getNextTag(data, offset, false);
     } catch (err) {
         this.error = err;
     }
@@ -372,7 +372,7 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
 daikon.Parser.prototype.findFirstTagOffset = function (data) {
     var offset = 0,
         magicCookieLength = daikon.Parser.MAGIC_COOKIE.length,
-        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 2,
+        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 5,
         found = false,
         ctr = 0,
         ctrIn = 0,
@@ -382,7 +382,7 @@ daikon.Parser.prototype.findFirstTagOffset = function (data) {
         offset = daikon.Parser.MAGIC_COOKIE_OFFSET + magicCookieLength;
     } else {
         for (ctr = 0; ctr < searchOffsetMax; ctr += 1) {
-            ch = data.getUint8(offset);
+            ch = data.getUint8(ctr);
             if (ch === daikon.Parser.MAGIC_COOKIE[0]) {
                 found = true;
                 for (ctrIn = 1; ctrIn < magicCookieLength; ctrIn += 1) {
@@ -392,7 +392,7 @@ daikon.Parser.prototype.findFirstTagOffset = function (data) {
                 }
 
                 if (found) {
-                    offset = ctr;
+                    offset = ctr + magicCookieLength;
                     break;
                 }
             }
