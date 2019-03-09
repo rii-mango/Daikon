@@ -625,7 +625,7 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
         }
         var originalGetWord = getWord;
         getWord = function(offset, endian) { 
-            const val = maxVal - originalGetWord(offset, endian);
+            var val = maxVal - originalGetWord(offset, endian);
             return Math.min(maxVal, Math.max(minVal, val)); 
         }
     }
