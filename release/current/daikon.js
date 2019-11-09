@@ -18642,21 +18642,40 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
     } else {
         data = new Float32Array(numElements);
     }
+    var getWord;
+    if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
+        if (numBytes === 1) {
+            getWord = dataView.getInt8.bind(dataView)
+        } else if (numBytes === 2) {
+            getWord = dataView.getInt16.bind(dataView)
+        }
+    } else if (datatype === daikon.Image.BYTE_TYPE_INTEGER_UNSIGNED) {
+        if (numBytes === 1) {
+            getWord = dataView.getUint8.bind(dataView)
+        } else if (numBytes === 2) {
+            getWord = dataView.getUint16.bind(dataView)
+        }
+    }
+    
+    // invert pixel values if INVERTED xor MONOCHROME1
+    var invert = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_LUT_SHAPE[0], daikon.Tag.TAG_LUT_SHAPE[1]), 0) === "INVERSE";
+    invert = !invert && this.getPhotometricInterpretation() === "MONOCHROME1";
+    if (invert) {
+        var maxVal = Math.pow(2, this.getBitsStored()) - 1;
+        var minVal = 0;
+        if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
+            maxVal /= 2;
+            minVal = -maxVal;
+        }
+        var originalGetWord = getWord;
+        getWord = function(offset, endian) { 
+            var val = maxVal - originalGetWord(offset, endian);
+            return Math.min(maxVal, Math.max(minVal, val)); 
+        }
+    }
 
     for (ctr = offset, dataCtr = 0; dataCtr < numElements; ctr++, dataCtr++) {
-        if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
-            if (numBytes === 1) {
-                rawValue = dataView.getInt8(ctr * numBytes);
-            } else if (numBytes === 2) {
-                rawValue = dataView.getInt16(ctr * numBytes, littleEndian);
-            }
-        } else if (datatype === daikon.Image.BYTE_TYPE_INTEGER_UNSIGNED) {
-            if (numBytes === 1) {
-                rawValue = dataView.getUint8(ctr * numBytes);
-            } else if (numBytes === 2) {
-                rawValue = dataView.getUint16(ctr * numBytes, littleEndian);
-            }
-        }
+        rawValue = getWord(ctr * numBytes, littleEndian);
 
         value = ((rawValue & mask) * slope) + intercept;
         data[dataCtr] = value;
@@ -18676,7 +18695,7 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
         return {data: data, min: min, minIndex: minIndex, max: max, maxIndex: maxIndex, numCols: this.getCols(),
             numRows: this.getRows()};
     }
-
+    
     return data;
 };
 
@@ -19871,6 +19890,7 @@ daikon.Parser = daikon.Parser || function () {
     this.metaFinishedOffset = -1;
     this.needsDeflate = false;
     this.inflated = null;
+    this.encapsulation = false;
     this.level = 0;
     this.error = null;
 };
@@ -19981,6 +20001,8 @@ daikon.Parser.prototype.parse = function (data) {
 daikon.Parser.prototype.parseEncapsulated = function (data) {
     var offset = 0, tag, tags = [];
 
+    this.encapsulation = true;
+
     try {
         tag = this.getNextTag(data, offset);
 
@@ -20010,7 +20032,7 @@ daikon.Parser.prototype.testForValidTag = function (data) {
 
     try {
         offset = this.findFirstTagOffset(data);
-        tag = this.getNextTag(data, offset, true);
+        tag = this.getNextTag(data, offset, false);
     } catch (err) {
         this.error = err;
     }
@@ -20085,7 +20107,9 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
     offsetValue = offset;
 
-    if ((vr === 'SQ') || ((this.level > 0) && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
+    var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
+
+    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
         value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
@@ -20093,7 +20117,7 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
         }
     } else if ((length > 0) && !testForTag) {
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
-            if ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1])) {
+            if (isPixelData) {
                 length = (data.byteLength - offset);
             }
         }
@@ -20208,7 +20232,7 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
 daikon.Parser.prototype.findFirstTagOffset = function (data) {
     var offset = 0,
         magicCookieLength = daikon.Parser.MAGIC_COOKIE.length,
-        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 2,
+        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 5,
         found = false,
         ctr = 0,
         ctrIn = 0,
@@ -20218,7 +20242,7 @@ daikon.Parser.prototype.findFirstTagOffset = function (data) {
         offset = daikon.Parser.MAGIC_COOKIE_OFFSET + magicCookieLength;
     } else {
         for (ctr = 0; ctr < searchOffsetMax; ctr += 1) {
-            ch = data.getUint8(offset);
+            ch = data.getUint8(ctr);
             if (ch === daikon.Parser.MAGIC_COOKIE[0]) {
                 found = true;
                 for (ctrIn = 1; ctrIn < magicCookieLength; ctrIn += 1) {
@@ -20228,7 +20252,7 @@ daikon.Parser.prototype.findFirstTagOffset = function (data) {
                 }
 
                 if (found) {
-                    offset = ctr;
+                    offset = ctr + magicCookieLength;
                     break;
                 }
             }
@@ -21403,6 +21427,9 @@ daikon.Tag.TAG_IMAGE_ORIENTATION = [0x0020, 0x0037];
 daikon.Tag.TAG_IMAGE_POSITION = [0x0020, 0x0032];
 daikon.Tag.TAG_SLICE_LOCATION_VECTOR = [0x0018, 0x2005];
 
+// LUT shape
+daikon.Tag.TAG_LUT_SHAPE = [0x2050, 0x0020];
+
 // pixel data
 daikon.Tag.TAG_PIXEL_DATA = [0x7FE0, 0x0010];
 
@@ -21645,45 +21672,51 @@ daikon.Tag.getDateTimeStringValue = function (rawData) {
 
 
 
-daikon.Tag.getTimeStringValue = function (rawData) {
+daikon.Tag.getTimeStringValue = function (rawData, ms) {
     var stringData = daikon.Tag.getStringValue(rawData),
-        data = [],
-        parts = null,
-        ctr,
-        hours = 0,
-        minutes = 0,
-        seconds = 0;
+    data = [];
 
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        if (stringData[ctr].indexOf(':') !== -1) {
-            parts = stringData[ctr].split(':');
-            hours = daikon.Utils.safeParseInt(parts[0]);
+    if (ms) {
+        var parts = null,
+            ctr,
+            hours = 0,
+            minutes = 0,
+            seconds = 0;
 
-            if (parts.length > 1) {
-                minutes = daikon.Utils.safeParseInt(parts[1]);
+        for (ctr = 0; ctr < stringData.length; ctr += 1) {
+            if (stringData[ctr].indexOf(':') !== -1) {
+                parts = stringData[ctr].split(':');
+                hours = daikon.Utils.safeParseInt(parts[0]);
+
+                if (parts.length > 1) {
+                    minutes = daikon.Utils.safeParseInt(parts[1]);
+                }
+
+                if (parts.length > 2) {
+                    seconds = daikon.Utils.safeParseFloat(parts[2]);
+                }
+            } else {
+                if (stringData[ctr].length >= 2) {
+                    hours = daikon.Utils.safeParseInt(stringData[ctr].substring(0, 2));
+                }
+
+                if (stringData[ctr].length >= 4) {
+                    minutes = daikon.Utils.safeParseInt(stringData[ctr].substring(2, 4));
+                }
+
+                if (stringData[ctr].length >= 6) {
+                    seconds = daikon.Utils.safeParseFloat(stringData[ctr].substring(4));
+                }
             }
 
-            if (parts.length > 2) {
-                seconds = daikon.Utils.safeParseFloat(parts[2]);
-            }
-        } else {
-            if (stringData[ctr].length >= 2) {
-                hours = daikon.Utils.safeParseInt(stringData[ctr].substring(0, 2));
-            }
-
-            if (stringData[ctr].length >= 4) {
-                minutes = daikon.Utils.safeParseInt(stringData[ctr].substring(2, 4));
-            }
-
-            if (stringData[ctr].length >= 6) {
-                seconds = daikon.Utils.safeParseFloat(stringData[ctr].substring(4));
-            }
+            data[ctr] = Math.round((hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000));
         }
 
-        data[ctr] = Math.round((hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000));
+        return data;
     }
 
-    return data;
+
+    return stringData;
 };
 
 

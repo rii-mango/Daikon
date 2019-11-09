@@ -598,7 +598,7 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
     } else {
         data = new Float32Array(numElements);
     }
-    var getWord; 
+    var getWord;
     if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
         if (numBytes === 1) {
             getWord = dataView.getInt8.bind(dataView)
@@ -610,6 +610,23 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
             getWord = dataView.getUint8.bind(dataView)
         } else if (numBytes === 2) {
             getWord = dataView.getUint16.bind(dataView)
+        }
+    }
+    
+    // invert pixel values if INVERTED xor MONOCHROME1
+    var invert = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_LUT_SHAPE[0], daikon.Tag.TAG_LUT_SHAPE[1]), 0) === "INVERSE";
+    invert = !invert && this.getPhotometricInterpretation() === "MONOCHROME1";
+    if (invert) {
+        var maxVal = Math.pow(2, this.getBitsStored()) - 1;
+        var minVal = 0;
+        if (datatype === daikon.Image.BYTE_TYPE_INTEGER) {
+            maxVal /= 2;
+            minVal = -maxVal;
+        }
+        var originalGetWord = getWord;
+        getWord = function(offset, endian) { 
+            var val = maxVal - originalGetWord(offset, endian);
+            return Math.min(maxVal, Math.max(minVal, val)); 
         }
     }
 

@@ -30,6 +30,7 @@ daikon.Parser = daikon.Parser || function () {
     this.metaFinishedOffset = -1;
     this.needsDeflate = false;
     this.inflated = null;
+    this.encapsulation = false;
     this.level = 0;
     this.error = null;
 };
@@ -140,6 +141,8 @@ daikon.Parser.prototype.parse = function (data) {
 daikon.Parser.prototype.parseEncapsulated = function (data) {
     var offset = 0, tag, tags = [];
 
+    this.encapsulation = true;
+
     try {
         tag = this.getNextTag(data, offset);
 
@@ -169,7 +172,7 @@ daikon.Parser.prototype.testForValidTag = function (data) {
 
     try {
         offset = this.findFirstTagOffset(data);
-        tag = this.getNextTag(data, offset, true);
+        tag = this.getNextTag(data, offset, false);
     } catch (err) {
         this.error = err;
     }
@@ -244,7 +247,9 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
     offsetValue = offset;
 
-    if ((vr === 'SQ') || ((this.level > 0) && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
+    var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
+
+    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
         value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
@@ -252,7 +257,7 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
         }
     } else if ((length > 0) && !testForTag) {
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
-            if ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1])) {
+            if (isPixelData) {
                 length = (data.byteLength - offset);
             }
         }
@@ -367,7 +372,7 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
 daikon.Parser.prototype.findFirstTagOffset = function (data) {
     var offset = 0,
         magicCookieLength = daikon.Parser.MAGIC_COOKIE.length,
-        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 2,
+        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 5,
         found = false,
         ctr = 0,
         ctrIn = 0,
@@ -377,7 +382,7 @@ daikon.Parser.prototype.findFirstTagOffset = function (data) {
         offset = daikon.Parser.MAGIC_COOKIE_OFFSET + magicCookieLength;
     } else {
         for (ctr = 0; ctr < searchOffsetMax; ctr += 1) {
-            ch = data.getUint8(offset);
+            ch = data.getUint8(ctr);
             if (ch === daikon.Parser.MAGIC_COOKIE[0]) {
                 found = true;
                 for (ctrIn = 1; ctrIn < magicCookieLength; ctrIn += 1) {
@@ -387,7 +392,7 @@ daikon.Parser.prototype.findFirstTagOffset = function (data) {
                 }
 
                 if (found) {
-                    offset = ctr;
+                    offset = ctr + magicCookieLength;
                     break;
                 }
             }

@@ -121,4 +121,8 @@ Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLos
 - [image-JPEG2000](https://github.com/OHIF/image-JPEG2000) for JPEG 2000 support.
 
 Also thanks to these contributors:
-- [DLiblik](https://github.com/DLiblik)
+- [@DLiblik](https://github.com/DLiblik)
+- [@nickhingston](https://github.com/nickhingston)
+
+### Disclaimer
+The authors of this software have not sought nor received approval for clinical/diagnostic use of this software library.
