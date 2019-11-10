@@ -212,7 +212,6 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
     element = data.getUint16(offset, little);
     offset += 2;
-
     if (this.explicit || !this.metaFinished) {
         vr = daikon.Utils.getStringAt(data, offset, 2);
 
@@ -266,7 +265,7 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     }
 
     offset += length;
-    tag = new daikon.Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian);
+    tag = new daikon.Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian, this.charset);
 
     if (tag.isTransformSyntax()) {
         if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
@@ -285,6 +284,16 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
         }
     } else if (tag.isMetaLength()) {
         this.metaFinishedOffset = tag.value[0] + offset;
+    } else if (tag.isCharset()) {
+        var charset = tag.value;
+        if (charset.length == 2) {
+            charset = (charset[0] || "ISO 2022 IR 6") + "\\" + charset[1];
+        }
+        else if (charset.length == 1) {
+            
+            charset = charset[0];
+        }
+        this.charset = charset;
     }
 
     return tag;

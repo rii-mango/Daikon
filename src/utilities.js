@@ -5,7 +5,7 @@
 "use strict";
 
 /*** Imports ***/
-var iconv = require('iconv-lite');
+var convertBytes = require('dicom-character-set').convertBytes;
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || {};
 
@@ -20,7 +20,9 @@ daikon.Utils.MIN_VALUE = -9007199254740991;
 //daikon.Utils.utfLabel = 'gb18030';
 // daikon.Utils.utfLabel = 'utf-8';
 //daikon.Utils.utfLabel = 'big5';
-daikon.Utils.utfLabel = 'gbk';
+// daikon.Utils.utfLabel = 'gbk';
+daikon.Utils.utfLabel = 'EUC-KR';
+
 
 
 /*** Static methods ***/
@@ -45,18 +47,25 @@ daikon.Utils.createArray = function (length) {
 };
 
 
-daikon.Utils.getStringAt = function (dataview, start, length) {
-    var strBuff = [], ctr, ch;
-
-    for (ctr = 0; ctr < length; ctr += 1) {
-        ch = dataview.getUint8(start + ctr);
-
-        if (ch !== 0) {
-            strBuff.push(ch)
-        }
+daikon.Utils.getStringAt = function (dataview, start, length, charset, vr) {
+    if (charset) {
+        // we should be able to use comnvert bytes with no charset, but this seems garbles sometimes
+        var strBuff = new Uint8Array(dataview.buffer, dataview.byteOffset + start, length);
+        return convertBytes(charset, strBuff, {vr: vr} );
     }
+    else {
+        var str = "", ctr, ch;
 
-    return iconv.decode(Buffer.from(strBuff), daikon.Utils.utfLabel);
+        for (ctr = 0; ctr < length; ctr += 1) {
+            ch = dataview.getUint8(start + ctr);
+
+            if (ch !== 0) {
+                str += String.fromCharCode(ch);
+            }
+        }
+
+        return str;
+    }
 };
 
 
