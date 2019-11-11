@@ -17,11 +17,6 @@ daikon.Utils.crcTable = null;
 
 daikon.Utils.MAX_VALUE = 9007199254740991;
 daikon.Utils.MIN_VALUE = -9007199254740991;
-//daikon.Utils.utfLabel = 'gb18030';
-// daikon.Utils.utfLabel = 'utf-8';
-//daikon.Utils.utfLabel = 'big5';
-// daikon.Utils.utfLabel = 'gbk';
-daikon.Utils.utfLabel = 'EUC-KR';
 
 
 
