@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "dicom-character-set": "git+https://github.com/nickhingston/dicom-character-set.git#dist",
+    "dicom-character-set": "git+https://github.com/nickhingston/dicom-character-set.git#v1.0.2_nodefix",
     "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git#v2.0.4",
     "pako": "^1.0.10"
   },
