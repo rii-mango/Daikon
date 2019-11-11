@@ -48,24 +48,14 @@ daikon.Utils.createArray = function (length) {
 
 
 daikon.Utils.getStringAt = function (dataview, start, length, charset, vr) {
-    if (charset) {
-        // we should be able to use comnvert bytes with no charset, but this seems garbles sometimes
-        var strBuff = new Uint8Array(dataview.buffer, dataview.byteOffset + start, length);
-        return convertBytes(charset, strBuff, {vr: vr} );
+    var strBuff = new Uint8Array(dataview.buffer, dataview.byteOffset + start, length);
+    var str = convertBytes(charset || "ISO 2022 IR 6", strBuff, {vr: vr} );
+    
+    while (str && str.charCodeAt(str.length - 1) === 0) {
+        str = str.slice(0,-1);
     }
-    else {
-        var str = "", ctr, ch;
 
-        for (ctr = 0; ctr < length; ctr += 1) {
-            ch = dataview.getUint8(start + ctr);
-
-            if (ch !== 0) {
-                str += String.fromCharCode(ch);
-            }
-        }
-
-        return str;
-    }
+    return str;
 };
 
 

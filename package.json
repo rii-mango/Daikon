@@ -13,13 +13,14 @@
   },
   "devDependencies": {
     "browserify": "^16.5.0",
+    "full-icu": "^1.3.0",
+    "icu4c-data": "^0.60.2",
     "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0",
-    "text-encoding": "^0.7.0",
     "uglifyjs": "^2.4.11"
   },
   "scripts": {
-    "test": "mocha --timeout 0 tests",
+    "test": "NODE_ICU_DATA=./node_modules/icu4c-data/ && mocha --timeout 0 tests",
     "build": "rm -rf build; mkdir build; browserify --standalone daikon src/main.js -o build/daikon.js; uglifyjs build/daikon.js -o build/daikon-min.js",
     "release": "rm release/current/*.js; cp build/*.js release/current/.",
     "doc": "rm -rf build; mkdir build; ./node_modules/.bin/jsdoc2md src/*.js > build/docs.md"
