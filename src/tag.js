@@ -555,7 +555,7 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian, charset) {
     } else if (vr === 'LO') {
         data = daikon.Tag.getStringValue(rawData, charset, vr);
     } else if (vr === 'LT') {
-        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AS_MAX_LENGTH, charset, vr);
+        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AT_MAX_LENGTH, charset, vr);
     } else if (vr === 'OB') {
         data = rawData;
     } else if (vr === 'OD') {
@@ -575,7 +575,7 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian, charset) {
     } else if (vr === 'SS') {
         data = daikon.Tag.getSignedInteger16(rawData, littleEndian);
     } else if (vr === 'ST') {
-        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AS_MAX_LENGTH, charset, vr);
+        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_ST_MAX_LENGTH, charset, vr);
     } else if (vr === 'TM') {
         data = daikon.Tag.getTimeStringValue(rawData);
     } else if (vr === 'UI') {
