@@ -268,7 +268,9 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     offset += length;
     tag = new daikon.Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian);
 
-    if (tag.isTransformSyntax()) {
+    if (tag.isTransformSyntax() && !this.transformSyntaxAlreadyExist) {
+        // 传输语法已存在
+        this.transformSyntaxAlreadyExist = true;
         if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
             this.explicit = false;
             this.littleEndian = true;
