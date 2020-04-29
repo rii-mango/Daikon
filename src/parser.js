@@ -267,33 +267,35 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     offset += length;
     tag = new daikon.Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian, this.charset);
 
-    if (tag.isTransformSyntax()) {
-        if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
-            this.explicit = false;
-            this.littleEndian = true;
-        } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_BIG) {
-            this.explicit = true;
-            this.littleEndian = false;
-        } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE) {
-            this.needsDeflate = true;
-            this.explicit = true;
-            this.littleEndian = true;
-        } else {
-            this.explicit = true;
-            this.littleEndian = true;
+    if (tag.value) {
+        if (tag.isTransformSyntax()) {
+            if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
+                this.explicit = false;
+                this.littleEndian = true;
+            } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_BIG) {
+                this.explicit = true;
+                this.littleEndian = false;
+            } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE) {
+                this.needsDeflate = true;
+                this.explicit = true;
+                this.littleEndian = true;
+            } else {
+                this.explicit = true;
+                this.littleEndian = true;
+            }
+        } else if (tag.isMetaLength()) {
+            this.metaFinishedOffset = tag.value[0] + offset;
+        } else if (tag.isCharset()) {
+            var charset = tag.value;
+            if (charset.length == 2) {
+                charset = (charset[0] || "ISO 2022 IR 6") + "\\" + charset[1];
+            }
+            else if (charset.length == 1) {
+                
+                charset = charset[0];
+            }
+            this.charset = charset;
         }
-    } else if (tag.isMetaLength()) {
-        this.metaFinishedOffset = tag.value[0] + offset;
-    } else if (tag.isCharset()) {
-        var charset = tag.value;
-        if (charset.length == 2) {
-            charset = (charset[0] || "ISO 2022 IR 6") + "\\" + charset[1];
-        }
-        else if (charset.length == 1) {
-            
-            charset = charset[0];
-        }
-        this.charset = charset;
     }
 
     return tag;
