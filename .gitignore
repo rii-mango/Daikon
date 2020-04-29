@@ -1,5 +1,6 @@
 .idea/
 .project
+.vscode/
 .DS_Store
 /build/
 .jshint*
