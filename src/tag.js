@@ -583,6 +583,8 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
         data = daikon.Tag.getUnsignedInteger16(rawData, littleEndian);
     } else if (vr === 'UT') {
         data = daikon.Tag.getSingleStringValue(rawData);
+    } else if (vr === 'UC') {
+        data = daikon.Tag.getStringValue(rawData);
     }
 
     return data;
