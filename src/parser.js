@@ -249,7 +249,7 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
     var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
 
-    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
+    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) && (vr !== 'UC'))) {
         value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
