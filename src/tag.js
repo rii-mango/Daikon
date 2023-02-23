@@ -84,6 +84,7 @@ daikon.Tag.VR_UL_MAX_LENGTH = 4;
 daikon.Tag.VR_UN_MAX_LENGTH = -1;
 daikon.Tag.VR_US_MAX_LENGTH = 2;
 daikon.Tag.VR_UT_MAX_LENGTH = -1;
+daikon.Tag.VR_UC_MAX_LENGTH = -1;
 
 // metadata
 daikon.Tag.TAG_TRANSFER_SYNTAX = [0x0002, 0x0010];
@@ -583,6 +584,8 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
         data = daikon.Tag.getUnsignedInteger16(rawData, littleEndian);
     } else if (vr === 'UT') {
         data = daikon.Tag.getSingleStringValue(rawData);
+    } else if (vr === 'UC') {
+        data = daikon.Tag.getStringValue(rawData);
     }
 
     return data;

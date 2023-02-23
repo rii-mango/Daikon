@@ -49,8 +49,8 @@ daikon.Parser.verbose = false;
 
 daikon.Parser.MAGIC_COOKIE_OFFSET = 128;
 daikon.Parser.MAGIC_COOKIE = [68, 73, 67, 77];
-daikon.Parser.VRS = ["AE", "AS", "AT", "CS", "DA", "DS", "DT", "FL", "FD", "IS", "LO", "LT", "OB", "OD", "OF", "OW", "PN", "SH", "SL", "SS", "ST", "TM", "UI", "UL", "UN", "US", "UT"];
-daikon.Parser.DATA_VRS = ["OB", "OW", "OF", "SQ", "UT", "UN"];
+daikon.Parser.VRS = ["AE", "AS", "AT", "CS", "DA", "DS", "DT", "FL", "FD", "IS", "LO", "LT", "OB", "OD", "OF", "OW", "PN", "SH", "SL", "SS", "ST", "TM", "UI", "UL", "UN", "US", "UT", "UC"];
+daikon.Parser.DATA_VRS = ["OB", "OW", "OF", "SQ", "UT", "UN", "UC"];
 daikon.Parser.RAW_DATA_VRS = ["OB", "OD", "OF", "OW", "UN"];
 daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE = "1.2.840.10008.1.2";
 daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_LITTLE = "1.2.840.10008.1.2.1";
@@ -249,7 +249,7 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
 
     var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
 
-    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
+    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) && (vr !== 'UC'))) {
         value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
