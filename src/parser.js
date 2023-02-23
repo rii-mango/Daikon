@@ -341,14 +341,14 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
     if (length === daikon.Parser.UNDEFINED_LENGTH) {
         tag = this.getNextTag(data, offset);
 
-        while (!tag.isSublistItemDelim()) {
+        while (tag && !tag.isSublistItemDelim()) {
             tags.push(tag);
             offset = tag.offsetEnd;
             tag = this.getNextTag(data, offset);
         }
 
-        tags.push(tag);
-        offset = tag.offsetEnd;
+        tag && tags.push(tag);
+        tag && (offset = tag.offsetEnd);
     } else if (raw) {
         value = data.buffer.slice(offset, offset + length);
         offset = offset + length;
