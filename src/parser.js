@@ -248,8 +248,15 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     offsetValue = offset;
 
     var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
-
-    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) && (vr !== 'UC'))) {
+    /*
+    color lookup data will be in (0028,12XX), so don't try to treat these as a sublist even though it can look like a list. Example:
+      (0028,1201) OW 0000\ffff\ffff\0000\ffff\ffff\0000\cccc\0000\0000\1e1e\0000\0101... # 512, 1 RedPaletteColorLookupTableData
+      (0028,1202) OW 0000\ffff\0000\ffff\8080\3333\ffff\b3b3\0000\0000\1e1e\0000\0101... # 512, 1 GreenPaletteColorLookupTableData
+      (0028,1203) OW 0000\0000\ffff\ffff\0000\4d4d\0000\0000\0000\0000\1e1e\0000\0101... # 512, 1 BluePaletteColorLookupTableData
+    */
+    var isLookupTableData = 0x0028 === group && element>= 0x1201 && element<0x1300;
+    
+    if ((vr === 'SQ') || (!isLookupTableData && !isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) && (vr !== 'UC'))) {
         value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {

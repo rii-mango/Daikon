@@ -123,6 +123,8 @@ Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLos
 Also thanks to these contributors:
 - [@DLiblik](https://github.com/DLiblik)
 - [@nickhingston](https://github.com/nickhingston)
+- [@suoc](https://github.com/suoc)
+- [@buddamus](https://github.com/buddamus)
 
 ### Disclaimer
 The authors of this software have not sought nor received approval for clinical/diagnostic use of this software library.
