@@ -5,7 +5,7 @@
 "use strict";
 
 /*** Imports ***/
-var convertBytes = require('dicom-character-set').convertBytes;
+var convertBytes = require('@wearemothership/dicom-character-set').convertBytes;
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || {};
 

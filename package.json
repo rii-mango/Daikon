@@ -1,13 +1,13 @@
 {
   "name": "daikon",
-  "version": "1.2.42",
+  "version": "1.2.43",
   "description": "A JavaScript DICOM reader.",
   "main": "src/main.js",
   "directories": {
     "test": "tests"
   },
   "dependencies": {
-    "dicom-character-set": "git+https://github.com/nickhingston/dicom-character-set.git#v1.0.2_nodefix",
+    "@wearemothership/dicom-character-set": "^1.0.4-opt.1",
     "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git#v2.0.4",
     "pako": "^1.0.10"
   },

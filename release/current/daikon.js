@@ -1,5 +1,5 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.daikon = f()}})(function(){var define,module,exports;return (function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
-(function (process,__dirname){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.daikon = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function (process,__dirname){(function (){
 /*! CharLS.js - v2.0.1 - 2016-06-08 | (c) 2016 Chris Hafey | https://github.com/chafey/charls */
 
 /*!
@@ -65,7 +65,7 @@ if ((moduleType !== 'undefined') && module.exports) {
     module.exports = CharLS;
 }
 
-}).call(this,require('_process'),"/lib")
+}).call(this)}).call(this,require('_process'),"/lib")
 },{"_process":33,"fs":5,"path":32}],2:[function(require,module,exports){
 /*
  Copyright 2011 notmasteryet
@@ -7611,6 +7611,22 @@ function Inflate(options) {
   this.header = new GZheader();
 
   zlib_inflate.inflateGetHeader(this.strm, this.header);
+
+  // Setup dictionary
+  if (opt.dictionary) {
+    // Convert data if needed
+    if (typeof opt.dictionary === 'string') {
+      opt.dictionary = strings.string2buf(opt.dictionary);
+    } else if (toString.call(opt.dictionary) === '[object ArrayBuffer]') {
+      opt.dictionary = new Uint8Array(opt.dictionary);
+    }
+    if (opt.raw) { //In raw mode we need to set the dictionary early
+      status = zlib_inflate.inflateSetDictionary(this.strm, opt.dictionary);
+      if (status !== c.Z_OK) {
+        throw new Error(msg[status]);
+      }
+    }
+  }
 }
 
 /**
@@ -7647,7 +7663,6 @@ Inflate.prototype.push = function (data, mode) {
   var dictionary = this.options.dictionary;
   var status, _mode;
   var next_out_utf8, tail, utf8str;
-  var dict;
 
   // Flag to properly process Z_BUF_ERROR on testing inflate call
   // when we check that all output data was flushed.
@@ -7679,17 +7694,7 @@ Inflate.prototype.push = function (data, mode) {
     status = zlib_inflate.inflate(strm, c.Z_NO_FLUSH);    /* no bad return value */
 
     if (status === c.Z_NEED_DICT && dictionary) {
-      // Convert data if needed
-      if (typeof dictionary === 'string') {
-        dict = strings.string2buf(dictionary);
-      } else if (toString.call(dictionary) === '[object ArrayBuffer]') {
-        dict = new Uint8Array(dictionary);
-      } else {
-        dict = dictionary;
-      }
-
-      status = zlib_inflate.inflateSetDictionary(this.strm, dict);
-
+      status = zlib_inflate.inflateSetDictionary(this.strm, dictionary);
     }
 
     if (status === c.Z_BUF_ERROR && allowBufError === true) {
@@ -8077,8 +8082,10 @@ exports.string2buf = function (str) {
 
 // Helper (used in 2 places)
 function buf2binstring(buf, len) {
-  // use fallback for big arrays to avoid stack overflow
-  if (len < 65537) {
+  // On Chrome, the arguments in a function call that are allowed is `65534`.
+  // If the length of the buffer is smaller than that, we can use this optimization,
+  // otherwise we will take a slower path.
+  if (len < 65534) {
     if ((buf.subarray && STR_APPLY_UIA_OK) || (!buf.subarray && STR_APPLY_OK)) {
       return String.fromCharCode.apply(null, utils.shrinkBuf(buf, len));
     }
@@ -9819,7 +9826,7 @@ function deflate(strm, flush) {
                     (!s.gzhead.extra ? 0 : 4) +
                     (!s.gzhead.name ? 0 : 8) +
                     (!s.gzhead.comment ? 0 : 16)
-                );
+        );
         put_byte(s, s.gzhead.time & 0xff);
         put_byte(s, (s.gzhead.time >> 8) & 0xff);
         put_byte(s, (s.gzhead.time >> 16) & 0xff);
@@ -12604,6 +12611,8 @@ module.exports = {
 //   misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 
+/* eslint-disable space-unary-ops */
+
 var utils = require('../utils/common');
 
 /* Public constants ==========================================================*/
@@ -13854,7 +13863,10 @@ function ZStream() {
 module.exports = ZStream;
 
 },{}],32:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
+// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13905,14 +13917,6 @@ function normalizeArray(parts, allowAboveRoot) {
 
   return parts;
 }
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
 
 // path.resolve([from ...], to)
 // posix version
@@ -14029,37 +14033,120 @@ exports.relative = function(from, to) {
 exports.sep = '/';
 exports.delimiter = ':';
 
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
   }
 
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
   }
-
-  return root + dir;
+  return path.slice(0, end);
 };
 
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
 
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
   if (ext && f.substr(-1 * ext.length) === ext) {
     f = f.substr(0, f.length - ext.length);
   }
   return f;
 };
 
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
 
-exports.extname = function(path) {
-  return splitPath(path)[3];
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
 };
 
 function filter (xs, f) {
@@ -14080,7 +14167,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":33}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -18538,6 +18625,9 @@ daikon.Image.prototype.getTR = function () {
 
 
 daikon.Image.prototype.putTag = function (tag) {
+    if (this.tags[tag.id] && this.tags[tag.id].value[0] !== tag.value[0]) {
+        return;
+    }
     this.tags[tag.id] = tag;
     this.putFlattenedTag(this.tagsFlat, tag);
 };
@@ -18657,9 +18747,9 @@ daikon.Image.prototype.getInterpretedData = function (asArray, asObject, frameIn
         }
     }
     
-    // invert pixel values if INVERTED xor MONOCHROME1
+    // invert pixel values if INVERTED or MONOCHROME1
     var invert = daikon.Image.getSingleValueSafely(this.getTag(daikon.Tag.TAG_LUT_SHAPE[0], daikon.Tag.TAG_LUT_SHAPE[1]), 0) === "INVERSE";
-    invert = !invert && this.getPhotometricInterpretation() === "MONOCHROME1";
+    invert = invert || this.getPhotometricInterpretation() === "MONOCHROME1";
     if (invert) {
         var maxVal = Math.pow(2, this.getBitsStored()) - 1;
         var minVal = 0;
@@ -19909,8 +19999,8 @@ daikon.Parser.verbose = false;
 
 daikon.Parser.MAGIC_COOKIE_OFFSET = 128;
 daikon.Parser.MAGIC_COOKIE = [68, 73, 67, 77];
-daikon.Parser.VRS = ["AE", "AS", "AT", "CS", "DA", "DS", "DT", "FL", "FD", "IS", "LO", "LT", "OB", "OD", "OF", "OW", "PN", "SH", "SL", "SS", "ST", "TM", "UI", "UL", "UN", "US", "UT"];
-daikon.Parser.DATA_VRS = ["OB", "OW", "OF", "SQ", "UT", "UN"];
+daikon.Parser.VRS = ["AE", "AS", "AT", "CS", "DA", "DS", "DT", "FL", "FD", "IS", "LO", "LT", "OB", "OD", "OF", "OW", "PN", "SH", "SL", "SS", "ST", "TM", "UI", "UL", "UN", "US", "UT", "UC"];
+daikon.Parser.DATA_VRS = ["OB", "OW", "OF", "SQ", "UT", "UN", "UC"];
 daikon.Parser.RAW_DATA_VRS = ["OB", "OD", "OF", "OW", "UN"];
 daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE = "1.2.840.10008.1.2";
 daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_LITTLE = "1.2.840.10008.1.2.1";
@@ -20108,8 +20198,15 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     offsetValue = offset;
 
     var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
-
-    if ((vr === 'SQ') || (!isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1))) {
+    /*
+    color lookup data will be in (0028,12XX), so don't try to treat these as a sublist even though it can look like a list. Example:
+      (0028,1201) OW 0000\ffff\ffff\0000\ffff\ffff\0000\cccc\0000\0000\1e1e\0000\0101... # 512, 1 RedPaletteColorLookupTableData
+      (0028,1202) OW 0000\ffff\0000\ffff\8080\3333\ffff\b3b3\0000\0000\1e1e\0000\0101... # 512, 1 GreenPaletteColorLookupTableData
+      (0028,1203) OW 0000\0000\ffff\ffff\0000\4d4d\0000\0000\0000\0000\1e1e\0000\0101... # 512, 1 BluePaletteColorLookupTableData
+    */
+    var isLookupTableData = 0x0028 === group && element>= 0x1201 && element<0x1300;
+    
+    if ((vr === 'SQ') || (!isLookupTableData && !isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) && (vr !== 'UC'))) {
         value = this.parseSublist(data, offset, length, vr !== 'SQ');
 
         if (length === daikon.Parser.UNDEFINED_LENGTH) {
@@ -20128,7 +20225,9 @@ daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
     offset += length;
     tag = new daikon.Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian);
 
-    if (tag.isTransformSyntax()) {
+    if (tag.isTransformSyntax() && !this.transformSyntaxAlreadyExist) {
+        // 传输语法已存在
+        this.transformSyntaxAlreadyExist = true;
         if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
             this.explicit = false;
             this.littleEndian = true;
@@ -20201,14 +20300,14 @@ daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
     if (length === daikon.Parser.UNDEFINED_LENGTH) {
         tag = this.getNextTag(data, offset);
 
-        while (!tag.isSublistItemDelim()) {
+        while (tag && !tag.isSublistItemDelim()) {
             tags.push(tag);
             offset = tag.offsetEnd;
             tag = this.getNextTag(data, offset);
         }
 
-        tags.push(tag);
-        offset = tag.offsetEnd;
+        tag && tags.push(tag);
+        tag && (offset = tag.offsetEnd);
     } else if (raw) {
         value = data.buffer.slice(offset, offset + length);
         offset = offset + length;
@@ -21346,6 +21445,7 @@ daikon.Tag.VR_UL_MAX_LENGTH = 4;
 daikon.Tag.VR_UN_MAX_LENGTH = -1;
 daikon.Tag.VR_US_MAX_LENGTH = 2;
 daikon.Tag.VR_UT_MAX_LENGTH = -1;
+daikon.Tag.VR_UC_MAX_LENGTH = -1;
 
 // metadata
 daikon.Tag.TAG_TRANSFER_SYNTAX = [0x0002, 0x0010];
@@ -21845,6 +21945,8 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
         data = daikon.Tag.getUnsignedInteger16(rawData, littleEndian);
     } else if (vr === 'UT') {
         data = daikon.Tag.getSingleStringValue(rawData);
+    } else if (vr === 'UC') {
+        data = daikon.Tag.getStringValue(rawData);
     }
 
     return data;
