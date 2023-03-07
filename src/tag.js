@@ -25,7 +25,7 @@ daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('
  * @property {number|number[]|string|string[]|object} value
  * @type {Function}
  */
-daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, offsetValue, offsetEnd, littleEndian) {
+daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, offsetValue, offsetEnd, littleEndian, charset) {
     this.group = group;
     this.element = element;
     this.vr = vr;
@@ -41,7 +41,7 @@ daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, off
         this.sublist = true;
     } else if (value !== null) {
         var dv = new DataView(value);
-        this.value = daikon.Tag.convertValue(vr, dv, littleEndian);
+        this.value = daikon.Tag.convertValue(vr, dv, littleEndian, charset);
 
         if ((this.value === dv) && this.isPrivateData()) {
             this.value = daikon.Tag.convertPrivateValue(group, element, dv);
@@ -134,6 +134,7 @@ daikon.Tag.TAG_WINDOW_CENTER = [0x0028, 0x1050];
 daikon.Tag.TAG_WINDOW_WIDTH = [0x0028, 0x1051];
 
 // descriptors
+daikon.Tag.TAG_SPECIFIC_CHAR_SET = [0x0008, 0x0005];
 daikon.Tag.TAG_PATIENT_NAME = [0x0010, 0x0010];
 daikon.Tag.TAG_PATIENT_ID = [0x0010, 0x0020];
 daikon.Tag.TAG_STUDY_DATE = [0x0008, 0x0020];
@@ -300,13 +301,13 @@ daikon.Tag.getDoubleElscint = function (rawData) {
 
 
 
-daikon.Tag.getFixedLengthStringValue = function (rawData, maxLength) {
+daikon.Tag.getFixedLengthStringValue = function (rawData, maxLength, charset, vr) {
     var data, mul, ctr;
 
     mul = Math.floor(rawData.byteLength / maxLength);
     data = [];
     for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = daikon.Utils.getStringAt(rawData, ctr * maxLength, maxLength);
+        data[ctr] = daikon.Utils.getStringAt(rawData, ctr * maxLength, maxLength, charset, vr);
     }
 
     return data;
@@ -314,8 +315,8 @@ daikon.Tag.getFixedLengthStringValue = function (rawData, maxLength) {
 
 
 
-daikon.Tag.getStringValue = function (rawData) {
-    var data = daikon.Utils.getStringAt(rawData, 0, rawData.byteLength).split('\\'), ctr;
+daikon.Tag.getStringValue = function (rawData, charset, vr) {
+    var data = daikon.Utils.getStringAt(rawData, 0, rawData.byteLength, charset, vr).split('\\'), ctr;
 
     for (ctr = 0; ctr < data.length; ctr += 1) {
         data[ctr] = daikon.Utils.trim(data[ctr]);
@@ -488,14 +489,18 @@ daikon.Tag.getIntegerStringValue = function (rawData) {
 
 
 
-daikon.Tag.getSingleStringValue = function (rawData) {
-    return [daikon.Utils.trim(daikon.Utils.getStringAt(rawData, 0, rawData.byteLength))];
+daikon.Tag.getSingleStringValue = function (rawData, maxLength, charset, vr) {
+    var len = rawData.byteLength;
+    if (maxLength) {
+        len = Math.min(rawData.byteLength, maxLength);
+    }
+    return [daikon.Utils.trim(daikon.Utils.getStringAt(rawData, 0, len, charset, vr))];
 };
 
 
 
-daikon.Tag.getPersonNameStringValue = function (rawData) {
-    var stringData = daikon.Tag.getStringValue(rawData),
+daikon.Tag.getPersonNameStringValue = function (rawData, charset, vr) {
+    var stringData = daikon.Tag.getStringValue(rawData, charset, vr),
         data = [],
         ctr;
 
@@ -523,9 +528,9 @@ daikon.Tag.convertPrivateValue = function (group, element, rawData) {
 
 
 
-daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
+daikon.Tag.convertValue = function (vr, rawData, littleEndian, charset) {
     var data = null;
-
+    // http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_6.2.html
     if (vr === 'AE') {
         data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AE_MAX_LENGTH);
     } else if (vr === 'AS') {
@@ -549,9 +554,9 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
     } else if (vr === 'IS') {
         data = daikon.Tag.getIntegerStringValue(rawData);
     } else if (vr === 'LO') {
-        data = daikon.Tag.getStringValue(rawData);
+        data = daikon.Tag.getStringValue(rawData, charset, vr);
     } else if (vr === 'LT') {
-        data = daikon.Tag.getSingleStringValue(rawData);
+        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AT_MAX_LENGTH, charset, vr);
     } else if (vr === 'OB') {
         data = rawData;
     } else if (vr === 'OD') {
@@ -561,9 +566,9 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
     } else if (vr === 'OW') {
         data = rawData;
     } else if (vr === 'PN') {
-        data = daikon.Tag.getPersonNameStringValue(rawData);
+        data = daikon.Tag.getPersonNameStringValue(rawData, charset, vr);
     } else if (vr === 'SH') {
-        data = daikon.Tag.getStringValue(rawData);
+        data = daikon.Tag.getStringValue(rawData, charset, vr);
     } else if (vr === 'SL') {
         data = daikon.Tag.getSignedInteger32(rawData, littleEndian);
     } else if (vr === 'SQ') {
@@ -571,7 +576,7 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
     } else if (vr === 'SS') {
         data = daikon.Tag.getSignedInteger16(rawData, littleEndian);
     } else if (vr === 'ST') {
-        data = daikon.Tag.getSingleStringValue(rawData);
+        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_ST_MAX_LENGTH, charset, vr);
     } else if (vr === 'TM') {
         data = daikon.Tag.getTimeStringValue(rawData);
     } else if (vr === 'UI') {
@@ -583,7 +588,7 @@ daikon.Tag.convertValue = function (vr, rawData, littleEndian) {
     } else if (vr === 'US') {
         data = daikon.Tag.getUnsignedInteger16(rawData, littleEndian);
     } else if (vr === 'UT') {
-        data = daikon.Tag.getSingleStringValue(rawData);
+        data = daikon.Tag.getSingleStringValue(rawData, Number.MAX_SAFE_INTEGER, charset, vr);
     } else if (vr === 'UC') {
         data = daikon.Tag.getStringValue(rawData);
     }
@@ -676,6 +681,15 @@ daikon.Tag.prototype.toHTMLString = function (level) {
  */
 daikon.Tag.prototype.isTransformSyntax = function () {
     return (this.group === daikon.Tag.TAG_TRANSFER_SYNTAX[0]) && (this.element === daikon.Tag.TAG_TRANSFER_SYNTAX[1]);
+};
+
+
+/**
+ * Returns true if this is the char set tag.
+ * @returns {boolean}
+ */
+daikon.Tag.prototype.isCharset = function () {
+    return (this.group === daikon.Tag.TAG_SPECIFIC_CHAR_SET[0]) && (this.element === daikon.Tag.TAG_SPECIFIC_CHAR_SET[1]);
 };
 
 
