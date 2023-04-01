@@ -9,7 +9,7 @@
   "dependencies": {
     "@wearemothership/dicom-character-set": "^1.0.4-opt.1",
     "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git#v2.0.4",
-    "pako": "^1.0.10",
+    "fflate": "*",
     "xss": "^1.0.14"
   },
   "devDependencies": {

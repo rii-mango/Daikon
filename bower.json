@@ -10,7 +10,7 @@
       ".gitignore"
   ],
   "dependencies": {
-    "pako": "*",
+    "fflate": "*",
     "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git"
   },
   "devDependencies": {
