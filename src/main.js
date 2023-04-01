@@ -35,7 +35,9 @@ var JpxImage = JpxImage || ((typeof require !== 'undefined') ? require('../lib/j
 var CharLS = CharLS || ((typeof require !== 'undefined') ? require('../lib/charLS-DynamicMemory-browser.js') : null);
 var JpegLSDecoder = JpegLSDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-ls.js') : null);
 
-var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
+//use fflate not pako
+//var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
+var fflate = fflate || ((typeof require !== 'undefined') ? require('fflate') : null);
 
 /*** Exports ***/
 
