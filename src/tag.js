@@ -4,6 +4,8 @@
 
 "use strict";
 
+var xss = require("xss");
+
 /*** Imports ***/
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
@@ -656,6 +658,9 @@ daikon.Tag.prototype.toString = function (level, html) {
     } else {
         des = daikon.Utils.convertCamcelCaseToTitleCase(daikon.Dictionary.getDescription(this.group, this.element));
     }
+
+    // filter for xss
+    valueStr = xss(valueStr);
 
     if (html) {
         return padding + "<span style='color:#B5CBD3'>" + tagStr + "</span>&nbsp;&nbsp;&nbsp;" + des + '&nbsp;&nbsp;&nbsp;' + valueStr;
