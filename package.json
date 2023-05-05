@@ -8,8 +8,9 @@
   },
   "dependencies": {
     "@wearemothership/dicom-character-set": "^1.0.4-opt.1",
+    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git#v2.0.4",
     "fflate": "*",
-    "jpeg-lossless-decoder-js": "git+https://github.com/rii-mango/JPEGLosslessDecoderJS.git#v2.0.4"
+    "xss": "^1.0.14"
   },
   "devDependencies": {
     "browserify": "^16.5.2",
