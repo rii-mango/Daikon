@@ -42,13 +42,12 @@ describe("Daikon", function () {
         '</span><script>alert("Hi!")</script><span>',
       ].join("\n");
 
-      console.log(xssTag);
+      // console.log(xssTag);
       let tagText = xssTag.toString();
-      console.log("tag text");
-      console.log(tagText);
+      
       const re = /(<script)|(onmouseover=")|(javascript:alert)/i;
       assert.doesNotMatch(tagText, re);
     });
   });
 });
-daikon.Parser.verbose = false;
+// daikon.Parser.verbose = false;
