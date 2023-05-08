@@ -97,12 +97,6 @@ Or install via [NPM](https://www.npmjs.com/):
 npm install daikon
 ```
 
-Or install via [Bower](http://bower.io/):
-
-```
-bower install daikon
-```
-
 ### Testing
 ```
 npm test
@@ -126,6 +120,7 @@ Also thanks to these contributors:
 - [@suoc](https://github.com/suoc)
 - [@buddamus](https://github.com/buddamus)
 - [@usb-radiology](https://github.com/usb-radiology)
+- [@cdrake](https://github.com/cdrake)
 
 ### Disclaimer
 The authors of this software have not sought nor received approval for clinical/diagnostic use of this software library.
