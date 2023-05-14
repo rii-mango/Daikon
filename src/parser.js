@@ -12,8 +12,8 @@ daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? req
 daikon.Image = daikon.Image || ((typeof require !== 'undefined') ? require('./image.js') : null);
 
 //use fflate not pako
-//var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
-var fflate = fflate || ((typeof require !== 'undefined') ? require('fflate') : null);
+var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
+//var fflate = fflate || ((typeof require !== 'undefined') ? require('fflate') : null);
 
 /*** Constructor ***/
 
@@ -120,8 +120,8 @@ daikon.Parser.prototype.parse = function (data) {
                 this.needsDeflate = false;
                 copyMeta = data.buffer.slice(0, tag.offsetEnd);
                 copyDeflated = data.buffer.slice(tag.offsetEnd);
-                //this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, pako.inflateRaw(copyDeflated));
-                this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, fflate.decompressSync(new Uint8Array(copyDeflated)));
+                this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, pako.inflateRaw(copyDeflated));
+                //this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, fflate.decompressSync(new Uint8Array(copyDeflated)));
                 data = new DataView(this.inflated);
             }
 

@@ -5,7 +5,7 @@
 "use strict";
 
 /*** Imports ***/
-var convertBytes = require('@wearemothership/dicom-character-set').convertBytes;
+//var convertBytes = require('@wearemothership/dicom-character-set').convertBytes;
 var daikon = daikon || {};
 daikon.Utils = daikon.Utils || {};
 
@@ -43,13 +43,23 @@ daikon.Utils.createArray = function (length) {
 
 
 daikon.Utils.getStringAt = function (dataview, start, length, charset, vr) {
+    var str = "", ctr, ch;
+
+    for (ctr = 0; ctr < length; ctr += 1) {
+        ch = dataview.getUint8(start + ctr);
+
+        if (ch !== 0) {
+            str += String.fromCharCode(ch);
+        }
+    }
+
+	/* - @from wearemothership dicom-character-set
     var strBuff = new Uint8Array(dataview.buffer, dataview.byteOffset + start, length);
     var str = convertBytes(charset || "ISO 2022 IR 6", strBuff, {vr: vr} );
-    
     while (str && str.charCodeAt(str.length - 1) === 0) {
         str = str.slice(0,-1);
     }
-
+	*/
     return str;
 };
 

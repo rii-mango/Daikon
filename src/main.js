@@ -36,8 +36,8 @@ var CharLS = CharLS || ((typeof require !== 'undefined') ? require('../lib/charL
 var JpegLSDecoder = JpegLSDecoder || ((typeof require !== 'undefined') ? require('../lib/jpeg-ls.js') : null);
 
 //use fflate not pako
-//var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
-var fflate = fflate || ((typeof require !== 'undefined') ? require('fflate') : null);
+var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
+//var fflate = fflate || ((typeof require !== 'undefined') ? require('fflate') : null);
 
 /*** Exports ***/
 
