@@ -86,7 +86,7 @@ series.concatenateImageData(null, function (imageData) {
 See [tests/browser.html](https://github.com/rii-mango/Daikon/blob/master/tests/browser.html) for an example.  For a more advanced example, see [this class](https://github.com/rii-mango/Papaya/blob/master/src/js/volume/dicom/header-dicom.js) in Papaya.
 
 ### Install
-Get a packaged source file:
+Get a packaged source file from the [release folder](https://github.com/rii-mango/Daikon/tree/master/release):
 
 * [daikon.js](https://raw.githubusercontent.com/rii-mango/Daikon/master/release/current/daikon.js)
 * [daikon-min.js](https://raw.githubusercontent.com/rii-mango/Daikon/master/release/current/daikon-min.js)
@@ -103,11 +103,10 @@ npm test
 ```
 
 ### Building
-See the [release folder](https://github.com/rii-mango/Daikon/tree/master/release) for the latest builds or build it yourself using:
 ```
 npm run build
 ```
-This will output daikon.js and daikon-min.js to build/.
+This will output daikon.js and daikon-min.js to build/
 
 ### Acknowledgments
 Daikon makes use of [JPEGLosslessDecoderJS](https://github.com/rii-mango/JPEGLosslessDecoderJS) for JPEG Lossless support as well as the following third-party libraries:
