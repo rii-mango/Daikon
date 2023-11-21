@@ -9,9 +9,9 @@
   "dependencies": {
     "@wearemothership/dicom-character-set": "^1.0.4-opt.1",
     "jpeg-lossless-decoder-js": "^2.0.7",
-    "pako": "^1.0",
+    "pako": "^2.1",
     "fflate": "*",
-    "xss": "0.0.9"
+    "xss": "1.0.14"
   },
   "devDependencies": {
     "esbuild": "*",
