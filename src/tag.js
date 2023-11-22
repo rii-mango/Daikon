@@ -1,770 +1,694 @@
+import xss from 'xss'
+import { getDescription } from './dictionary.js'
+import { Siemens } from './siemens.js'
+import {
+  bytesToDouble,
+  convertCamcelCaseToTitleCase,
+  dec2hex,
+  getStringAt,
+  isString,
+  isValidDate,
+  safeParseFloat,
+  safeParseInt,
+  trim
+} from './utilities.js'
 
-/*jslint browser: true, node: true */
-/*global require */
+export class Tag {
+  static PRIVATE_DATA_READERS = [Siemens]
 
-"use strict";
+  static VR_AE_MAX_LENGTH = 16
+  static VR_AS_MAX_LENGTH = 4
+  static VR_AT_MAX_LENGTH = 4
+  static VR_CS_MAX_LENGTH = 16
+  static VR_DA_MAX_LENGTH = 8
+  static VR_DS_MAX_LENGTH = 16
+  static VR_DT_MAX_LENGTH = 26
+  static VR_FL_MAX_LENGTH = 4
+  static VR_FD_MAX_LENGTH = 8
+  static VR_IS_MAX_LENGTH = 12
+  static VR_LO_MAX_LENGTH = 64
+  static VR_LT_MAX_LENGTH = 10240
+  static VR_OB_MAX_LENGTH = -1
+  static VR_OD_MAX_LENGTH = -1
+  static VR_OF_MAX_LENGTH = -1
+  static VR_OW_MAX_LENGTH = -1
+  static VR_PN_MAX_LENGTH = 64 * 5
+  static VR_SH_MAX_LENGTH = 16
+  static VR_SL_MAX_LENGTH = 4
+  static VR_SS_MAX_LENGTH = 2
+  static VR_ST_MAX_LENGTH = 1024
+  static VR_TM_MAX_LENGTH = 16
+  static VR_UI_MAX_LENGTH = 64
+  static VR_UL_MAX_LENGTH = 4
+  static VR_UN_MAX_LENGTH = -1
+  static VR_US_MAX_LENGTH = 2
+  static VR_UT_MAX_LENGTH = -1
+  static VR_UC_MAX_LENGTH = -1
 
-var xss = require("xss");
+  // metadata
+  static TAG_TRANSFER_SYNTAX = [0x0002, 0x0010]
+  static TAG_META_LENGTH = [0x0002, 0x0000]
 
-/*** Imports ***/
-var daikon = daikon || {};
-daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
-daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? require('./dictionary.js') : null);
-daikon.Siemens = daikon.Siemens || ((typeof require !== 'undefined') ? require('./siemens.js') : null);
+  // sublists
+  static TAG_SUBLIST_ITEM = [0xfffe, 0xe000]
+  static TAG_SUBLIST_ITEM_DELIM = [0xfffe, 0xe00d]
+  static TAG_SUBLIST_SEQ_DELIM = [0xfffe, 0xe0dd]
 
+  // image dims
+  static TAG_ROWS = [0x0028, 0x0010]
+  static TAG_COLS = [0x0028, 0x0011]
+  static TAG_ACQUISITION_MATRIX = [0x0018, 0x1310]
+  static TAG_NUMBER_OF_FRAMES = [0x0028, 0x0008]
+  static TAG_NUMBER_TEMPORAL_POSITIONS = [0x0020, 0x0105]
 
-/*** Constructor ***/
+  // voxel dims
+  static TAG_PIXEL_SPACING = [0x0028, 0x0030]
+  static TAG_SLICE_THICKNESS = [0x0018, 0x0050]
+  static TAG_SLICE_GAP = [0x0018, 0x0088]
+  static TAG_TR = [0x0018, 0x0080]
+  static TAG_FRAME_TIME = [0x0018, 0x1063]
 
-/**
- * The Tag constuctor.
- * @property {number} group
- * @property {number} element
- * @property {string} vr
- * @property {number} offsetStart
- * @property {number} offsetValue
- * @property {number} offsetEnd
- * @property {boolean} sublist - true if this tag is a sublist
- * @property {number|number[]|string|string[]|object} value
- * @type {Function}
- */
-daikon.Tag = daikon.Tag || function (group, element, vr, value, offsetStart, offsetValue, offsetEnd, littleEndian, charset) {
-    this.group = group;
-    this.element = element;
-    this.vr = vr;
-    this.offsetStart = offsetStart;
-    this.offsetValue = offsetValue;
-    this.offsetEnd = offsetEnd;
-    this.sublist = false;
-    this.preformatted = false;
-    this.id = daikon.Tag.createId(group, element);
+  // datatype
+  static TAG_BITS_ALLOCATED = [0x0028, 0x0100]
+  static TAG_BITS_STORED = [0x0028, 0x0101]
+  static TAG_PIXEL_REPRESENTATION = [0x0028, 0x0103]
+  static TAG_HIGH_BIT = [0x0028, 0x0102]
+  static TAG_PHOTOMETRIC_INTERPRETATION = [0x0028, 0x0004]
+  static TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002]
+  static TAG_PLANAR_CONFIG = [0x0028, 0x0006]
+  static TAG_PALETTE_RED = [0x0028, 0x1201]
+  static TAG_PALETTE_GREEN = [0x0028, 0x1202]
+  static TAG_PALETTE_BLUE = [0x0028, 0x1203]
+
+  // data scale
+  static TAG_DATA_SCALE_SLOPE = [0x0028, 0x1053]
+  static TAG_DATA_SCALE_INTERCEPT = [0x0028, 0x1052]
+  static TAG_DATA_SCALE_ELSCINT = [0x0207, 0x101f]
+  static TAG_PIXEL_BANDWIDTH = [0x0018, 0x0095]
+
+  // range
+  static TAG_IMAGE_MIN = [0x0028, 0x0106]
+  static TAG_IMAGE_MAX = [0x0028, 0x0107]
+  static TAG_WINDOW_CENTER = [0x0028, 0x1050]
+  static TAG_WINDOW_WIDTH = [0x0028, 0x1051]
+
+  // descriptors
+  static TAG_SPECIFIC_CHAR_SET = [0x0008, 0x0005]
+  static TAG_PATIENT_NAME = [0x0010, 0x0010]
+  static TAG_PATIENT_ID = [0x0010, 0x0020]
+  static TAG_STUDY_DATE = [0x0008, 0x0020]
+  static TAG_STUDY_TIME = [0x0008, 0x0030]
+  static TAG_STUDY_DES = [0x0008, 0x1030]
+  static TAG_IMAGE_TYPE = [0x0008, 0x0008]
+  static TAG_IMAGE_COMMENTS = [0x0020, 0x4000]
+  static TAG_SEQUENCE_NAME = [0x0018, 0x0024]
+  static TAG_MODALITY = [0x0008, 0x0060]
+
+  // session ID
+  static TAG_FRAME_OF_REF_UID = [0x0020, 0x0052]
+
+  // study ID
+  static TAG_STUDY_UID = [0x0020, 0x000d]
+
+  // volume ID
+  static TAG_SERIES_DESCRIPTION = [0x0008, 0x103e]
+  static TAG_SERIES_INSTANCE_UID = [0x0020, 0x000e]
+  static TAG_SERIES_NUMBER = [0x0020, 0x0011]
+  static TAG_ECHO_NUMBER = [0x0018, 0x0086]
+  static TAG_TEMPORAL_POSITION = [0x0020, 0x0100]
+
+  // slice ID
+  static TAG_IMAGE_NUM = [0x0020, 0x0013]
+  static TAG_SLICE_LOCATION = [0x0020, 0x1041]
+
+  // orientation
+  static TAG_IMAGE_ORIENTATION = [0x0020, 0x0037]
+  static TAG_IMAGE_POSITION = [0x0020, 0x0032]
+  static TAG_SLICE_LOCATION_VECTOR = [0x0018, 0x2005]
+
+  // LUT shape
+  static TAG_LUT_SHAPE = [0x2050, 0x0020]
+
+  // pixel data
+  static TAG_PIXEL_DATA = [0x7fe0, 0x0010]
+
+  /**
+   * The Tag constuctor.
+   * @property {number} group
+   * @property {number} element
+   * @property {string} vr
+   * @property {number} offsetStart
+   * @property {number} offsetValue
+   * @property {number} offsetEnd
+   * @property {boolean} sublist - true if this tag is a sublist
+   * @property {number|number[]|string|string[]|object} value
+   * @type {Function}
+   */
+
+  constructor(group, element, vr, value, offsetStart, offsetValue, offsetEnd, littleEndian, charset) {
+    this.group = group
+    this.element = element
+    this.vr = vr
+    this.offsetStart = offsetStart
+    this.offsetValue = offsetValue
+    this.offsetEnd = offsetEnd
+    this.sublist = false
+    this.preformatted = false
+    this.id = Tag.createId(group, element)
 
     if (value instanceof Array) {
-        this.value = value;
-        this.sublist = true;
+      this.value = value
+      this.sublist = true
     } else if (value !== null) {
-        var dv = new DataView(value);
-        this.value = daikon.Tag.convertValue(vr, dv, littleEndian, charset);
+      const dv = new DataView(value)
+      this.value = this.convertValue(vr, dv, littleEndian, charset)
 
-        if ((this.value === dv) && this.isPrivateData()) {
-            this.value = daikon.Tag.convertPrivateValue(group, element, dv);
-            this.preformatted = (this.value !== dv);
-        }
+      if (this.value === dv && this.isPrivateData()) {
+        this.value = this.convertPrivateValue(group, element, dv)
+        this.preformatted = this.value !== dv
+      }
     } else {
-        this.value = null;
+      this.value = null
     }
-};
+  }
 
+  /**
+   * Create an ID string based on the specified group and element
+   * @param {number} group
+   * @param {number} element
+   * @returns {string}
+   */
+  static createId(group, element) {
+    const groupStr = dec2hex(group)
+    const elemStr = dec2hex(element)
+    return groupStr + elemStr
+  }
 
-/*** Static Pseudo-constants ***/
-
-daikon.Tag.PRIVATE_DATA_READERS = [daikon.Siemens];
-
-daikon.Tag.VR_AE_MAX_LENGTH = 16;
-daikon.Tag.VR_AS_MAX_LENGTH = 4;
-daikon.Tag.VR_AT_MAX_LENGTH = 4;
-daikon.Tag.VR_CS_MAX_LENGTH = 16;
-daikon.Tag.VR_DA_MAX_LENGTH = 8;
-daikon.Tag.VR_DS_MAX_LENGTH = 16;
-daikon.Tag.VR_DT_MAX_LENGTH = 26;
-daikon.Tag.VR_FL_MAX_LENGTH = 4;
-daikon.Tag.VR_FD_MAX_LENGTH = 8;
-daikon.Tag.VR_IS_MAX_LENGTH = 12;
-daikon.Tag.VR_LO_MAX_LENGTH = 64;
-daikon.Tag.VR_LT_MAX_LENGTH = 10240;
-daikon.Tag.VR_OB_MAX_LENGTH = -1;
-daikon.Tag.VR_OD_MAX_LENGTH = -1;
-daikon.Tag.VR_OF_MAX_LENGTH = -1;
-daikon.Tag.VR_OW_MAX_LENGTH = -1;
-daikon.Tag.VR_PN_MAX_LENGTH = 64 * 5;
-daikon.Tag.VR_SH_MAX_LENGTH = 16;
-daikon.Tag.VR_SL_MAX_LENGTH = 4;
-daikon.Tag.VR_SS_MAX_LENGTH = 2;
-daikon.Tag.VR_ST_MAX_LENGTH = 1024;
-daikon.Tag.VR_TM_MAX_LENGTH = 16;
-daikon.Tag.VR_UI_MAX_LENGTH = 64;
-daikon.Tag.VR_UL_MAX_LENGTH = 4;
-daikon.Tag.VR_UN_MAX_LENGTH = -1;
-daikon.Tag.VR_US_MAX_LENGTH = 2;
-daikon.Tag.VR_UT_MAX_LENGTH = -1;
-daikon.Tag.VR_UC_MAX_LENGTH = -1;
-
-// metadata
-daikon.Tag.TAG_TRANSFER_SYNTAX = [0x0002, 0x0010];
-daikon.Tag.TAG_META_LENGTH = [0x0002, 0x0000];
-
-// sublists
-daikon.Tag.TAG_SUBLIST_ITEM = [0xFFFE, 0xE000];
-daikon.Tag.TAG_SUBLIST_ITEM_DELIM = [0xFFFE, 0xE00D];
-daikon.Tag.TAG_SUBLIST_SEQ_DELIM = [0xFFFE, 0xE0DD];
-
-// image dims
-daikon.Tag.TAG_ROWS = [0x0028, 0x0010];
-daikon.Tag.TAG_COLS = [0x0028, 0x0011];
-daikon.Tag.TAG_ACQUISITION_MATRIX = [0x0018, 0x1310];
-daikon.Tag.TAG_NUMBER_OF_FRAMES = [0x0028, 0x0008];
-daikon.Tag.TAG_NUMBER_TEMPORAL_POSITIONS = [0x0020, 0x0105];
-
-// voxel dims
-daikon.Tag.TAG_PIXEL_SPACING = [0x0028, 0x0030];
-daikon.Tag.TAG_SLICE_THICKNESS = [0x0018, 0x0050];
-daikon.Tag.TAG_SLICE_GAP = [0x0018, 0x0088];
-daikon.Tag.TAG_TR = [0x0018, 0x0080];
-daikon.Tag.TAG_FRAME_TIME = [0x0018, 0x1063];
-
-// datatype
-daikon.Tag.TAG_BITS_ALLOCATED = [0x0028, 0x0100];
-daikon.Tag.TAG_BITS_STORED = [0x0028, 0x0101];
-daikon.Tag.TAG_PIXEL_REPRESENTATION = [0x0028, 0x0103];
-daikon.Tag.TAG_HIGH_BIT = [0x0028, 0x0102];
-daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION = [0x0028, 0x0004];
-daikon.Tag.TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002];
-daikon.Tag.TAG_PLANAR_CONFIG = [0x0028, 0x0006];
-daikon.Tag.TAG_PALETTE_RED = [0x0028, 0x1201];
-daikon.Tag.TAG_PALETTE_GREEN = [0x0028, 0x1202];
-daikon.Tag.TAG_PALETTE_BLUE = [0x0028, 0x1203];
-
-// data scale
-daikon.Tag.TAG_DATA_SCALE_SLOPE = [0x0028, 0x1053];
-daikon.Tag.TAG_DATA_SCALE_INTERCEPT = [0x0028, 0x1052];
-daikon.Tag.TAG_DATA_SCALE_ELSCINT = [0x0207, 0x101F];
-daikon.Tag.TAG_PIXEL_BANDWIDTH = [0x0018, 0x0095];
-
-// range
-daikon.Tag.TAG_IMAGE_MIN = [0x0028, 0x0106];
-daikon.Tag.TAG_IMAGE_MAX = [0x0028, 0x0107];
-daikon.Tag.TAG_WINDOW_CENTER = [0x0028, 0x1050];
-daikon.Tag.TAG_WINDOW_WIDTH = [0x0028, 0x1051];
-
-// descriptors
-daikon.Tag.TAG_SPECIFIC_CHAR_SET = [0x0008, 0x0005];
-daikon.Tag.TAG_PATIENT_NAME = [0x0010, 0x0010];
-daikon.Tag.TAG_PATIENT_ID = [0x0010, 0x0020];
-daikon.Tag.TAG_STUDY_DATE = [0x0008, 0x0020];
-daikon.Tag.TAG_STUDY_TIME = [0x0008, 0x0030];
-daikon.Tag.TAG_STUDY_DES = [0x0008, 0x1030];
-daikon.Tag.TAG_IMAGE_TYPE = [0x0008, 0x0008];
-daikon.Tag.TAG_IMAGE_COMMENTS = [0x0020, 0x4000];
-daikon.Tag.TAG_SEQUENCE_NAME = [0x0018, 0x0024];
-daikon.Tag.TAG_MODALITY = [0x0008, 0x0060];
-
-// session ID
-daikon.Tag.TAG_FRAME_OF_REF_UID = [0x0020, 0x0052];
-
-// study ID
-daikon.Tag.TAG_STUDY_UID = [0x0020, 0x000D];
-
-// volume ID
-daikon.Tag.TAG_SERIES_DESCRIPTION = [0x0008, 0x103E];
-daikon.Tag.TAG_SERIES_INSTANCE_UID = [0x0020, 0x000E];
-daikon.Tag.TAG_SERIES_NUMBER = [0x0020, 0x0011];
-daikon.Tag.TAG_ECHO_NUMBER = [0x0018, 0x0086];
-daikon.Tag.TAG_TEMPORAL_POSITION = [0x0020, 0x0100];
-
-// slice ID
-daikon.Tag.TAG_IMAGE_NUM = [0x0020, 0x0013];
-daikon.Tag.TAG_SLICE_LOCATION = [0x0020, 0x1041];
-
-// orientation
-daikon.Tag.TAG_IMAGE_ORIENTATION = [0x0020, 0x0037];
-daikon.Tag.TAG_IMAGE_POSITION = [0x0020, 0x0032];
-daikon.Tag.TAG_SLICE_LOCATION_VECTOR = [0x0018, 0x2005];
-
-// LUT shape
-daikon.Tag.TAG_LUT_SHAPE = [0x2050, 0x0020];
-
-// pixel data
-daikon.Tag.TAG_PIXEL_DATA = [0x7FE0, 0x0010];
-
-
-/*** Static methods ***/
-
-/**
- * Create an ID string based on the specified group and element
- * @param {number} group
- * @param {number} element
- * @returns {string}
- */
-daikon.Tag.createId = function (group, element) {
-    var groupStr = daikon.Utils.dec2hex(group),
-        elemStr = daikon.Utils.dec2hex(element);
-    return groupStr + elemStr;
-};
-
-
-
-daikon.Tag.getUnsignedInteger16 = function (rawData, littleEndian) {
-    var data, mul, ctr;
-
-    mul = rawData.byteLength / 2;
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = rawData.getUint16(ctr * 2, littleEndian);
+  getUnsignedInteger16(rawData, littleEndian) {
+    const mul = rawData.byteLength / 2
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = rawData.getUint16(ctr * 2, littleEndian)
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getSignedInteger16 = function (rawData, littleEndian) {
-    var data, mul, ctr;
-
-    mul = rawData.byteLength / 2;
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = rawData.getInt16(ctr * 2, littleEndian);
+  getSignedInteger16(rawData, littleEndian) {
+    const mul = rawData.byteLength / 2
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = rawData.getInt16(ctr * 2, littleEndian)
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getFloat32 = function (rawData, littleEndian) {
-    var data, mul, ctr;
-
-    mul = rawData.byteLength / 4;
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = rawData.getFloat32(ctr * 4, littleEndian);
+  getFloat32(rawData, littleEndian) {
+    const mul = rawData.byteLength / 4
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = rawData.getFloat32(ctr * 4, littleEndian)
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getSignedInteger32 = function (rawData, littleEndian) {
-    var data, mul, ctr;
-
-    mul = rawData.byteLength / 4;
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = rawData.getInt32(ctr * 4, littleEndian);
+  getSignedInteger32(rawData, littleEndian) {
+    const mul = rawData.byteLength / 4
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = rawData.getInt32(ctr * 4, littleEndian)
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getUnsignedInteger32 = function (rawData, littleEndian) {
-    var data, mul, ctr;
-
-    mul = rawData.byteLength / 4;
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = rawData.getUint32(ctr * 4, littleEndian);
+  getUnsignedInteger32(rawData, littleEndian) {
+    const mul = rawData.byteLength / 4
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = rawData.getUint32(ctr * 4, littleEndian)
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getFloat64 = function (rawData, littleEndian) {
-    var data, mul, ctr;
-
+  getFloat64(rawData, littleEndian) {
     if (rawData.byteLength < 8) {
-        return 0;
+      return 0
     }
 
-    mul = rawData.byteLength / 8;
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = rawData.getFloat64(ctr * 8, littleEndian);
+    const mul = rawData.byteLength / 8
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = rawData.getFloat64(ctr * 8, littleEndian)
     }
 
-    return data;
-};
+    return data
+  }
 
+  getDoubleElscint(rawData) {
+    let data = []
+    const reordered = []
 
-
-daikon.Tag.getDoubleElscint = function (rawData) {
-    var data = [], reordered = [], ctr;
-
-    for (ctr = 0; ctr < 8; ctr += 1) {
-        data[ctr] = rawData.getUint8(ctr);
+    for (let ctr = 0; ctr < 8; ctr += 1) {
+      data[ctr] = rawData.getUint8(ctr)
     }
 
-    reordered[0] = data[3];
-    reordered[1] = data[2];
-    reordered[2] = data[1];
-    reordered[3] = data[0];
-    reordered[4] = data[7];
-    reordered[5] = data[6];
-    reordered[6] = data[5];
-    reordered[7] = data[4];
+    reordered[0] = data[3]
+    reordered[1] = data[2]
+    reordered[2] = data[1]
+    reordered[3] = data[0]
+    reordered[4] = data[7]
+    reordered[5] = data[6]
+    reordered[6] = data[5]
+    reordered[7] = data[4]
 
-    data = [daikon.Utils.bytesToDouble(reordered)];
+    data = [bytesToDouble(reordered)]
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getFixedLengthStringValue = function (rawData, maxLength, charset, vr) {
-    var data, mul, ctr;
-
-    mul = Math.floor(rawData.byteLength / maxLength);
-    data = [];
-    for (ctr = 0; ctr < mul; ctr += 1) {
-        data[ctr] = daikon.Utils.getStringAt(rawData, ctr * maxLength, maxLength, charset, vr);
+  getFixedLengthStringValue(rawData, maxLength, charset, vr) {
+    const mul = Math.floor(rawData.byteLength / maxLength)
+    const data = []
+    for (let ctr = 0; ctr < mul; ctr += 1) {
+      data[ctr] = getStringAt(rawData, ctr * maxLength, maxLength, charset, vr)
     }
 
-    return data;
-};
+    return data
+  }
 
+  getStringValue(rawData, charset, vr) {
+    const data = getStringAt(rawData, 0, rawData.byteLength, charset, vr).split('\\')
 
-
-daikon.Tag.getStringValue = function (rawData, charset, vr) {
-    var data = daikon.Utils.getStringAt(rawData, 0, rawData.byteLength, charset, vr).split('\\'), ctr;
-
-    for (ctr = 0; ctr < data.length; ctr += 1) {
-        data[ctr] = daikon.Utils.trim(data[ctr]);
+    for (let ctr = 0; ctr < data.length; ctr += 1) {
+      data[ctr] = trim(data[ctr])
     }
 
-    return data;
-};
+    return data
+  }
 
+  getDateStringValue(rawData) {
+    const dotFormat = this.getSingleStringValue(rawData)[0].indexOf('.') !== -1
+    const stringData = this.getFixedLengthStringValue(rawData, dotFormat ? 10 : Tag.VR_DA_MAX_LENGTH)
+    let parts = null
+    const data = []
 
-
-daikon.Tag.getDateStringValue = function (rawData) {
-    var dotFormat = (daikon.Tag.getSingleStringValue(rawData)[0].indexOf('.') !== -1),
-        stringData = daikon.Tag.getFixedLengthStringValue(rawData, dotFormat ? 10 : daikon.Tag.VR_DA_MAX_LENGTH),
-        parts = null,
-        data = [],
-        ctr;
-
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        if (dotFormat) {
-            parts = stringData[ctr].split('.');
-            if (parts.length === 3) {
-                data[ctr] = new Date(daikon.Utils.safeParseInt(parts[0]),
-                    daikon.Utils.safeParseInt(parts[1]) - 1,
-                    daikon.Utils.safeParseInt(parts[2]));
-            } else {
-                data[ctr] = new Date();
-            }
-        } else if (stringData[ctr].length === 8) {
-            data[ctr] = new Date(daikon.Utils.safeParseInt(stringData[ctr].substring(0, 4)),
-                daikon.Utils.safeParseInt(stringData[ctr].substring(4, 6)) - 1,
-                daikon.Utils.safeParseInt(stringData[ctr].substring(6, 8)));
+    for (let ctr = 0; ctr < stringData.length; ctr += 1) {
+      if (dotFormat) {
+        parts = stringData[ctr].split('.')
+        if (parts.length === 3) {
+          data[ctr] = new Date(safeParseInt(parts[0]), safeParseInt(parts[1]) - 1, safeParseInt(parts[2]))
         } else {
-            data[ctr] = Date.parse(stringData[ctr]);
+          data[ctr] = new Date()
         }
+      } else if (stringData[ctr].length === 8) {
+        data[ctr] = new Date(
+          safeParseInt(stringData[ctr].substring(0, 4)),
+          safeParseInt(stringData[ctr].substring(4, 6)) - 1,
+          safeParseInt(stringData[ctr].substring(6, 8))
+        )
+      } else {
+        data[ctr] = Date.parse(stringData[ctr])
+      }
 
-        if (!daikon.Utils.isValidDate(data[ctr])) {
-            data[ctr] = stringData[ctr];
-        }
+      if (!isValidDate(data[ctr])) {
+        data[ctr] = stringData[ctr]
+      }
     }
 
-    return data;
-};
+    return data
+  }
 
+  getDateTimeStringValue(rawData) {
+    const stringData = this.getStringValue(rawData)
+    const data = []
+    let year = null
+    let month = null
+    let date = null
+    let hours = null
+    let minutes = null
+    let seconds = null
 
+    for (let ctr = 0; ctr < stringData.length; ctr += 1) {
+      if (stringData[ctr].length >= 4) {
+        year = parseInt(stringData[ctr].substring(0, 4), 10) // required
 
-daikon.Tag.getDateTimeStringValue = function (rawData) {
-    var stringData = daikon.Tag.getStringValue(rawData),
-        data = [],
-        ctr,
-        year = null,
-        month = null,
-        date = null,
-        hours = null,
-        minutes = null,
-        seconds = null;
-
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        if (stringData[ctr].length >= 4) {
-            year = parseInt(stringData[ctr].substring(0, 4), 10);  // required
-
-            if (stringData[ctr].length >= 6) {
-                month = daikon.Utils.safeParseInt(stringData[ctr].substring(4, 6)) - 1;
-            }
-
-            if (stringData[ctr].length >= 8) {
-                date = daikon.Utils.safeParseInt(stringData[ctr].substring(6, 8));
-            }
-
-            if (stringData[ctr].length >= 10) {
-                hours = daikon.Utils.safeParseInt(stringData[ctr].substring(8, 10));
-            }
-
-            if (stringData[ctr].length >= 12) {
-                minutes = daikon.Utils.safeParseInt(stringData[ctr].substring(10, 12));
-            }
-
-            if (stringData[ctr].length >= 14) {
-                seconds = daikon.Utils.safeParseInt(stringData[ctr].substring(12, 14));
-            }
-
-            data[ctr] = new Date(year, month, date, hours, minutes, seconds);
-        } else {
-            data[ctr] = Date.parse(stringData[ctr]);
+        if (stringData[ctr].length >= 6) {
+          month = safeParseInt(stringData[ctr].substring(4, 6)) - 1
         }
 
-        if (!daikon.Utils.isValidDate(data[ctr])) {
-            data[ctr] = stringData[ctr];
+        if (stringData[ctr].length >= 8) {
+          date = safeParseInt(stringData[ctr].substring(6, 8))
         }
+
+        if (stringData[ctr].length >= 10) {
+          hours = safeParseInt(stringData[ctr].substring(8, 10))
+        }
+
+        if (stringData[ctr].length >= 12) {
+          minutes = safeParseInt(stringData[ctr].substring(10, 12))
+        }
+
+        if (stringData[ctr].length >= 14) {
+          seconds = safeParseInt(stringData[ctr].substring(12, 14))
+        }
+
+        data[ctr] = new Date(year, month, date, hours, minutes, seconds)
+      } else {
+        data[ctr] = Date.parse(stringData[ctr])
+      }
+
+      if (!isValidDate(data[ctr])) {
+        data[ctr] = stringData[ctr]
+      }
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getTimeStringValue = function (rawData, ms) {
-    var stringData = daikon.Tag.getStringValue(rawData),
-    data = [];
+  getTimeStringValue(rawData, ms) {
+    const stringData = this.getStringValue(rawData)
+    const data = []
 
     if (ms) {
-        var parts = null,
-            ctr,
-            hours = 0,
-            minutes = 0,
-            seconds = 0;
+      let parts = null
+      let hours = 0
+      let minutes = 0
+      let seconds = 0
 
-        for (ctr = 0; ctr < stringData.length; ctr += 1) {
-            if (stringData[ctr].indexOf(':') !== -1) {
-                parts = stringData[ctr].split(':');
-                hours = daikon.Utils.safeParseInt(parts[0]);
+      for (let ctr = 0; ctr < stringData.length; ctr += 1) {
+        if (stringData[ctr].indexOf(':') !== -1) {
+          parts = stringData[ctr].split(':')
+          hours = safeParseInt(parts[0])
 
-                if (parts.length > 1) {
-                    minutes = daikon.Utils.safeParseInt(parts[1]);
-                }
+          if (parts.length > 1) {
+            minutes = safeParseInt(parts[1])
+          }
 
-                if (parts.length > 2) {
-                    seconds = daikon.Utils.safeParseFloat(parts[2]);
-                }
-            } else {
-                if (stringData[ctr].length >= 2) {
-                    hours = daikon.Utils.safeParseInt(stringData[ctr].substring(0, 2));
-                }
+          if (parts.length > 2) {
+            seconds = safeParseFloat(parts[2])
+          }
+        } else {
+          if (stringData[ctr].length >= 2) {
+            hours = safeParseInt(stringData[ctr].substring(0, 2))
+          }
 
-                if (stringData[ctr].length >= 4) {
-                    minutes = daikon.Utils.safeParseInt(stringData[ctr].substring(2, 4));
-                }
+          if (stringData[ctr].length >= 4) {
+            minutes = safeParseInt(stringData[ctr].substring(2, 4))
+          }
 
-                if (stringData[ctr].length >= 6) {
-                    seconds = daikon.Utils.safeParseFloat(stringData[ctr].substring(4));
-                }
-            }
-
-            data[ctr] = Math.round((hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000));
+          if (stringData[ctr].length >= 6) {
+            seconds = safeParseFloat(stringData[ctr].substring(4))
+          }
         }
 
-        return data;
+        data[ctr] = Math.round(hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000)
+      }
+
+      return data
     }
 
+    return stringData
+  }
 
-    return stringData;
-};
+  getDoubleStringValue(rawData) {
+    const stringData = this.getStringValue(rawData)
+    const data = []
 
-
-
-daikon.Tag.getDoubleStringValue = function (rawData) {
-    var stringData = daikon.Tag.getStringValue(rawData),
-        data = [],
-        ctr;
-
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        data[ctr] = parseFloat(stringData[ctr]);
+    for (let ctr = 0; ctr < stringData.length; ctr += 1) {
+      data[ctr] = parseFloat(stringData[ctr])
     }
 
-    return data;
-};
+    return data
+  }
 
+  getIntegerStringValue(rawData) {
+    const stringData = this.getStringValue(rawData)
+    const data = []
 
-
-daikon.Tag.getIntegerStringValue = function (rawData) {
-    var stringData = daikon.Tag.getStringValue(rawData),
-        data = [],
-        ctr;
-
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        data[ctr] = parseInt(stringData[ctr], 10);
+    for (let ctr = 0; ctr < stringData.length; ctr += 1) {
+      data[ctr] = parseInt(stringData[ctr], 10)
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.getSingleStringValue = function (rawData, maxLength, charset, vr) {
-    var len = rawData.byteLength;
+  getSingleStringValue(rawData, maxLength, charset, vr) {
+    let len = rawData.byteLength
     if (maxLength) {
-        len = Math.min(rawData.byteLength, maxLength);
+      len = Math.min(rawData.byteLength, maxLength)
     }
-    return [daikon.Utils.trim(daikon.Utils.getStringAt(rawData, 0, len, charset, vr))];
-};
+    return [trim(getStringAt(rawData, 0, len, charset, vr))]
+  }
 
+  getPersonNameStringValue(rawData, charset, vr) {
+    const stringData = this.getStringValue(rawData, charset, vr)
+    const data = []
 
-
-daikon.Tag.getPersonNameStringValue = function (rawData, charset, vr) {
-    var stringData = daikon.Tag.getStringValue(rawData, charset, vr),
-        data = [],
-        ctr;
-
-    for (ctr = 0; ctr < stringData.length; ctr += 1) {
-        data[ctr] = stringData[ctr].replace('^', ' ');
+    for (let ctr = 0; ctr < stringData.length; ctr += 1) {
+      data[ctr] = stringData[ctr].replace('^', ' ')
     }
 
-    return data;
-};
+    return data
+  }
 
-
-
-daikon.Tag.convertPrivateValue = function (group, element, rawData) {
-    var ctr, privReader;
-
-    for (ctr = 0; ctr < daikon.Tag.PRIVATE_DATA_READERS.length; ctr += 1) {
-        privReader = new daikon.Tag.PRIVATE_DATA_READERS[ctr](rawData.buffer);
-        if (privReader.canRead(group, element)) {
-            return privReader.readHeader();
-        }
+  convertPrivateValue(group, element, rawData) {
+    for (let ctr = 0; ctr < Tag.PRIVATE_DATA_READERS.length; ctr += 1) {
+      const privReader = new Tag.PRIVATE_DATA_READERS[ctr](rawData.buffer)
+      if (privReader.canRead(group, element)) {
+        return privReader.readHeader()
+      }
     }
 
-    return rawData;
-};
+    return rawData
+  }
 
-
-
-daikon.Tag.convertValue = function (vr, rawData, littleEndian, charset) {
-    var data = null;
+  convertValue(vr, rawData, littleEndian, charset) {
+    let data = null
     // http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_6.2.html
     if (vr === 'AE') {
-        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AE_MAX_LENGTH);
+      data = this.getSingleStringValue(rawData, Tag.VR_AE_MAX_LENGTH)
     } else if (vr === 'AS') {
-        data = daikon.Tag.getFixedLengthStringValue(rawData, daikon.Tag.VR_AS_MAX_LENGTH);
+      data = this.getFixedLengthStringValue(rawData, Tag.VR_AS_MAX_LENGTH)
     } else if (vr === 'AT') {
-        data = daikon.Tag.getUnsignedInteger16(rawData, littleEndian);
+      data = this.getUnsignedInteger16(rawData, littleEndian)
     } else if (vr === 'CS') {
-        data = daikon.Tag.getStringValue(rawData);
+      data = this.getStringValue(rawData)
     } else if (vr === 'DA') {
-        data = daikon.Tag.getDateStringValue(rawData);
+      data = this.getDateStringValue(rawData)
     } else if (vr === 'DS') {
-        data = daikon.Tag.getDoubleStringValue(rawData);
+      data = this.getDoubleStringValue(rawData)
     } else if (vr === 'DT') {
-        data = daikon.Tag.getDateTimeStringValue(rawData);
+      data = this.getDateTimeStringValue(rawData)
     } else if (vr === 'FL') {
-        data = daikon.Tag.getFloat32(rawData, littleEndian);
+      data = this.getFloat32(rawData, littleEndian)
     } else if (vr === 'FD') {
-        data = daikon.Tag.getFloat64(rawData, littleEndian);
-    } else if (vr === 'FE') {  // special Elscint double (see dictionary)
-        data = daikon.Tag.getDoubleElscint(rawData, littleEndian);
+      data = this.getFloat64(rawData, littleEndian)
+    } else if (vr === 'FE') {
+      // special Elscint double (see dictionary)
+      data = this.getDoubleElscint(rawData, littleEndian)
     } else if (vr === 'IS') {
-        data = daikon.Tag.getIntegerStringValue(rawData);
+      data = this.getIntegerStringValue(rawData)
     } else if (vr === 'LO') {
-        data = daikon.Tag.getStringValue(rawData, charset, vr);
+      data = this.getStringValue(rawData, charset, vr)
     } else if (vr === 'LT') {
-        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_AT_MAX_LENGTH, charset, vr);
+      data = this.getSingleStringValue(rawData, Tag.VR_AT_MAX_LENGTH, charset, vr)
     } else if (vr === 'OB') {
-        data = rawData;
+      data = rawData
     } else if (vr === 'OD') {
-        data = rawData;
+      data = rawData
     } else if (vr === 'OF') {
-        data = rawData;
+      data = rawData
     } else if (vr === 'OW') {
-        data = rawData;
+      data = rawData
     } else if (vr === 'PN') {
-        data = daikon.Tag.getPersonNameStringValue(rawData, charset, vr);
+      data = this.getPersonNameStringValue(rawData, charset, vr)
     } else if (vr === 'SH') {
-        data = daikon.Tag.getStringValue(rawData, charset, vr);
+      data = this.getStringValue(rawData, charset, vr)
     } else if (vr === 'SL') {
-        data = daikon.Tag.getSignedInteger32(rawData, littleEndian);
+      data = this.getSignedInteger32(rawData, littleEndian)
     } else if (vr === 'SQ') {
-        data = null;
+      data = null
     } else if (vr === 'SS') {
-        data = daikon.Tag.getSignedInteger16(rawData, littleEndian);
+      data = this.getSignedInteger16(rawData, littleEndian)
     } else if (vr === 'ST') {
-        data = daikon.Tag.getSingleStringValue(rawData, daikon.Tag.VR_ST_MAX_LENGTH, charset, vr);
+      data = this.getSingleStringValue(rawData, Tag.VR_ST_MAX_LENGTH, charset, vr)
     } else if (vr === 'TM') {
-        data = daikon.Tag.getTimeStringValue(rawData);
+      data = this.getTimeStringValue(rawData)
     } else if (vr === 'UI') {
-        data = daikon.Tag.getStringValue(rawData);
+      data = this.getStringValue(rawData)
     } else if (vr === 'UL') {
-        data = daikon.Tag.getUnsignedInteger32(rawData, littleEndian);
+      data = this.getUnsignedInteger32(rawData, littleEndian)
     } else if (vr === 'UN') {
-        data = rawData;
+      data = rawData
     } else if (vr === 'US') {
-        data = daikon.Tag.getUnsignedInteger16(rawData, littleEndian);
+      data = this.getUnsignedInteger16(rawData, littleEndian)
     } else if (vr === 'UT') {
-        data = daikon.Tag.getSingleStringValue(rawData, Number.MAX_SAFE_INTEGER, charset, vr);
+      data = this.getSingleStringValue(rawData, Number.MAX_SAFE_INTEGER, charset, vr)
     } else if (vr === 'UC') {
-        data = daikon.Tag.getStringValue(rawData);
+      data = this.getStringValue(rawData)
     }
 
-    return data;
-};
+    return data
+  }
 
+  /** * Prototype Methods ***/
 
-/*** Prototype Methods ***/
-
-/**
- * Returns a string representation of this tag.
- * @param {number} [level] - the indentation level
- * @param {boolean} [html]
- * @returns {string}
- */
-daikon.Tag.prototype.toString = function (level, html) {
-    var valueStr = '',
-        ctr,
-        groupStr = daikon.Utils.dec2hex(this.group),
-        elemStr = daikon.Utils.dec2hex(this.element),
-        tagStr = '(' + groupStr + ',' + elemStr + ')',
-        des = '',
-        padding;
+  /**
+   * Returns a string representation of this tag.
+   * @param {number} [level] - the indentation level
+   * @param {boolean} [html]
+   * @returns {string}
+   */
+  toString(level, html) {
+    let valueStr = ''
+    const groupStr = dec2hex(this.group)
+    const elemStr = dec2hex(this.element)
+    let tagStr = '(' + groupStr + ',' + elemStr + ')'
+    let des = ''
+    let padding = ''
 
     if (level === undefined) {
-        level = 0;
+      level = 0
     }
 
-    padding = "";
-    for (ctr = 0; ctr < level; ctr += 1) {
-        if (html) {
-            padding += "&nbsp;&nbsp;";
-        } else {
-            padding += "  ";
-        }
+    for (let ctr = 0; ctr < level; ctr += 1) {
+      if (html) {
+        padding += '&nbsp;&nbsp;'
+      } else {
+        padding += '  '
+      }
     }
 
     if (this.sublist) {
-        for (ctr = 0; ctr < this.value.length; ctr += 1) {
-            valueStr += ('\n' + (this.value[ctr].toString(level + 1, html)));
-        }
+      for (let ctr = 0; ctr < this.value.length; ctr += 1) {
+        valueStr += '\n' + this.value[ctr].toString(level + 1, html)
+      }
     } else if (this.vr === 'SQ') {
-        valueStr = '';
+      valueStr = ''
     } else if (this.isPixelData()) {
-        valueStr = '';
+      valueStr = ''
     } else if (!this.value) {
-        valueStr = '';
+      valueStr = ''
     } else {
-        if (html && this.preformatted) {
-            valueStr = "[<pre>"+this.value +"</pre>]";
-        } else {
-            valueStr = '[' + this.value + ']';
-        }
+      if (html && this.preformatted) {
+        valueStr = '[<pre>' + this.value + '</pre>]'
+      } else {
+        valueStr = '[' + this.value + ']'
+      }
     }
 
     if (this.isSublistItem()) {
-        tagStr = "Sequence Item";
+      tagStr = 'Sequence Item'
     } else if (this.isSublistItemDelim()) {
-        tagStr = "Sequence Item Delimiter";
+      tagStr = 'Sequence Item Delimiter'
     } else if (this.isSequenceDelim()) {
-        tagStr = "Sequence Delimiter";
+      tagStr = 'Sequence Delimiter'
     } else if (this.isPixelData()) {
-        tagStr = "Pixel Data";
+      tagStr = 'Pixel Data'
     } else {
-        des = daikon.Utils.convertCamcelCaseToTitleCase(daikon.Dictionary.getDescription(this.group, this.element));
+      des = convertCamcelCaseToTitleCase(getDescription(this.group, this.element))
     }
 
     // filter for xss
-    valueStr = xss(valueStr);
+    valueStr = xss(valueStr)
 
     if (html) {
-        return padding + "<span style='color:#B5CBD3'>" + tagStr + "</span>&nbsp;&nbsp;&nbsp;" + des + '&nbsp;&nbsp;&nbsp;' + valueStr;
+      return (
+        padding +
+        "<span style='color:#B5CBD3'>" +
+        tagStr +
+        '</span>&nbsp;&nbsp;&nbsp;' +
+        des +
+        '&nbsp;&nbsp;&nbsp;' +
+        valueStr
+      )
     } else {
-        return padding + ' ' + tagStr + ' ' + des + ' ' + valueStr;
+      return padding + ' ' + tagStr + ' ' + des + ' ' + valueStr
     }
-};
+  }
 
+  /**
+   * Returns an HTML string representation of this tag.
+   * @param {number} level - the indentation level
+   * @returns {string}
+   */
+  toHTMLString(level) {
+    return this.toString(level, true)
+  }
 
-/**
- * Returns an HTML string representation of this tag.
- * @param {number} level - the indentation level
- * @returns {string}
- */
-daikon.Tag.prototype.toHTMLString = function (level) {
-    return this.toString(level, true);
-};
+  /**
+   * Returns true if this is the transform syntax tag.
+   * @returns {boolean}
+   */
+  isTransformSyntax() {
+    return this.group === Tag.TAG_TRANSFER_SYNTAX[0] && this.element === Tag.TAG_TRANSFER_SYNTAX[1]
+  }
 
+  /**
+   * Returns true if this is the char set tag.
+   * @returns {boolean}
+   */
+  isCharset() {
+    return this.group === Tag.TAG_SPECIFIC_CHAR_SET[0] && this.element === Tag.TAG_SPECIFIC_CHAR_SET[1]
+  }
 
-/**
- * Returns true if this is the transform syntax tag.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isTransformSyntax = function () {
-    return (this.group === daikon.Tag.TAG_TRANSFER_SYNTAX[0]) && (this.element === daikon.Tag.TAG_TRANSFER_SYNTAX[1]);
-};
+  /**
+   * Returns true if this is the pixel data tag.
+   * @returns {boolean}
+   */
+  isPixelData() {
+    return this.group === Tag.TAG_PIXEL_DATA[0] && this.element === Tag.TAG_PIXEL_DATA[1]
+  }
 
+  /**
+   * Returns true if this tag contains private data.
+   * @returns {boolean}
+   */
+  isPrivateData() {
+    return (this.group & 1) === 1
+  }
 
-/**
- * Returns true if this is the char set tag.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isCharset = function () {
-    return (this.group === daikon.Tag.TAG_SPECIFIC_CHAR_SET[0]) && (this.element === daikon.Tag.TAG_SPECIFIC_CHAR_SET[1]);
-};
+  /**
+   * Returns true if this tag contains private data that can be read.
+   * @returns {boolean}
+   */
+  hasInterpretedPrivateData() {
+    return this.isPrivateData() && isString(this.value)
+  }
 
+  /**
+   * Returns true if this tag is a sublist item.
+   * @returns {boolean}
+   */
+  isSublistItem() {
+    return this.group === Tag.TAG_SUBLIST_ITEM[0] && this.element === Tag.TAG_SUBLIST_ITEM[1]
+  }
 
-/**
- * Returns true if this is the pixel data tag.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isPixelData = function () {
-    return (this.group === daikon.Tag.TAG_PIXEL_DATA[0]) && (this.element === daikon.Tag.TAG_PIXEL_DATA[1]);
-};
+  /**
+   * Returns true if this tag is a sublist item delimiter.
+   * @returns {boolean}
+   */
+  isSublistItemDelim() {
+    return this.group === Tag.TAG_SUBLIST_ITEM_DELIM[0] && this.element === Tag.TAG_SUBLIST_ITEM_DELIM[1]
+  }
 
+  /**
+   * Returns true if this tag is a sequence delimiter.
+   * @returns {boolean}
+   */
+  isSequenceDelim() {
+    return this.group === Tag.TAG_SUBLIST_SEQ_DELIM[0] && this.element === Tag.TAG_SUBLIST_SEQ_DELIM[1]
+  }
 
-/**
- * Returns true if this tag contains private data.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isPrivateData = function () {
-    /*jslint bitwise: true */
-    return ((this.group & 1) === 1);
-};
-
-
-/**
- * Returns true if this tag contains private data that can be read.
- * @returns {boolean}
- */
-daikon.Tag.prototype.hasInterpretedPrivateData = function () {
-    return this.isPrivateData() && daikon.Utils.isString(this.value);
-};
-
-
-/**
- * Returns true if this tag is a sublist item.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isSublistItem = function () {
-    return (this.group === daikon.Tag.TAG_SUBLIST_ITEM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_ITEM[1]);
-};
-
-
-/**
- * Returns true if this tag is a sublist item delimiter.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isSublistItemDelim = function () {
-    return (this.group === daikon.Tag.TAG_SUBLIST_ITEM_DELIM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_ITEM_DELIM[1]);
-};
-
-
-/**
- * Returns true if this tag is a sequence delimiter.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isSequenceDelim = function () {
-    return (this.group === daikon.Tag.TAG_SUBLIST_SEQ_DELIM[0]) && (this.element === daikon.Tag.TAG_SUBLIST_SEQ_DELIM[1]);
-};
-
-
-/**
- * Returns true if this is a meta length tag.
- * @returns {boolean}
- */
-daikon.Tag.prototype.isMetaLength = function () {
-    return (this.group === daikon.Tag.TAG_META_LENGTH[0]) && (this.element === daikon.Tag.TAG_META_LENGTH[1]);
-};
-
-
-/*** Exports ***/
-
-var moduleType = typeof module;
-if ((moduleType !== 'undefined') && module.exports) {
-    module.exports = daikon.Tag;
+  /**
+   * Returns true if this is a meta length tag.
+   * @returns {boolean}
+   */
+  isMetaLength() {
+    return this.group === Tag.TAG_META_LENGTH[0] && this.element === Tag.TAG_META_LENGTH[1]
+  }
 }

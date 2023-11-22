@@ -16,8 +16,6 @@
 
         function readDICOM(name, buf) {
             clearLog();
-            console.log("File: " + name);
-            console.log("");
             var data = new DataView(buf);
             daikon.Parser.verbose = true;
             daikon.Series.parseImage(data);

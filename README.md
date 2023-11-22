@@ -50,7 +50,7 @@ var series = new daikon.Series();
 var files = fs.readdirSync('./data/volume/');
 
 // iterate over files
-for (var ctr in files) {
+for (let ctr in files) {
     var name = './data/volume/' + files[ctr];
     var buf = fs.readFileSync(name);
     

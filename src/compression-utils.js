@@ -1,59 +1,33 @@
+/** * Static Pseudo-constants ***/
+export const JPEG_MAGIC_NUMBER = [0xff, 0xd8]
+export const JPEG2000_MAGIC_NUMBER = [0xff, 0x4f, 0xff, 0x51]
 
-/*jslint browser: true, node: true */
-/*global require, module */
-
-"use strict";
-
-/*** Imports ***/
-var daikon = daikon || {};
-daikon.CompressionUtils = daikon.CompressionUtils || {};
-
-
-/*** Static Pseudo-constants ***/
-
-daikon.CompressionUtils.JPEG_MAGIC_NUMBER = [0xFF, 0xD8];
-daikon.CompressionUtils.JPEG2000_MAGIC_NUMBER = [0xFF, 0x4F, 0xFF, 0x51];
-
-
-/*** Static methods ***/
-
-daikon.CompressionUtils.isHeaderJPEG = function (data) {
-    if (data) {
-        if (data.getUint8(0) !== daikon.CompressionUtils.JPEG_MAGIC_NUMBER[0]) {
-            return false;
-        }
-
-        if (data.getUint8(1) !== daikon.CompressionUtils.JPEG_MAGIC_NUMBER[1]) {
-            return false;
-        }
-
-        return true;
+export const isHeaderJPEG = (data) => {
+  if (data) {
+    if (data.getUint8(0) !== JPEG_MAGIC_NUMBER[0]) {
+      return false
     }
 
-    return false;
-};
-
-
-daikon.CompressionUtils.isHeaderJPEG2000 = function (data) {
-    var ctr;
-
-    if (data) {
-        for (ctr = 0; ctr < daikon.CompressionUtils.JPEG2000_MAGIC_NUMBER.length; ctr+=1) {
-            if (data.getUint8(ctr) !== daikon.CompressionUtils.JPEG2000_MAGIC_NUMBER[ctr]) {
-                return false;
-            }
-        }
-
-        return true;
+    if (data.getUint8(1) !== JPEG_MAGIC_NUMBER[1]) {
+      return false
     }
 
-    return false;
-};
+    return true
+  }
 
+  return false
+}
 
-/*** Exports ***/
+export const isHeaderJPEG2000 = (data) => {
+  if (data) {
+    for (let ctr = 0; ctr < JPEG2000_MAGIC_NUMBER.length; ctr += 1) {
+      if (data.getUint8(ctr) !== JPEG2000_MAGIC_NUMBER[ctr]) {
+        return false
+      }
+    }
 
-var moduleType = typeof module;
-if ((moduleType !== 'undefined') && module.exports) {
-    module.exports = daikon.CompressionUtils;
+    return true
+  }
+
+  return false
 }

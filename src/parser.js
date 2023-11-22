@@ -1,439 +1,434 @@
+import { inflateRaw } from 'pako'
+import { Image } from './image.js'
+import { concatArrayBuffers, getStringAt } from './utilities.js'
+import { getVR } from './dictionary.js'
+import { Tag } from './tag.js'
 
-/*jslint browser: true, node: true */
-/*global require, module */
+export class Parser {
+  static MAGIC_COOKIE_OFFSET = 128
+  static MAGIC_COOKIE = [68, 73, 67, 77]
+  static VRS = [
+    'AE',
+    'AS',
+    'AT',
+    'CS',
+    'DA',
+    'DS',
+    'DT',
+    'FL',
+    'FD',
+    'IS',
+    'LO',
+    'LT',
+    'OB',
+    'OD',
+    'OF',
+    'OW',
+    'PN',
+    'SH',
+    'SL',
+    'SS',
+    'ST',
+    'TM',
+    'UI',
+    'UL',
+    'UN',
+    'US',
+    'UT',
+    'UC'
+  ]
 
-"use strict";
+  static DATA_VRS = ['OB', 'OW', 'OF', 'SQ', 'UT', 'UN', 'UC']
+  static RAW_DATA_VRS = ['OB', 'OD', 'OF', 'OW', 'UN']
+  static TRANSFER_SYNTAX_IMPLICIT_LITTLE = '1.2.840.10008.1.2'
+  static TRANSFER_SYNTAX_EXPLICIT_LITTLE = '1.2.840.10008.1.2.1'
+  static TRANSFER_SYNTAX_EXPLICIT_BIG = '1.2.840.10008.1.2.2'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG = '1.2.840.10008.1.2.4'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS = '1.2.840.10008.1.2.4.57'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1 = '1.2.840.10008.1.2.4.70'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT = '1.2.840.10008.1.2.4.50'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT = '1.2.840.10008.1.2.4.51'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_LS_LOSSLESS = '1.2.840.10008.1.2.4.80'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_LS = '1.2.840.10008.1.2.4.81'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS = '1.2.840.10008.1.2.4.90'
+  static TRANSFER_SYNTAX_COMPRESSION_JPEG_2000 = '1.2.840.10008.1.2.4.91'
+  static TRANSFER_SYNTAX_COMPRESSION_RLE = '1.2.840.10008.1.2.5'
+  static TRANSFER_SYNTAX_COMPRESSION_DEFLATE = '1.2.840.10008.1.2.1.99'
+  static UNDEFINED_LENGTH = 0xffffffff
 
-/*** Imports ***/
-var daikon = daikon || {};
-daikon.Tag = daikon.Tag || ((typeof require !== 'undefined') ? require('./tag.js') : null);
-daikon.Utils = daikon.Utils || ((typeof require !== 'undefined') ? require('./utilities.js') : null);
-daikon.Dictionary = daikon.Dictionary || ((typeof require !== 'undefined') ? require('./dictionary.js') : null);
-daikon.Image = daikon.Image || ((typeof require !== 'undefined') ? require('./image.js') : null);
+  littleEndian = true
+  explicit = true
+  metaFound = false
+  metaFinished = false
+  metaFinishedOffset = -1
+  needsDeflate = false
+  inflated = null
+  encapsulation = false
+  level = 0
+  error = null
+  verbose = false
 
-//use fflate not pako
-var pako = pako || ((typeof require !== 'undefined') ? require('pako') : null);
-//var fflate = fflate || ((typeof require !== 'undefined') ? require('fflate') : null);
+  /**
+   * Returns true if the DICOM magic cookie is found.
+   * @param {DataView} data
+   * @returns {boolean}
+   */
+  static isMagicCookieFound(data) {
+    const offset = Parser.MAGIC_COOKIE_OFFSET
+    const magicCookieLength = Parser.MAGIC_COOKIE.length
 
-/*** Constructor ***/
-
-/**
- * The Parser constructor.
- * @property {boolean} explicit
- * @property {boolean} littleEndian
- * @type {Function}
- */
-daikon.Parser = daikon.Parser || function () {
-    this.littleEndian = true;
-    this.explicit = true;
-    this.metaFound = false;
-    this.metaFinished = false;
-    this.metaFinishedOffset = -1;
-    this.needsDeflate = false;
-    this.inflated = null;
-    this.encapsulation = false;
-    this.level = 0;
-    this.error = null;
-};
-
-
-/*** Static Fields ***/
-
-/**
- * Global property to output string representation of tags as they are parsed.
- * @type {boolean}
- */
-daikon.Parser.verbose = false;
-
-
-/*** Static Pseudo-constants ***/
-
-daikon.Parser.MAGIC_COOKIE_OFFSET = 128;
-daikon.Parser.MAGIC_COOKIE = [68, 73, 67, 77];
-daikon.Parser.VRS = ["AE", "AS", "AT", "CS", "DA", "DS", "DT", "FL", "FD", "IS", "LO", "LT", "OB", "OD", "OF", "OW", "PN", "SH", "SL", "SS", "ST", "TM", "UI", "UL", "UN", "US", "UT", "UC"];
-daikon.Parser.DATA_VRS = ["OB", "OW", "OF", "SQ", "UT", "UN", "UC"];
-daikon.Parser.RAW_DATA_VRS = ["OB", "OD", "OF", "OW", "UN"];
-daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE = "1.2.840.10008.1.2";
-daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_LITTLE = "1.2.840.10008.1.2.1";
-daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_BIG = "1.2.840.10008.1.2.2";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG = "1.2.840.10008.1.2.4";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS = "1.2.840.10008.1.2.4.57";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1 = "1.2.840.10008.1.2.4.70";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT = "1.2.840.10008.1.2.4.50";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT = "1.2.840.10008.1.2.4.51";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LS_LOSSLESS = "1.2.840.10008.1.2.4.80";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_LS = "1.2.840.10008.1.2.4.81";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS = "1.2.840.10008.1.2.4.90";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_JPEG_2000 = "1.2.840.10008.1.2.4.91";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_RLE = "1.2.840.10008.1.2.5";
-daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE = "1.2.840.10008.1.2.1.99";
-daikon.Parser.UNDEFINED_LENGTH = 0xFFFFFFFF;
-
-
-/*** Static Methods ***/
-
-/**
- * Returns true if the DICOM magic cookie is found.
- * @param {DataView} data
- * @returns {boolean}
- */
-daikon.Parser.isMagicCookieFound = function (data) {
-    var offset = daikon.Parser.MAGIC_COOKIE_OFFSET, magicCookieLength = daikon.Parser.MAGIC_COOKIE.length, ctr;
-
-    for (ctr = 0; ctr < magicCookieLength; ctr += 1) {
-        if (data.getUint8(offset + ctr) !== daikon.Parser.MAGIC_COOKIE[ctr]) {
-            return false;
-        }
+    for (let ctr = 0; ctr < magicCookieLength; ctr += 1) {
+      if (data.getUint8(offset + ctr) !== Parser.MAGIC_COOKIE[ctr]) {
+        return false
+      }
     }
 
-    return true;
-};
+    return true
+  }
 
-
-/*** Prototype Methods ***/
-
-/**
- * Parses this data and returns an image object.
- * @param {DataView} data
- * @returns {daikon.Image|null}
- */
-daikon.Parser.prototype.parse = function (data) {
-    var image = null, offset, tag, copyMeta, copyDeflated;
+  /**
+   * Parses this data and returns an image object.
+   * @param {DataView} data
+   * @returns {daikon.Image|null}
+   */
+  parse(data) {
+    let image = null
+    let offset
+    let tag
+    let copyMeta
+    let copyDeflated
 
     try {
-        image = new daikon.Image();
-        offset = this.findFirstTagOffset(data);
-        tag = this.getNextTag(data, offset);
+      image = new Image()
+      offset = this.findFirstTagOffset(data)
+      tag = this.getNextTag(data, offset)
 
-        while (tag !== null) {
-            if (daikon.Parser.verbose) {
-                console.log(tag.toString());
-            }
-
-            image.putTag(tag);
-
-            if (tag.isPixelData()) {
-                break;
-            }
-
-            if (this.needsDeflate && (tag.offsetEnd >= this.metaFinishedOffset)) {
-                this.needsDeflate = false;
-                copyMeta = data.buffer.slice(0, tag.offsetEnd);
-                copyDeflated = data.buffer.slice(tag.offsetEnd);
-                this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, pako.inflateRaw(copyDeflated));
-                //this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, fflate.decompressSync(new Uint8Array(copyDeflated)));
-                data = new DataView(this.inflated);
-            }
-
-            tag = this.getNextTag(data, tag.offsetEnd);
+      while (tag !== null) {
+        if (this.verbose) {
+          console.info(tag.toString())
         }
+
+        image.putTag(tag)
+
+        if (tag.isPixelData()) {
+          break
+        }
+
+        if (this.needsDeflate && tag.offsetEnd >= this.metaFinishedOffset) {
+          this.needsDeflate = false
+          copyMeta = data.buffer.slice(0, tag.offsetEnd)
+          copyDeflated = data.buffer.slice(tag.offsetEnd)
+          this.inflated = concatArrayBuffers(copyMeta, inflateRaw(copyDeflated))
+          // this.inflated = daikon.Utils.concatArrayBuffers(copyMeta, fflate.decompressSync(new Uint8Array(copyDeflated)));
+          data = new DataView(this.inflated)
+        }
+
+        tag = this.getNextTag(data, tag.offsetEnd)
+      }
     } catch (err) {
-        this.error = err;
+      this.error = err
     }
 
     if (image !== null) {
-        image.littleEndian = this.littleEndian;
+      image.littleEndian = this.littleEndian
     }
 
-    return image;
-};
+    return image
+  }
 
+  parseEncapsulated(data) {
+    const offset = 0
+    let tag
+    const tags = []
 
-
-daikon.Parser.prototype.parseEncapsulated = function (data) {
-    var offset = 0, tag, tags = [];
-
-    this.encapsulation = true;
+    this.encapsulation = true
 
     try {
-        tag = this.getNextTag(data, offset);
+      tag = this.getNextTag(data, offset)
 
-        while (tag !== null) {
-            if (tag.isSublistItem()) {
-                tags.push(tag);
-            }
-
-            if (daikon.Parser.verbose) {
-                console.log(tag.toString());
-            }
-
-            tag = this.getNextTag(data, tag.offsetEnd);
+      while (tag !== null) {
+        if (tag.isSublistItem()) {
+          tags.push(tag)
         }
-    } catch (err) {
-        this.error = err;
 
+        if (this.verbose) {
+          console.info(tag.toString())
+        }
+
+        tag = this.getNextTag(data, tag.offsetEnd)
+      }
+    } catch (err) {
+      this.error = err
     }
 
-    return tags;
-};
+    return tags
+  }
 
-
-
-daikon.Parser.prototype.testForValidTag = function (data) {
-    var offset, tag = null;
+  testForValidTag(data) {
+    let offset
+    let tag = null
 
     try {
-        offset = this.findFirstTagOffset(data);
-        tag = this.getNextTag(data, offset, false);
+      offset = this.findFirstTagOffset(data)
+      tag = this.getNextTag(data, offset, false)
     } catch (err) {
-        this.error = err;
+      this.error = err
     }
 
-    return tag;
-};
+    return tag
+  }
 
-
-
-daikon.Parser.prototype.getNextTag = function (data, offset, testForTag) {
-    var group = 0, element, value = null, offsetStart = offset, offsetValue, length = 0, little = true, vr = null, tag;
+  getNextTag(data, offset, testForTag) {
+    let group = 0
+    let value = null
+    const offsetStart = offset
+    let length = 0
+    let little = true
+    let vr = null
 
     if (offset >= data.byteLength) {
-        return null;
+      return null
     }
 
     if (this.metaFinished) {
-        little = this.littleEndian;
-        group = data.getUint16(offset, little);
+      little = this.littleEndian
+      group = data.getUint16(offset, little)
     } else {
-        group = data.getUint16(offset, true);
+      group = data.getUint16(offset, true)
 
-        if (((this.metaFinishedOffset !== -1) && (offset >= this.metaFinishedOffset)) || (group !== 0x0002)) {
-            this.metaFinished = true;
-            little = this.littleEndian;
-            group = data.getUint16(offset, little);
-        } else {
-            little = true;
-        }
+      if ((this.metaFinishedOffset !== -1 && offset >= this.metaFinishedOffset) || group !== 0x0002) {
+        this.metaFinished = true
+        little = this.littleEndian
+        group = data.getUint16(offset, little)
+      } else {
+        little = true
+      }
     }
 
-    if (!this.metaFound && (group === 0x0002)) {
-        this.metaFound = true;
+    if (!this.metaFound && group === 0x0002) {
+      this.metaFound = true
     }
 
-    offset += 2;
+    offset += 2
 
-    element = data.getUint16(offset, little);
-    offset += 2;
+    const element = data.getUint16(offset, little)
+    offset += 2
     if (this.explicit || !this.metaFinished) {
-        vr = daikon.Utils.getStringAt(data, offset, 2);
+      vr = getStringAt(data, offset, 2)
 
-        if (!this.metaFound && this.metaFinished && (daikon.Parser.VRS.indexOf(vr) === -1)) {
-            vr = daikon.Dictionary.getVR(group, element);
-            length = data.getUint32(offset, little);
-            offset += 4;
-            this.explicit = false;
+      if (!this.metaFound && this.metaFinished && Parser.VRS.indexOf(vr) === -1) {
+        vr = getVR(group, element)
+        length = data.getUint32(offset, little)
+        offset += 4
+        this.explicit = false
+      } else {
+        offset += 2
+
+        if (Parser.DATA_VRS.indexOf(vr) !== -1) {
+          offset += 2 // skip two empty bytes
+
+          length = data.getUint32(offset, little)
+          offset += 4
         } else {
-            offset += 2;
-
-            if (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) {
-                offset += 2;  // skip two empty bytes
-
-                length = data.getUint32(offset, little);
-                offset += 4;
-            } else {
-                length = data.getUint16(offset, little);
-                offset += 2;
-            }
+          length = data.getUint16(offset, little)
+          offset += 2
         }
+      }
     } else {
-        vr = daikon.Dictionary.getVR(group, element);
-        length = data.getUint32(offset, little);
+      vr = getVR(group, element)
+      length = data.getUint32(offset, little)
 
-        if (length === daikon.Parser.UNDEFINED_LENGTH) {
-            vr = 'SQ';
-        }
+      if (length === Parser.UNDEFINED_LENGTH) {
+        vr = 'SQ'
+      }
 
-        offset += 4;
+      offset += 4
     }
 
-    offsetValue = offset;
+    const offsetValue = offset
 
-    var isPixelData = ((group === daikon.Tag.TAG_PIXEL_DATA[0]) && (element === daikon.Tag.TAG_PIXEL_DATA[1]));
+    const isPixelData = group === Tag.TAG_PIXEL_DATA[0] && element === Tag.TAG_PIXEL_DATA[1]
     /*
     color lookup data will be in (0028,12XX), so don't try to treat these as a sublist even though it can look like a list. Example:
       (0028,1201) OW 0000\ffff\ffff\0000\ffff\ffff\0000\cccc\0000\0000\1e1e\0000\0101... # 512, 1 RedPaletteColorLookupTableData
       (0028,1202) OW 0000\ffff\0000\ffff\8080\3333\ffff\b3b3\0000\0000\1e1e\0000\0101... # 512, 1 GreenPaletteColorLookupTableData
       (0028,1203) OW 0000\0000\ffff\ffff\0000\4d4d\0000\0000\0000\0000\1e1e\0000\0101... # 512, 1 BluePaletteColorLookupTableData
     */
-    var isLookupTableData = 0x0028 === group && element>= 0x1201 && element<0x1300;
-    
-    if ((vr === 'SQ') || (!isLookupTableData && !isPixelData && !this.encapsulation && (daikon.Parser.DATA_VRS.indexOf(vr) !== -1) && (vr !== 'UC'))) {
-        value = this.parseSublist(data, offset, length, vr !== 'SQ');
+    const isLookupTableData = group === 0x0028 && element >= 0x1201 && element < 0x1300
 
-        if (length === daikon.Parser.UNDEFINED_LENGTH) {
-            length = value[value.length - 1].offsetEnd - offset;
-        }
-    } else if ((length > 0) && !testForTag) {
-        if (length === daikon.Parser.UNDEFINED_LENGTH) {
-            if (isPixelData) {
-                length = (data.byteLength - offset);
-            }
-        }
+    if (
+      vr === 'SQ' ||
+      (!isLookupTableData && !isPixelData && !this.encapsulation && Parser.DATA_VRS.indexOf(vr) !== -1 && vr !== 'UC')
+    ) {
+      value = this.parseSublist(data, offset, length, vr !== 'SQ')
 
-        value = data.buffer.slice(offset, offset + length);
+      if (length === Parser.UNDEFINED_LENGTH) {
+        length = value[value.length - 1].offsetEnd - offset
+      }
+    } else if (length > 0 && !testForTag) {
+      if (length === Parser.UNDEFINED_LENGTH) {
+        if (isPixelData) {
+          length = data.byteLength - offset
+        }
+      }
+
+      value = data.buffer.slice(offset, offset + length)
     }
 
-    offset += length;
-    tag = new daikon.Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian, this.charset);
+    offset += length
+    const tag = new Tag(group, element, vr, value, offsetStart, offsetValue, offset, this.littleEndian, this.charset)
 
     if (tag.value) {
-        if (tag.isTransformSyntax()) {
-            // 传输语法已存在
-            this.transformSyntaxAlreadyExist = true;
-            if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
-                this.explicit = false;
-                this.littleEndian = true;
-            } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_EXPLICIT_BIG) {
-                this.explicit = true;
-                this.littleEndian = false;
-            } else if (tag.value[0] === daikon.Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE) {
-                this.needsDeflate = true;
-                this.explicit = true;
-                this.littleEndian = true;
-            } else {
-                this.explicit = true;
-                this.littleEndian = true;
-            }
-        } else if (tag.isMetaLength()) {
-            this.metaFinishedOffset = tag.value[0] + offset;
-        } else if (tag.isCharset()) {
-            var charset = tag.value;
-            if (charset.length == 2) {
-                charset = (charset[0] || "ISO 2022 IR 6") + "\\" + charset[1];
-            }
-            else if (charset.length == 1) {
-                
-                charset = charset[0];
-            }
-            this.charset = charset;
+      if (tag.isTransformSyntax()) {
+        this.transformSyntaxAlreadyExist = true
+        if (tag.value[0] === Parser.TRANSFER_SYNTAX_IMPLICIT_LITTLE) {
+          this.explicit = false
+          this.littleEndian = true
+        } else if (tag.value[0] === Parser.TRANSFER_SYNTAX_EXPLICIT_BIG) {
+          this.explicit = true
+          this.littleEndian = false
+        } else if (tag.value[0] === Parser.TRANSFER_SYNTAX_COMPRESSION_DEFLATE) {
+          this.needsDeflate = true
+          this.explicit = true
+          this.littleEndian = true
+        } else {
+          this.explicit = true
+          this.littleEndian = true
         }
+      } else if (tag.isMetaLength()) {
+        this.metaFinishedOffset = tag.value[0] + offset
+      } else if (tag.isCharset()) {
+        let charset = tag.value
+        if (charset.length === 2) {
+          charset = (charset[0] || 'ISO 2022 IR 6') + '\\' + charset[1]
+        } else if (charset.length === 1) {
+          charset = charset[0]
+        }
+        this.charset = charset
+      }
     }
 
-    return tag;
-};
+    return tag
+  }
 
+  parseSublist(data, offset, length, raw) {
+    let sublistItem
+    const offsetEnd = offset + length
+    const tags = []
 
+    this.level++
 
-daikon.Parser.prototype.parseSublist = function (data, offset, length, raw) {
-    var sublistItem,
-        offsetEnd = offset + length,
-        tags = [];
+    if (length === Parser.UNDEFINED_LENGTH) {
+      sublistItem = this.parseSublistItem(data, offset, raw)
 
-    this.level++;
+      while (!sublistItem.isSequenceDelim()) {
+        tags.push(sublistItem)
+        offset = sublistItem.offsetEnd
+        sublistItem = this.parseSublistItem(data, offset, raw)
+      }
 
-    if (length === daikon.Parser.UNDEFINED_LENGTH) {
-        sublistItem = this.parseSublistItem(data, offset, raw);
-
-        while (!sublistItem.isSequenceDelim()) {
-            tags.push(sublistItem);
-            offset = sublistItem.offsetEnd;
-            sublistItem = this.parseSublistItem(data, offset, raw);
-        }
-
-        tags.push(sublistItem);
+      tags.push(sublistItem)
     } else {
-        while (offset < offsetEnd) {
-            sublistItem = this.parseSublistItem(data, offset, raw);
-            tags.push(sublistItem);
-            offset = sublistItem.offsetEnd;
-        }
+      while (offset < offsetEnd) {
+        sublistItem = this.parseSublistItem(data, offset, raw)
+        tags.push(sublistItem)
+        offset = sublistItem.offsetEnd
+      }
     }
 
-    this.level--;
+    this.level--
 
-    return tags;
-};
+    return tags
+  }
 
+  parseSublistItem(data, offset, raw) {
+    let offsetEnd
+    let tag
+    const offsetStart = offset
+    let value = null
+    const tags = []
 
+    const group = data.getUint16(offset, this.littleEndian)
+    offset += 2
 
-daikon.Parser.prototype.parseSublistItem = function (data, offset, raw) {
-    var group, element, length, offsetEnd, tag, offsetStart = offset, value = null, offsetValue, sublistItemTag, tags = [];
+    const element = data.getUint16(offset, this.littleEndian)
+    offset += 2
 
-    group = data.getUint16(offset, this.littleEndian);
-    offset += 2;
+    const length = data.getUint32(offset, this.littleEndian)
+    offset += 4
 
-    element = data.getUint16(offset, this.littleEndian);
-    offset += 2;
+    const offsetValue = offset
 
-    length = data.getUint32(offset, this.littleEndian);
-    offset += 4;
+    if (length === Parser.UNDEFINED_LENGTH) {
+      tag = this.getNextTag(data, offset)
 
-    offsetValue = offset;
+      while (tag && !tag.isSublistItemDelim()) {
+        tags.push(tag)
+        offset = tag.offsetEnd
+        tag = this.getNextTag(data, offset)
+      }
 
-    if (length === daikon.Parser.UNDEFINED_LENGTH) {
-        tag = this.getNextTag(data, offset);
-
-        while (tag && !tag.isSublistItemDelim()) {
-            tags.push(tag);
-            offset = tag.offsetEnd;
-            tag = this.getNextTag(data, offset);
-        }
-
-        tag && tags.push(tag);
-        tag && (offset = tag.offsetEnd);
+      tag && tags.push(tag)
+      tag && (offset = tag.offsetEnd)
     } else if (raw) {
-        value = data.buffer.slice(offset, offset + length);
-        offset = offset + length;
+      value = data.buffer.slice(offset, offset + length)
+      offset = offset + length
     } else {
-        offsetEnd = offset + length;
+      offsetEnd = offset + length
 
-        while (offset < offsetEnd) {
-            tag = this.getNextTag(data, offset);
-            tags.push(tag);
-            offset = tag.offsetEnd;
-        }
+      while (offset < offsetEnd) {
+        tag = this.getNextTag(data, offset)
+        tags.push(tag)
+        offset = tag.offsetEnd
+      }
     }
 
-    sublistItemTag = new daikon.Tag(group, element, null, value || tags, offsetStart, offsetValue, offset, this.littleEndian);
+    const sublistItemTag = new Tag(
+      group,
+      element,
+      null,
+      value || tags,
+      offsetStart,
+      offsetValue,
+      offset,
+      this.littleEndian
+    )
 
-    return sublistItemTag;
-};
+    return sublistItemTag
+  }
 
+  findFirstTagOffset(data) {
+    let offset = 0
+    const magicCookieLength = Parser.MAGIC_COOKIE.length
+    const searchOffsetMax = Parser.MAGIC_COOKIE_OFFSET * 5
+    let found = false
+    let ch = 0
 
-
-daikon.Parser.prototype.findFirstTagOffset = function (data) {
-    var offset = 0,
-        magicCookieLength = daikon.Parser.MAGIC_COOKIE.length,
-        searchOffsetMax = daikon.Parser.MAGIC_COOKIE_OFFSET * 5,
-        found = false,
-        ctr = 0,
-        ctrIn = 0,
-        ch = 0;
-
-    if (daikon.Parser.isMagicCookieFound(data)) {
-        offset = daikon.Parser.MAGIC_COOKIE_OFFSET + magicCookieLength;
+    if (Parser.isMagicCookieFound(data)) {
+      offset = Parser.MAGIC_COOKIE_OFFSET + magicCookieLength
     } else {
-        for (ctr = 0; ctr < searchOffsetMax; ctr += 1) {
-            ch = data.getUint8(ctr);
-            if (ch === daikon.Parser.MAGIC_COOKIE[0]) {
-                found = true;
-                for (ctrIn = 1; ctrIn < magicCookieLength; ctrIn += 1) {
-                    if (data.getUint8(ctr + ctrIn) !== daikon.Parser.MAGIC_COOKIE[ctrIn]) {
-                        found = false;
-                    }
-                }
-
-                if (found) {
-                    offset = ctr + magicCookieLength;
-                    break;
-                }
+      for (let ctr = 0; ctr < searchOffsetMax; ctr += 1) {
+        ch = data.getUint8(ctr)
+        if (ch === Parser.MAGIC_COOKIE[0]) {
+          found = true
+          for (let ctrIn = 1; ctrIn < magicCookieLength; ctrIn += 1) {
+            if (data.getUint8(ctr + ctrIn) !== Parser.MAGIC_COOKIE[ctrIn]) {
+              found = false
             }
+          }
+
+          if (found) {
+            offset = ctr + magicCookieLength
+            break
+          }
         }
+      }
     }
 
-    return offset;
-};
+    return offset
+  }
 
-
-
-daikon.Parser.prototype.hasError = function () {
-    return (this.error !== null);
-};
-
-
-/*** Exports ***/
-
-var moduleType = typeof module;
-if ((moduleType !== 'undefined') && module.exports) {
-    module.exports = daikon.Parser;
+  hasError() {
+    return this.error !== null
+  }
 }
