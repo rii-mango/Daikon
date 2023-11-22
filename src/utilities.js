@@ -18,7 +18,7 @@ export const createArray = function (length) {
   return arr
 }
 
-export const getStringAt = (dataview, start, length, charset, vr) => {
+export const getStringAt = (dataview, start, length) => {
   let str = ''
 
   for (let ctr = 0; ctr < length; ctr += 1) {

@@ -30,7 +30,7 @@
     "uglify-js": "*"
   },
   "scripts": {
-    "lint": "DEBUG=eslint:cli-engine eslint --fix .",
+    "lint": "eslint .",
     "test": "NODE_ICU_DATA=./node_modules/icu4c-data/ && mocha --timeout 0 tests",
     "test-dev": "NODE_ICU_DATA=./node_modules/icu4c-data/ && mocha --timeout 0 tests/driver-jpeg-2000.js",
     "esbuild": "rm -rf build; mkdir build; esbuild src/main.js --bundle --global-name=daikon --platform=node --outfile=build/daikon.js; esbuild src/main.js --bundle --global-name=daikon --platform=node --minify --outfile=build/daikon-min.js",
