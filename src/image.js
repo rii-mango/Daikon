@@ -1,7 +1,7 @@
 import jpeg from 'jpeg-lossless-decoder-js'
 import { JpxImage } from 'jpeg2000'
 import { JpegImage } from '../lib/jpeg-baseline.js'
-import { JpegLS } from '../lib/jpeg-ls.js'
+import { decodeJPEGLS } from '../lib/jpeg-ls.js'
 
 import { Tag } from './tag.js'
 import { MAX_VALUE, MIN_VALUE, concatArrayBuffers2, createBitMask, fillBuffer } from './utilities.js'
@@ -655,8 +655,7 @@ export class Image {
       decoder.parse(new Uint8Array(jpg))
       return decoder.tiles[0].items
     } else if (this.isCompressedJPEGLS()) {
-      const decoder = new JpegLS()
-      return decoder.decodeJPEGLS(new Uint8Array(jpg), this.getDataType() === Image.BYTE_TYPE_INTEGER)
+      return decodeJPEGLS(new Uint8Array(jpg), this.getDataType() === Image.BYTE_TYPE_INTEGER)
     }
   }
 
@@ -749,8 +748,7 @@ export class Image {
         jpegs = this.getJpegs()
 
         for (let ctr = 0; ctr < jpegs.length; ctr += 1) {
-          decoder = new JpegLS()
-          decoded = decoder.decodeJPEGLS(new Uint8Array(jpegs[ctr]), this.getDataType() === Image.BYTE_TYPE_INTEGER)
+          decoded = decodeJPEGLS(new Uint8Array(jpegs[ctr]), this.getDataType() === Image.BYTE_TYPE_INTEGER)
           width = decoded.columns
           height = decoded.rows
           decoded = decoded.pixelData
