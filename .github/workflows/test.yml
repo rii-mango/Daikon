@@ -16,8 +16,7 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: npm run build
-      # TODO: activate this once a linting setup exists
-      # - name: Lint
-      #   if: matrix.os != 'windows-latest'
-      #   run: npm run lint
+      - name: Lint
+        if: matrix.os != 'windows-latest'
+        run: npm run lint
       - run: npm run test
